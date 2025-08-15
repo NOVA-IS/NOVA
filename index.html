@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>홍길동 · 포트폴리오</title>
+  <meta name="description" content="홍길동의 개발자 포트폴리오" />
+  <style>
+    /* ====== 기본 변수 (라이트 테마) ====== */
+    :root{
+      --bg: #f7f7fb;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --brand: #6366f1;        /* 인디고 */
+      --brand-2: #22c55e;      /* 그린 포인트 */
+      --border: #e5e7eb;
+      --shadow: 0 6px 24px rgba(0,0,0,.06);
+      --radius: 14px;
+      --maxw: 1040px;
+    }
+    /* ====== 다크 테마 ====== */
+    [data-theme="dark"]{
+      --bg: #0b0e14;
+      --card: #121722;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --brand: #8b5cf6;
+      --brand-2: #10b981;
+      --border: #1f2937;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    /* 시스템 기본 다크 모드 자동 감지 */
+    @media (prefers-color-scheme: dark){
+      :root:not([data-theme]){
+        --bg: #0b0e14;
+        --card: #121722;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --brand: #8b5cf6;
+        --brand-2: #10b981;
+        --border: #1f2937;
+        --shadow: 0 10px 30px rgba(0,0,0,.35);
+      }
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: radial-gradient(1200px 600px at 10% -10%, rgba(99,102,241,.12), transparent 60%),
+                  radial-gradient(1000px 500px at 110% 10%, rgba(16,185,129,.08), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.6;
+    }
+    a{color:var(--brand);text-decoration:none}
+    a:hover{opacity:.9;text-decoration:underline}
+
+    /* ====== 레이아웃 ====== */
+    .wrap{max-width:var(--maxw); margin:0 auto; padding:28px 18px 80px}
+    header.hero{
+      position:relative; padding:56px 18px 24px; text-align:center;
+      display:grid; gap:12px; justify-items:center;
+      animation:fadeUp .8s ease both;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--border);
+      padding:8px 12px; border-radius:999px; background:var(--card);
+      box-shadow:var(--shadow); font-size:.9rem; color:var(--muted);
+    }
+    .chip .dot{width:8px;height:8px;border-radius:50%;background:var(--brand-2);box-shadow:0 0 0 6px rgba(16,185,129,.15)}
+    .title{font-size:clamp(28px,6vw,48px); font-weight:800; letter-spacing:-.02em; margin:6px 0}
+    .subtitle{color:var(--muted);max-width:740px}
+
+    /* CTA 버튼 */
+    .cta{display:flex; gap:12px; margin-top:12px; flex-wrap:wrap; justify-content:center}
+    .btn{
+      border:1px solid var(--border); background:var(--card); color:var(--text);
+      padding:12px 18px; border-radius:12px; box-shadow:var(--shadow); font-weight:600;
+      transition:transform .15s ease, box-shadow .2s ease;
+      display:inline-flex; align-items:center; gap:10px;
+    }
+    .btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand-2)); color:#fff; border:none}
+    .btn:hover{transform:translateY(-2px)}
+    .btn:active{transform:translateY(0)}
+
+    /* 섹션 */
+    section{margin-top:42px}
+    .sec-title{font-size:1.6rem; font-weight:800; margin:0 0 16px}
+    .grid{
+      display:grid; gap:18px;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    }
+    .card{
+      background:var(--card); border:1px solid var(--border);
+      border-radius:var(--radius); box-shadow:var(--shadow);
+      padding:18px;
+      transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      position:relative; overflow:hidden;
+    }
+    .card:hover{transform:translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,.12); border-color:transparent}
+    .card .badge{
+      position:absolute; top:12px; right:12px; font-size:.75rem; color:#fff;
+      background:linear-gradient(135deg,var(--brand),var(--brand-2)); padding:6px 10px; border-radius:999px
+    }
+
+    /* 프로젝트 카드 */
+    .proj-title{margin:0 0 6px; font-weight:800; font-size:1.05rem}
+    .proj-links{display:flex; gap:10px; margin-top:10px; flex-wrap:wrap}
+    .proj-links a{display:inline-flex; gap:8px; align-items:center; padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:transparent}
+    .proj-meta{font-size:.9rem; color:var(--muted)}
+    .tech{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .pill{border:1px dashed var(--border); padding:6px 10px; border-radius:999px; font-size:.85rem; color:var(--muted)}
+
+    /* 스킬 바 */
+    .skill{display:grid; gap:8px}
+    .bar{height:10px; background:rgba(99,102,241,.15); border-radius:999px; overflow:hidden}
+    .bar > span{display:block; height:100%; background:linear-gradient(90deg,var(--brand),var(--brand-2)); width:0}
+    .skill[data-lvl="90"] .bar > span{width:90%}
+    .skill[data-lvl="80"] .bar > span{width:80%}
+    .skill[data-lvl="70"] .bar > span{width:70%}
+    .skill[data-lvl="60"] .bar > span{width:60%}
+
+    /* 타임라인 */
+    .timeline{position:relative; padding-left:22px}
+    .timeline:before{content:""; position:absolute; left:6px; top:0; bottom:0; width:2px; background:linear-gradient(var(--brand), transparent)}
+    .tl{
+      position:relative; margin:0 0 18px; padding:12px 12px 12px 14px;
+      border:1px solid var(--border); border-radius:12px; background:var(--card); box-shadow:var(--shadow);
+      animation:fadeUp .7s ease both;
+    }
+    .tl:before{content:""; position:absolute; left:-13px; top:14px; width:12px; height:12px; border-radius:50%; background:var(--brand); box-shadow:0 0 0 6px rgba(99,102,241,.15)}
+    .tl h4{margin:0 0 4px}
+    .tl .when{font-size:.9rem; color:var(--muted)}
+
+    /* 푸터 */
+    footer{margin:56px 0 0; padding:22px; text-align:center; color:var(--muted); border-top:1px dashed var(--border)}
+
+    /* 토글 & 테마 스위처 */
+    .topbar{
+      position:fixed; inset:18px 18px auto auto; z-index:50; display:flex; gap:8px;
+    }
+    .toggle, .theme{
+      border:1px solid var(--border); background:var(--card); color:var(--text);
+      padding:10px 12px; border-radius:12px; box-shadow:var(--shadow); cursor:pointer; font-weight:600;
+    }
+    .palette{position:absolute; right:0; top:46px; display:none; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px; box-shadow:var(--shadow)}
+    .sw{width:28px; height:28px; border-radius:8px; border:1px solid var(--border); display:inline-block; cursor:pointer}
+
+    /* 애니메이션 */
+    @keyframes fadeUp{
+      from{opacity:0; transform:translateY(8px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+    .reveal{opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease}
+    .reveal.is-visible{opacity:1; transform:translateY(0)}
+    /* 반응형 이미지/아바타 */
+    .avatar{
+      width:96px;height:96px;border-radius:50%;
+      background:linear-gradient(135deg,var(--brand),var(--brand-2));
+      display:grid; place-items:center; color:#fff; font-weight:800; font-size:28px;
+      box-shadow:var(--shadow)
+    }
+
+    /* 접근성 */
+    :focus-visible{outline:3px solid var(--brand-2); outline-offset:2px; border-radius:8px}
+  </style>
+</head>
+<body>
+  <!-- 상단 테마/색상 토글 -->
+  <div class="topbar" aria-label="테마 설정">
+    <button class="toggle" id="modeToggle" type="button">🌙 다크모드</button>
+    <div style="position:relative">
+      <button class="theme" id="themeBtn" type="button">🎨 테마</button>
+      <div class="palette" id="palette" role="menu" aria-label="색상 팔레트">
+        <span class="sw" data-brand="#6366f1" data-brand2="#22c55e" title="Indigo · Green" style="background:linear-gradient(135deg,#6366f1,#22c55e)"></span>
+        <span class="sw" data-brand="#ef4444" data-brand2="#f59e0b" title="Red · Amber" style="background:linear-gradient(135deg,#ef4444,#f59e0b)"></span>
+        <span class="sw" data-brand="#06b6d4" data-brand2="#10b981" title="Cyan · Emerald" style="background:linear-gradient(135deg,#06b6d4,#10b981)"></span>
+        <span class="sw" data-brand="#8b5cf6" data-brand2="#ec4899" title="Violet · Pink" style="background:linear-gradient(135deg,#8b5cf6,#ec4899)"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <header class="hero" id="home">
+      <span class="chip"><span class="dot"></span> 오픈소스 & 프로덕트 애호가</span>
+      <div class="avatar" aria-hidden="true">H</div>
+      <h1 class="title">홍길동</h1>
+      <p class="subtitle">Full-stack Developer · AI/ML Enthusiast · 사용자 경험을 사랑하는 문제 해결가. 안정적인 배포와 깔끔한 코드, 의미 있는 데이터 제품을 만듭니다.</p>
+      <div class="cta">
+        <a class="btn primary" href="#projects">프로젝트 보기</a>
+        <a class="btn" href="https://github.com/username" target="_blank" rel="noreferrer">GitHub 프로필</a>
+        <a class="btn" href="#contact">연락하기</a>
+      </div>
+    </header>
+
+    <!-- 소개 -->
+    <section id="about" class="reveal">
+      <h2 class="sec-title">소개</h2>
+      <div class="grid">
+        <article class="card">
+          <span class="badge">핵심</span>
+          <h3 style="margin:.2rem 0 6px">무엇을 잘하나요?</h3>
+          <p>React · TypeScript · Node.js 기반의 웹/서비스 개발과 파이프라인 자동화(CI/CD), 간단한 MLOps까지 수행합니다.</p>
+        </article>
+        <article class="card">
+          <h3 style="margin:.2rem 0 6px">가치관</h3>
+          <p>작게 빠르게 만들고, 지표로 검증하며, 사용자 피드백을 주기적으로 반영합니다. 문서화와 테스트를 꾸준히 합니다.</p>
+        </article>
+        <article class="card">
+          <h3 style="margin:.2rem 0 6px">관심사</h3>
+          <p>Generative AI, 데이터 시각화, 접근성, 성능 최적화, 개발자 경험(DX).</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 스킬 -->
+    <section id="skills" class="reveal">
+      <h2 class="sec-title">스킬</h2>
+      <div class="grid">
+        <div class="card skill" data-lvl="90" aria-label="JavaScript 숙련도 90%">
+          <strong>JavaScript / TypeScript</strong>
+          <div class="bar"><span></span></div>
+          <span class="proj-meta">프레임워크: React, Next.js, Node.js</span>
+        </div>
+        <div class="card skill" data-lvl="80" aria-label="Python 숙련도 80%">
+          <strong>Python</strong>
+          <div class="bar"><span></span></div>
+          <span class="proj-meta">데이터 처리 · 간단한 모델링 · 스크립팅</span>
+        </div>
+        <div class="card skill" data-lvl="70" aria-label="DevOps 숙련도 70%">
+          <strong>DevOps</strong>
+          <div class="bar"><span></span></div>
+          <span class="proj-meta">Docker, GitHub Actions, Vercel/Render</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 프로젝트 -->
+    <section id="projects" class="reveal">
+      <h2 class="sec-title">프로젝트</h2>
+      <div class="grid">
+        <article class="card">
+          <span class="badge">오픈소스</span>
+          <h3 class="proj-title">Airstack — 반응형 대시보드</h3>
+          <p class="proj-meta">2025 · 개인 · 성능 최적화(First Contentful Paint 1.2s)</p>
+          <p>대시보드 템플릿. 컴포넌트 지연 로딩과 코드 스플리팅으로 초기 로딩 최적화.</p>
+          <div class="tech">
+            <span class="pill">React</span><span class="pill">Vite</span><span class="pill">TypeScript</span>
+          </div>
+          <div class="proj-links">
+            <a href="#" aria-label="라이브 데모 링크">🔗 데모</a>
+            <a href="#" aria-label="GitHub 저장소 링크">💻 코드</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3 class="proj-title">ClippyAI — 문서 요약 봇</h3>
+          <p class="proj-meta">2024 · 팀 · 월간 2만 쿼리 처리</p>
+          <p>긴 문서를 섹션 단위로 임베딩해 빠르게 검색·요약하는 챗봇.</p>
+          <div class="tech">
+            <span class="pill">Python</span><span class="pill">FastAPI</span><span class="pill">Postgres</span>
+          </div>
+          <div class="proj-links">
+            <a href="#" aria-label="라이브 데모 링크">🔗 데모</a>
+            <a href="#" aria-label="GitHub 저장소 링크">💻 코드</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3 class="proj-title">SnapShot — 이미지 최적화 파이프라인</h3>
+          <p class="proj-meta">2023 · 개인 · 저장소 용량 65% 절감</p>
+          <p>CI에서 자동으로 이미지를 WebP로 변환하고 사이즈를 조절해 배포.</p>
+          <div class="tech">
+            <span class="pill">GitHub Actions</span><span class="pill">Node.js</span><span class="pill">Sharp</span>
+          </div>
+          <div class="proj-links">
+            <a href="#" aria-label="워크플로 문서">📄 Docs</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 경력 타임라인 -->
+    <section id="experience" class="reveal">
+      <h2 class="sec-title">경력</h2>
+      <div class="timeline">
+        <div class="tl">
+          <h4>Awesome Corp · 프론트엔드 엔지니어</h4>
+          <div class="when">2023.07 – 현재</div>
+          <p>디자인 시스템 구축, 성능 최적화, 접근성 점검 프로세스 도입.</p>
+        </div>
+        <div class="tl">
+          <h4>DataLab · 리서치 엔지니어(인턴)</h4>
+          <div class="when">2022.01 – 2022.12</div>
+          <p>문서 임베딩 성능 검증 · 데이터 파이프라인 자동화.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 연락 -->
+    <section id="contact" class="reveal">
+      <h2 class="sec-title">연락하기</h2>
+      <div class="grid">
+        <div class="card">
+          <p>함께 만들고 싶은 것이 있으신가요? 아래로 연락 주세요.</p>
+          <p>📧 <a href="mailto:example@email.com">example@email.com</a></p>
+          <p>🐙 <a href="https://github.com/username" target="_blank" rel="noreferrer">github.com/username</a></p>
+          <p>💼 <a href="#" target="_blank" rel="noreferrer">LinkedIn</a></p>
+        </div>
+        <form class="card" onsubmit="event.preventDefault(); alert('메시지가 전송된 것으로 가정합니다 :) 정적 사이트라 실제 전송은 되지 않아요.');">
+          <label>이름<br><input required style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;background:transparent;color:var(--text)"></label><br><br>
+          <label>이메일<br><input type="email" required style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;background:transparent;color:var(--text)"></label><br><br>
+          <label>메시지<br><textarea required rows="4" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;background:transparent;color:var(--text)"></textarea></label><br><br>
+          <button class="btn primary" type="submit">보내기</button>
+        </form>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="year"></span> 홍길동 · Built with GitHub Pages
+    </footer>
+  </div>
+
+  <script>
+    // 연도
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // 스크롤 리빌
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
+      })
+    },{threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+    // 다크 모드 토글 + 로컬 저장
+    const root = document.documentElement;
+    const modeBtn = document.getElementById('modeToggle');
+    const savedTheme = localStorage.getItem('theme');
+    if(savedTheme){ root.setAttribute('data-theme', savedTheme); modeBtn.textContent = savedTheme==='dark' ? '🌞 라이트모드' : '🌙 다크모드'; }
+
+    modeBtn.addEventListener('click',()=>{
+      const current = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', current);
+      localStorage.setItem('theme', current);
+      modeBtn.textContent = current==='dark' ? '🌞 라이트모드' : '🌙 다크모드';
+    });
+
+    // 테마 팔레트
+    const themeBtn = document.getElementById('themeBtn');
+    const palette = document.getElementById('palette');
+    themeBtn.addEventListener('click',()=>{
+      palette.style.display = palette.style.display==='block' ? 'none' : 'block';
+    });
+    document.addEventListener('click',(e)=>{
+      if(!themeBtn.contains(e.target) && !palette.contains(e.target)) palette.style.display='none';
+    });
+    palette.querySelectorAll('.sw').forEach(sw=>{
+      sw.addEventListener('click', ()=>{
+        root.style.setProperty('--brand', sw.dataset.brand);
+        root.style.setProperty('--brand-2', sw.dataset.brand2);
+        localStorage.setItem('brand', sw.dataset.brand);
+        localStorage.setItem('brand2', sw.dataset.brand2);
+        palette.style.display='none';
+      })
+    });
+    // 저장된 팔레트 복원
+    const b = localStorage.getItem('brand'); const b2 = localStorage.getItem('brand2');
+    if(b&&b2){ root.style.setProperty('--brand', b); root.style.setProperty('--brand-2', b2); }
+
+    // 키보드 단축키: T(테마), D(다크)
+    document.addEventListener('keydown',(e)=>{
+      if(e.key.toLowerCase()==='d'){ modeBtn.click(); }
+      if(e.key.toLowerCase()==='t'){ themeBtn.click(); }
+    });
+  </script>
+</body>
+</html>
