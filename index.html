@@ -1,29 +1,16 @@
+<!doctype html>
+<html lang="ko">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NOVA INTEGRATED SOLUTIONS LLC — Corporate Showcase</title>
-  <meta name="description" content="NOVA INTEGRATED SOLUTIONS LLC — 기업 회계·재무 운영을 돕는 파트너. 화보형 카탈로그 인덱스." />
-  <meta name="theme-color" content="#0b1020" />
   <title>NOVA INTEGRATED SOLUTIONS LLC — Theme & Color Switch</title>
   <meta name="description" content="NOVA INTEGRATED SOLUTIONS LLC — 다크모드와 포인트 컬러를 사용자가 선택." />
   <meta name="theme-color" content="#ffffff" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-  <!-- Minimal favicon (SVG data URI) -->
-  <link rel="icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230b1020"/><text x="50" y="62" font-size="58" text-anchor="middle" fill="%23e6e9f2" font-family="Arial, Helvetica, sans-serif">N</text></svg>' />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0b1020;          /* 배경(종이) */
-      --bg-2:#0f172a;        /* 헤더/섹션 배경 */
-      --ink:#e6e9f2;         /* 본문 텍스트 */
-      --muted:#9aa2b1;       /* 보조 텍스트 */
-      --accent:#3b82f6;      /* 포인트 (블루) */
-      --accent-2:#eab308;    /* 포인트 (골드) */
-      --glass:rgba(11,16,32,.55);
-      --radius:18px;
-      --shadow:0 10px 30px rgba(0,0,0,.45);
       --bg:#ffffff;
       --ink:#1f2937;
       --muted:#6b7280;
@@ -31,54 +18,12 @@
       --radius:16px;
       --shadow:0 6px 20px rgba(0,0,0,0.1);
     }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0; background:radial-gradient(1200px 800px at 80% -10%, rgba(59,130,246,.12), transparent 60%), 
-               radial-gradient(800px 600px at 10% 120%, rgba(234,179,8,.10), transparent 60%), var(--bg);
-      color:var(--ink); font:16px/1.6 Manrope, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
     [data-theme="dark"]{
       --bg:#0f172a; /* 더 딥한 다크 */
       --ink:#e5e7eb;
       --muted:#94a3b8;
     }
-    a{color:inherit; text-decoration:none}
-    .container{max-width:1200px; padding:0 24px; margin:0 auto}
 
-    /* Header */
-    .site-header{position:fixed; inset:0 0 auto 0; height:72px; display:flex; align-items:center; z-index:50; transition:background .4s, backdrop-filter .4s}
-    .site-header .wrap{display:flex; align-items:center; justify-content:space-between; gap:16px}
-    .site-header.scrolled{background:rgba(11,16,32,.6); backdrop-filter:saturate(140%) blur(10px); box-shadow:0 4px 16px rgba(0,0,0,.25)}
-    .brand{display:flex; align-items:center; gap:14px; font-weight:800; letter-spacing:.4px}
-    .brand-mark{display:grid; place-items:center; width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg, var(--accent), #60a5fa); color:white; font-weight:800; box-shadow:var(--shadow)}
-    .brand .name{font-weight:800}
-    .brand .sub{display:block; font-size:12px; color:var(--muted); font-weight:600}
-
-    nav ul{display:flex; list-style:none; gap:24px; padding:0; margin:0}
-    nav a{opacity:.9}
-    nav a:hover{opacity:1}
-    .menu-btn{display:none}
-
-    /* Hero */
-    .hero{position:relative; min-height:100vh; display:grid; place-items:center; overflow:hidden}
-    .slides{position:absolute; inset:0; z-index:-2}
-    .slide{position:absolute; inset:0; background-size:cover; background-position:center; filter:grayscale(.12) contrast(1.05); opacity:0; animation:fade 28s infinite; transform:scale(1.06)}
-    .slide:nth-child(1){animation-delay:0s}
-    .slide:nth-child(2){animation-delay:7s}
-    .slide:nth-child(3){animation-delay:14s}
-    .slide:nth-child(4){animation-delay:21s}
-    @keyframes fade{0%{opacity:0} 6%{opacity:1} 25%{opacity:1} 31%{opacity:0} 100%{opacity:0}}
-    .hero::after{content:""; position:absolute; inset:0; background:radial-gradient(1200px 600px at 20% 10%, rgba(59,130,246,.25), transparent 45%),
-                                     linear-gradient(180deg, rgba(11,16,32,.45), rgba(11,16,32,.85) 65%, rgba(11,16,32,.95)); z-index:-1}
-    .hero-inner{text-align:center; padding:96px 0 72px}
-    .eyebrow{display:inline-block; text-transform:uppercase; letter-spacing:.14em; font-weight:700; font-size:12px; color:#cbd5e1; background:rgba(203,213,225,.12); padding:8px 12px; border-radius:999px; border:1px solid rgba(148,163,184,.25)}
-    h1{font-family:"Playfair Display", serif; font-weight:700; margin:18px 0 10px; font-size:clamp(36px, 6vw, 64px); line-height:1.05}
-    .lead{color:#cdd3e1; max-width:760px; margin:0 auto 28px; font-size:clamp(16px, 2.2vw, 20px)}
-    .cta{display:flex; gap:14px; justify-content:center; flex-wrap:wrap}
-    .btn{display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:14px 20px; border-radius:999px; font-weight:800; letter-spacing:.3px; border:1px solid rgba(148,163,184,.25); backdrop-filter:blur(8px); box-shadow:0 4px 18px rgba(0,0,0,.25); transition:transform .12s ease, background .2s ease}
-    .btn.primary{background:linear-gradient(135deg, var(--accent), #60a5fa); color:white; border:none}
-    .btn.ghost{background:rgba(148,163,184,.08); color:var(--ink)}
     /* 레이아웃 기본 */
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;transition:background .3s,color .3s}
@@ -112,85 +57,23 @@
     [data-theme="dark"] .btn.secondary{background:transparent;color:var(--accent)}
     .btn:hover{transform:translateY(-2px)}
 
-    /* Showcase */
-    section{padding:86px 0}
-    .section-head{display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:28px}
-    .section-title{font-size:clamp(22px, 3vw, 36px); font-weight:800; letter-spacing:.3px}
-    .section-sub{color:var(--muted)}
-
-    .gallery{display:grid; grid-template-columns:repeat(12, 1fr); gap:14px}
-    .card{position:relative; border-radius:var(--radius); overflow:hidden; background:var(--bg-2); box-shadow:var(--shadow)}
-    .card img{width:100%; height:100%; object-fit:cover; display:block; filter:saturate(1.05); transition:transform .7s ease}
-    .card:hover img{transform:scale(1.06)}
-    .card .tag{position:absolute; left:12px; bottom:12px; background:rgba(11,16,32,.6); color:#e5e7eb; padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px; border:1px solid rgba(229,231,235,.15); backdrop-filter:blur(6px)}
-
-    /* Responsive column spans */
-    .span-6{grid-column:span 6}
-    .span-4{grid-column:span 4}
-    .span-8{grid-column:span 8}
-    .span-12{grid-column:span 12}
-
-    /* Type Wall */
-    .typewall{display:grid; grid-template-columns:1fr; gap:18px; text-align:center}
-    .typewall h2{font-family:"Playfair Display", serif; font-weight:700; font-size:clamp(28px, 3.6vw, 40px); margin:0}
-    .typewall .keywords{display:flex; flex-wrap:wrap; justify-content:center; gap:12px}
-    .chip{border:1px solid rgba(148,163,184,.25); padding:10px 14px; border-radius:999px; color:#cbd5e1; background:rgba(148,163,184,.06); font-weight:700}
-
-    /* Contact */
-    .contact{display:grid; grid-template-columns:1.2fr .8fr; gap:26px; align-items:stretch}
-    .panel{background:linear-gradient(180deg, rgba(148,163,184,.08), rgba(148,163,184,.03)); border:1px solid rgba(148,163,184,.18); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow)}
-    .panel h3{margin:0 0 8px; font-size:22px}
-    .panel p{margin:0 0 14px; color:#cbd5e1}
-    .contact a.link{font-weight:800; color:var(--accent)}
     section{padding:80px 20px}
     .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
     .card{overflow:hidden;border-radius:var(--radius);box-shadow:var(--shadow)}
     .card img{width:100%;height:100%;object-fit:cover;transition:.35s}
     .card:hover img{transform:scale(1.05)}
 
-    /* Footer */
-    footer{padding:28px 0 42px; color:#94a3b8}
-    .foot{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap}
-    .social{display:flex; gap:14px}
-    .social a{opacity:.8}
-    .social a:hover{opacity:1}
     footer{text-align:center;padding:40px 20px;color:var(--muted);font-size:.95rem}
 
-    /* Mobile */
-    @media (max-width:920px){
-      .contact{grid-template-columns:1fr;}
-      .span-6,.span-8,.span-4{grid-column:span 12}
     /* 작은 화면 정리 */
     @media (max-width:760px){
       .brand{display:none}
       nav ul{display:none}
-      .menu-btn{display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:10px; border:1px solid rgba(148,163,184,.25); background:rgba(148,163,184,.08)}
-      .nav-open nav ul{display:flex; position:absolute; top:72px; right:16px; background:rgba(11,16,32,.86); backdrop-filter:blur(8px); padding:14px; border:1px solid rgba(148,163,184,.25); border-radius:14px; flex-direction:column; gap:10px}
-    }
-
-    /* 접근성: 모션 최소화 선호 시 애니메이션 약화 */
-    @media (prefers-reduced-motion: reduce){
-      .slide{animation:none; opacity:.35}
-      .btn{transition:none}
       header{justify-content:center}
     }
   </style>
 </head>
 <body>
-  <header class="site-header" id="header">
-    <div class="container wrap">
-      <a class="brand" href="#top" aria-label="NOVA Integrated Solutions Home">
-        <span class="brand-mark">N</span>
-        <span class="name">NOVA INTEGRATED SOLUTIONS LLC <span class="sub">Accounting • Finance Ops</span></span>
-      </a>
-      <button class="menu-btn" aria-label="메뉴 열기" id="menuBtn">≡</button>
-      <nav aria-label="주요 메뉴">
-        <ul>
-          <li><a href="#showcase">포트폴리오</a></li>
-          <li><a href="#values">핵심</a></li>
-          <li><a href="#contact">문의</a></li>
-        </ul>
-      </nav>
   <header>
     <div class="brand">NOVA INTEGRATED SOLUTIONS</div>
     <nav>
@@ -212,25 +95,6 @@
       <button class="theme-toggle" id="themeToggle" aria-pressed="false">다크모드</button>
     </div>
   </header>
-
-  <main id="top">
-    <!-- HERO: 화보형 배너 (풀 스크린 슬라이드) -->
-    <section class="hero" aria-label="NOVA Visual">
-      <div class="slides" aria-hidden="true">
-        <!-- Unsplash 키워드 슬라이드: 회계, 재무, 도심, 전문성 -->
-        <div class="slide" style="background-image:url('https://source.unsplash.com/1920x1080/?finance,analytics,charts');"></div>
-        <div class="slide" style="background-image:url('https://source.unsplash.com/1920x1080/?city,architecture,night');"></div>
-        <div class="slide" style="background-image:url('https://source.unsplash.com/1920x1080/?office,team,consulting');"></div>
-        <div class="slide" style="background-image:url('https://source.unsplash.com/1920x1080/?technology,data,abstract');"></div>
-      </div>
-      <div class="hero-inner container">
-        <span class="eyebrow">NOVA INTEGRATED SOLUTIONS LLC</span>
-        <h1>기업 회계·재무 운영 파트너</h1>
-        <p class="lead">정확한 회계처리와 유연한 재무 운영. NOVA는 성장 단계의 기업이 신뢰할 수 있는 데이터로 빠르게 결정을 내리도록 돕습니다.</p>
-        <div class="cta">
-          <a class="btn primary" href="#showcase">작업 살펴보기</a>
-          <a class="btn ghost" href="#contact">문의하기</a>
-        </div>
   <main>
     <section class="hero">
       <h1>젊고 세련된 회계·재무 파트너</h1>
@@ -241,47 +105,6 @@
       </div>
     </section>
 
-    <!-- SHOWCASE GALLERY: 카탈로그 스타일 그리드 -->
-    <section id="showcase" aria-labelledby="showcase-title">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">Showcase</div>
-            <h2 class="section-title" id="showcase-title">화보로 보는 NOVA</h2>
-          </div>
-          <div class="section-sub">상세 설명보다 이미지 중심의 카탈로그 느낌으로 구성했습니다.</div>
-        </div>
-
-        <div class="gallery">
-          <figure class="card span-8" aria-label="월마감 및 리포팅">
-            <img alt="월마감 리포팅을 상징하는 그래프" src="https://source.unsplash.com/1200x800/?accounting,report,graph" loading="lazy" width="1200" height="800"/>
-            <figcaption class="tag">월마감 · 리포팅</figcaption>
-          </figure>
-          <figure class="card span-4" aria-label="규정 준수">
-            <img alt="규정 준수를 상징하는 도시 야경" src="https://source.unsplash.com/800x800/?city,compliance" loading="lazy" width="800" height="800"/>
-            <figcaption class="tag">규정 준수</figcaption>
-          </figure>
-          <figure class="card span-6" aria-label="세무 준비">
-            <img alt="세무 준비" src="https://source.unsplash.com/1000x750/?tax,documents" loading="lazy" width="1000" height="750"/>
-            <figcaption class="tag">세무 준비</figcaption>
-          </figure>
-          <figure class="card span-6" aria-label="현금흐름">
-            <img alt="현금흐름 분석" src="https://source.unsplash.com/1000x750/?cashflow,finance" loading="lazy" width="1000" height="750"/>
-            <figcaption class="tag">현금흐름</figcaption>
-          </figure>
-          <figure class="card span-4" aria-label="자동화">
-            <img alt="업무 자동화" src="https://source.unsplash.com/800x1000/?automation,data" loading="lazy" width="800" height="1000"/>
-            <figcaption class="tag">자동화</figcaption>
-          </figure>
-          <figure class="card span-8" aria-label="대시보드">
-            <img alt="대시보드와 KPI" src="https://source.unsplash.com/1200x800/?dashboard,kpi" loading="lazy" width="1200" height="800"/>
-            <figcaption class="tag">KPI · 대시보드</figcaption>
-          </figure>
-          <figure class="card span-12" aria-label="파트너십">
-            <img alt="파트너십" src="https://source.unsplash.com/1600x700/?handshake,partners" loading="lazy" width="1600" height="700"/>
-            <figcaption class="tag">파트너십</figcaption>
-          </figure>
-        </div>
     <section id="showcase">
       <div class="gallery">
         <div class="card"><img src="https://images.unsplash.com/photo-1581091870634-1e7e4c7a5b09?auto=format&fit=crop&w=800&q=80" alt="팀 협업"></div>
@@ -291,69 +114,16 @@
       </div>
     </section>
 
-    <!-- VALUES / CAPABILITIES: 키워드 중심 -->
-    <section id="values" aria-labelledby="values-title">
-      <div class="container typewall">
-        <h2 id="values-title">간결하지만 강력한 역량</h2>
-        <div class="keywords">
-          <span class="chip">Bookkeeping</span>
-          <span class="chip">Monthly Close</span>
-          <span class="chip">Budget &amp; Forecast</span>
-          <span class="chip">Cash Flow</span>
-          <span class="chip">Tax Pack</span>
-          <span class="chip">AP/AR</span>
-          <span class="chip">Audit Ready</span>
-          <span class="chip">Reporting Automation</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTACT: 최소 정보 -->
-    <section id="contact" aria-labelledby="contact-title">
-      <div class="container contact">
-        <div class="panel">
-          <div class="eyebrow">Contact</div>
-          <h3 id="contact-title">함께 일해요</h3>
-          <p>간단한 상담부터 시작해 보세요. 아래 연락처는 예시이니 회사 정보로 교체해 주세요.</p>
-          <p>
-            이메일: <a class="link" href="mailto:hello@example.com">hello@example.com</a><br/>
-            전화: <a class="link" href="tel:+10000000000">+1 (000) 000-0000</a>
-          </p>
-          <div class="cta" style="margin-top:10px">
-            <a class="btn primary" href="mailto:hello@example.com?subject=Inquiry%20—%20NOVA%20Integrated%20Solutions">이메일 보내기</a>
-            <a class="btn ghost" href="#top">맨 위로</a>
-          </div>
-        </div>
-        <div class="panel" aria-label="회사 스냅샷">
-          <h3>NOVA INTEGRATED SOLUTIONS LLC</h3>
-          <p>Accounting • Finance Operations</p>
-          <p style="color:#94a3b8; font-size:14px">사업자 정보, 주소, 라이선스 등 필요한 최소 정보로 교체하세요.</p>
-        </div>
-      </div>
     <section id="contact" style="text-align:center">
       <h2>함께 성장합시다</h2>
       <p>이메일: hello@example.com<br>전화: +1 (000) 000-0000</p>
     </section>
   </main>
-
   <footer>
-    <div class="container foot">
-      <div>© <span id="year"></span> NOVA INTEGRATED SOLUTIONS LLC</div>
-      <div class="social" aria-label="소셜 링크">
-        <a href="#" aria-label="LinkedIn">LinkedIn</a>
-        <a href="#" aria-label="X">X</a>
-        <a href="#" aria-label="Instagram">Instagram</a>
-      </div>
-    </div>
     © <span id="year"></span> NOVA INTEGRATED SOLUTIONS LLC
   </footer>
 
   <script>
-    // 헤더 스크롤 이펙트
-    const header = document.getElementById('header');
-    const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 10);
-    document.addEventListener('scroll', onScroll, {passive:true});
-    onScroll();
     const THEME_KEY='nova_theme';
     const ACCENT_KEY='nova_accent';
 
@@ -404,9 +174,6 @@
       }
     }
 
-    // 모바일 메뉴 토글
-    const menuBtn = document.getElementById('menuBtn');
-    menuBtn?.addEventListener('click', () => document.body.classList.toggle('nav-open'));
     document.getElementById('palette').addEventListener('click', (e)=>{
       const t=e.target.closest('.swatch');
       if(!t) return;
@@ -414,21 +181,11 @@
       if(color) setAccent(color);
     });
 
-    // 저작권 연도
-    document.getElementById('year').textContent = new Date().getFullYear();
     const customColor=document.getElementById('customColor');
     customColor.addEventListener('input', (e)=>{
       setAccent(e.target.value);
     });
 
-    // 슬라이드 이미지 프리로드 (가벼운 선호)
-    const preload = [
-      'https://source.unsplash.com/1920x1080/?finance,analytics,charts',
-      'https://source.unsplash.com/1920x1080/?city,architecture,night',
-      'https://source.unsplash.com/1920x1080/?office,team,consulting',
-      'https://source.unsplash.com/1920x1080/?technology,data,abstract'
-    ];
-    try{preload.forEach(src=>{const i=new Image(); i.decoding='async'; i.src=src;});}catch(_){/* noop */}
     // 첫 렌더 시 활성 스와치 표시
     if(savedAccent){ setAccent(savedAccent); }
   </script>
