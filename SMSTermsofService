@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service | NOVA INTEGRATED SOLUTIONS LLC</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; color:#333; }
+    h1, h2, h3 { color:#222; }
+    a { color:#0066cc; }
+  </style>
+</head>
+<body>
+  <h1>Terms of Service</h1>
+  <p><strong>Last Updated:</strong> OCT 15, 2025</p>
+
+  <h2>1. Overview</h2>
+  <p>These Terms of Service (“Terms”) govern your use of the <strong>NOVA Equipment</strong> Customer Relationship Management (CRM) platform (“Service”). By using or accessing the Service, you agree to these Terms.</p>
+
+  <h2>2. Services Provided</h2>
+  <p>The Service enables registered business users to store customer data, manage communications, and send notifications through channels such as SMS, email, and chat integrations.</p>
+
+  <h2>3. Acceptable Use</h2>
+  <ul>
+    <li>You must comply with all applicable laws including the TCPA, CAN-SPAM, and A2P 10DLC carrier rules.</li>
+    <li>Obtain proper opt-in consent before sending SMS messages.</li>
+    <li>Include clear opt-out instructions (e.g., “Reply STOP to unsubscribe”).</li>
+    <li>Do not send spam, fraudulent, or unauthorized messages.</li>
+  </ul>
+
+  <h2>4. User Responsibilities</h2>
+  <p>You are responsible for maintaining accurate information and securing your login credentials. Report unauthorized use immediately to [Platform Name].</p>
+
+  <h2>5. Message Delivery</h2>
+  <p>[Platform Name] uses third-party providers (e.g., Twilio, Plivo) for SMS delivery. Delivery times may vary by carrier. We are not liable for carrier delays or failures.</p>
+
+  <h2>6. Fees and Payments</h2>
+  <p>Usage fees are billed per selected plan. All fees are non-refundable except as required by law.</p>
+
+  <h2>7. Termination</h2>
+  <p>We may suspend or terminate accounts that violate these Terms or cause compliance issues with carriers.</p>
+
+  <h2>8. Limitation of Liability</h2>
+  <p>The Service is provided “as is.” [Platform Name] shall not be liable for indirect or consequential damages.</p>
+
+  <h2>9. Changes to Terms</h2>
+  <p>We may update these Terms periodically. The latest version will be available at <a href="https://yourdomain.com/terms">https://yourdomain.com/terms</a>.</p>
+
+  <h2>10. Contact</h2>
+  <p>For questions, contact us at <a href="mailto:support@yourdomain.com">support@yourdomain.com</a>.</p>
+</body>
+</html>
