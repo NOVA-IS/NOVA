@@ -71,22 +71,20 @@
             <div class="flex justify-center">
                 <div class="grid grid-cols-2 gap-3 w-full max-w-md">
                     
-                    <!-- 시작일 필드 (MM/DD/YYYY 텍스트) -->
+                    <!-- 시작일 필드 (달력 살아있는 type="date") -->
                     <div class="input-group-container">
                         <label for="start-date" class="input-label">시작일</label>
-                        <input type="text" id="start-date"
+                        <input type="date" id="start-date"
                                class="p-2 border border-gray-300 rounded-lg"
-                               title="시작일"
-                               placeholder="MM/DD/YYYY">
+                               title="시작일">
                     </div>
                     
-                    <!-- 종료일 필드 (MM/DD/YYYY 텍스트) -->
+                    <!-- 종료일 필드 -->
                     <div class="input-group-container">
                         <label for="end-date" class="input-label">종료일</label>
-                        <input type="text" id="end-date"
+                        <input type="date" id="end-date"
                                class="p-2 border border-gray-300 rounded-lg"
-                               title="종료일"
-                               placeholder="MM/DD/YYYY">
+                               title="종료일">
                     </div>
                 </div>
             </div>
@@ -106,15 +104,14 @@
                     </select>
                 </div>
 
-                <!-- Item (제품명) 셀렉트 박스로 변경: Label / 여러 ID -->
+                <!-- Item (제품명) 셀렉트 박스 -->
                 <div class="input-field-no-label">
                     <select id="item-input" class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Item (제품명)">
                         <option value="">-- Item 선택 --</option>
-                        <!-- value에 여러 ID를 콤마로 넣고, 화면에는 Label이 보이게 -->
-                        <option value="label">Label</option>
-                        <option value="Ribbon">Ribbon</option>
-                        <option value="Film">Film</option>
-                        <!-- 실제 사용 시, 위 옵션들을 필요한 상품 Label/ID로 교체해서 사용 -->
+                        <!-- value에 여러 ID를 콤마로 넣음 -->
+                        <option value="101,102,103">Label A (예: 상품A 묶음)</option>
+                        <option value="201">Label B (예: 단일상품B)</option>
+                        <option value="301,302">Label C (예: 묶음C)</option>
                     </select>
                 </div>
                 
@@ -146,21 +143,28 @@
 </div>
 
 <script>
-    // ⭐ 여기에 Make에서 복사한 Webhook URL을 붙여넣으세요.
+    // ⭐ Make Webhook URL
     const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/beojnrbam68450c5366anrdb2lfdi8uq"; 
     
-    // 로딩 상태 관리
     let isSending = false;
 
-    // UI에 보이는 날짜 형식: MM/DD/YYYY
-    function formatUIDate(date) {
+    // HTML date input 기본값 설정용 (YYYY-MM-DD)
+    function formatHtmlDate(date) {
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    // 화면에 표시용 날짜 (MM/DD/YYYY)
+    function formatDisplayDate(date) {
         const mm = String(date.getMonth() + 1).padStart(2, '0');
         const dd = String(date.getDate()).padStart(2, '0');
         const yyyy = date.getFullYear();
         return `${mm}/${dd}/${yyyy}`;
     }
 
-    // 웹훅 전송용 날짜 형식: MMDDYYYY
+    // 웹훅 전송용 날짜 (MMDDYYYY)
     function formatWebhookDate(date) {
         const mm = String(date.getMonth() + 1).padStart(2, '0');
         const dd = String(date.getDate()).padStart(2, '0');
@@ -168,56 +172,53 @@
         return `${mm}${dd}${yyyy}`;
     }
 
-    // "MM/DD/YYYY" 문자열을 Date 객체로 변환
-    function parseUIDate(str) {
+    // "YYYY-MM-DD" → Date 객체
+    function parseHtmlDate(str) {
         if (!str) return null;
-        const parts = str.split('/');
+        const parts = str.split('-'); // [yyyy, mm, dd]
         if (parts.length !== 3) return null;
-        const [mm, dd, yyyy] = parts;
-        const month = parseInt(mm, 10);
-        const day = parseInt(dd, 10);
-        const year = parseInt(yyyy, 10);
-        if (!month || !day || !year) return null;
-        // 월(day)-범위 체크 정도만 간단히
-        return new Date(year, month - 1, day);
+        const [yyyy, mm, dd] = parts;
+        return new Date(parseInt(yyyy, 10), parseInt(mm, 10) - 1, parseInt(dd, 10));
     }
 
-    // 페이지 로드 시 시작일(1년 전)과 종료일(오늘)을 UI 형식(MM/DD/YYYY)으로 설정
+    // 페이지 로드 시 시작일(1년 전)과 종료일(오늘) 세팅
     document.addEventListener('DOMContentLoaded', () => {
         const today = new Date();
         const oneYearAgo = new Date();
         oneYearAgo.setFullYear(today.getFullYear() - 1);
 
-        document.getElementById('end-date').value = formatUIDate(today);
-        document.getElementById('start-date').value = formatUIDate(oneYearAgo);
+        document.getElementById('end-date').value = formatHtmlDate(today);
+        document.getElementById('start-date').value = formatHtmlDate(oneYearAgo);
     });
 
-    // Make 웹훅에 메시지를 전송하는 비동기 함수
     async function sendMessage() {
         const inputElement = document.getElementById('user-input');
         const selectElement = document.getElementById('preset-prompt');
         const sendButton = document.getElementById('send-button');
         const messagesDiv = document.getElementById('messages');
         
-        // --- 1. 최종 질문 (prompt) 결정 ---
+        // 1. 최종 질문
         const presetMessage = selectElement.value;
         const typedMessage = inputElement.value.trim();
         const message = presetMessage || typedMessage;
 
-        // --- 2. 추가 데이터 수집 ---
-        const startDateStr = document.getElementById('start-date').value.trim();
-        const endDateStr = document.getElementById('end-date').value.trim();
-        
-        const startDateObj = parseUIDate(startDateStr);
-        const endDateObj = parseUIDate(endDateStr);
+        // 2. 날짜 데이터 수집
+        const startDateValue = document.getElementById('start-date').value; // YYYY-MM-DD
+        const endDateValue = document.getElementById('end-date').value;     // YYYY-MM-DD
 
-        // 웹훅 전송용: MMDDYYYY 로 변환
+        const startDateObj = parseHtmlDate(startDateValue);
+        const endDateObj = parseHtmlDate(endDateValue);
+
+        // 화면 표시용은 MM/DD/YYYY
+        const startDateDisplay = startDateObj ? formatDisplayDate(startDateObj) : '';
+        const endDateDisplay = endDateObj ? formatDisplayDate(endDateObj) : '';
+
+        // 웹훅 전송용은 MMDDYYYY
         const startDateForWebhook = startDateObj ? formatWebhookDate(startDateObj) : '';
         const endDateForWebhook = endDateObj ? formatWebhookDate(endDateObj) : '';
 
         const locationInput = document.getElementById('location-input').value; 
         
-        // Item은 select 기반 (Label + 여러 ID)
         const itemSelect = document.getElementById('item-input');
         const selectedItemOption = itemSelect.options[itemSelect.selectedIndex];
         const itemLabel = selectedItemOption && selectedItemOption.value !== "" ? selectedItemOption.text : '';
@@ -227,30 +228,26 @@
 
         const itemColorInput = document.getElementById('item-color-input').value.trim();
 
-        // --- 3. 유효성 검사 ---
+        // 3. 유효성 검사
         if (!message || isSending) {
-             if (!message && !isSending) {
-                 messagesDiv.innerHTML += `<div class="ai-message self-start bg-yellow-100 text-yellow-700">⚠️ 오류: 질문을 입력하거나 미리 정의된 질문을 선택해주세요.</div>`;
-                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
-             }
-             return;
+            if (!message && !isSending) {
+                messagesDiv.innerHTML += `<div class="ai-message self-start bg-yellow-100 text-yellow-700">⚠️ 오류: 질문을 입력하거나 미리 정의된 질문을 선택해주세요.</div>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+            return;
         }
-        
-        // --- 4. 전송 상태 업데이트 ---
+
+        // 4. 전송 상태
         isSending = true;
         sendButton.disabled = true;
 
-        // --- 5. 사용자 질문을 화면에 표시 (필터 데이터 포함) ---
+        // 5. 사용자 메시지 표시 (필터 표시)
         let displayMessage = message;
         let filterDetails = [];
-        if (startDateStr) filterDetails.push(`시작일: ${startDateStr}`);
-        if (endDateStr) filterDetails.push(`종료일: ${endDateStr}`);
-        
-        // Location이 선택된 경우에만 표시 (value=""가 '모두'를 의미)
-        if (locationInput) filterDetails.push(`Location: ${locationInput}`); 
-        
+        if (startDateDisplay) filterDetails.push(`시작일: ${startDateDisplay}`);
+        if (endDateDisplay) filterDetails.push(`종료일: ${endDateDisplay}`);
+        if (locationInput) filterDetails.push(`Location: ${locationInput}`);
         if (itemLabel) filterDetails.push(`Item: ${itemLabel} (${itemIds.join(', ')})`);
-        
         if (itemColorInput) filterDetails.push(`Item Color: ${itemColorInput}`);
 
         if (filterDetails.length > 0) {
@@ -261,7 +258,7 @@
         inputElement.value = ''; 
         selectElement.value = ''; 
 
-        // --- 6. 로딩 메시지 표시 ---
+        // 6. 로딩 메시지
         const loadingDiv = document.createElement('div');
         loadingDiv.id = 'loading';
         loadingDiv.textContent = '... AI가 분석 중입니다. 잠시만 기다려주세요...';
@@ -269,34 +266,30 @@
         messagesDiv.scrollTop = messagesDiv.scrollHeight; 
 
         try {
-            // --- 7. Make Webhook으로 데이터 전송 (날짜는 MMDDYYYY) ---
+            // 7. 웹훅 전송 (날짜 = MMDDYYYY)
             const response = await fetch(MAKE_WEBHOOK_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    prompt: message,            // Gemini에게 보낼 핵심 질문
+                    prompt: message,
                     startDate: startDateForWebhook, // MMDDYYYY
                     endDate: endDateForWebhook,     // MMDDYYYY
                     location: locationInput,
-                    item: itemLabel,               // 기존 호환용: Label
-                    itemLabel: itemLabel,          // 명시적으로 Label
-                    itemIds: itemIds,              // 여러 개 ID 배열로 전송
+                    item: itemLabel,
+                    itemLabel: itemLabel,
+                    itemIds: itemIds,
                     itemColor: itemColorInput
                 })
             });
 
-            // --- 8. 응답 처리 ---
             const data = await response.json();
             
-            // 로딩 메시지 제거
             const currentLoadingDiv = document.getElementById('loading');
             if (currentLoadingDiv) currentLoadingDiv.remove();
 
-            // 9. Gemini의 답변을 화면에 표시
-            let responseText = data.response_text || "응답을 받지 못했습니다. Make 시나리오의 Webhook Response 모듈을 확인해주세요. (웹훅이 필터 데이터를 제대로 수신하는지 확인)";
-            
+            let responseText = data.response_text || "응답을 받지 못했습니다. Make 시나리오의 Webhook Response 모듈을 확인해주세요.";
             messagesDiv.innerHTML += `<div class="ai-message self-start">🤖: ${responseText}</div>`;
             
         } catch (error) {
@@ -307,7 +300,6 @@
             
             messagesDiv.innerHTML += `<div class="ai-message self-start bg-red-100 text-red-700">⚠️ 통신 오류 발생: 웹훅 URL을 확인하거나 Make 시나리오가 실행 중인지 확인해주세요.</div>`;
         } finally {
-            // 10. 상태 복구
             isSending = false;
             sendButton.disabled = false;
             messagesDiv.scrollTop = messagesDiv.scrollHeight; 
