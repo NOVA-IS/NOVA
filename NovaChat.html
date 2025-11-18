@@ -1,3 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP-Gemini 챗봇</title>
+    <!-- Tailwind CSS CDN 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 사용자 정의 스타일 */
+        #messages {
+            height: 55vh; /* 높이를 줄여서 입력 필드 공간 확보 */
+            overflow-y: auto;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .user-message {
+            @apply bg-indigo-500 text-white p-3 rounded-lg shadow-md mb-2 max-w-3/4 self-end ml-auto; 
+        }
+        .ai-message {
+            @apply bg-gray-100 text-gray-800 p-3 rounded-lg shadow-md mb-2 max-w-3/4 self-start mr-auto; 
+        }
+        #loading {
+            @apply text-sm text-gray-500 italic mb-2;
+        }
+        /* 날짜 필드와 레이블을 묶는 컨테이너 스타일 */
+        .input-group-container {
+            @apply flex flex-col space-y-1;
+        }
+        .input-label {
+            @apply text-xs font-semibold text-gray-600;
+        }
+        /* Location, Item 등 레이블을 제거한 입력 필드의 스타일 조정 */
+        .input-field-no-label {
+            @apply flex flex-col justify-end;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans flex items-center justify-center min-h-screen p-4">
+<div id="chat-container" class="w-full max-w-3xl bg-white rounded-xl shadow-2xl flex flex-col h-[90vh]">
+    <header class="p-4 border-b bg-indigo-600 text-white rounded-t-xl">
+        <h1 class="text-xl font-bold">ERP-Gemini 챗봇</h1>
+        <p class="text-sm">데이터 필터를 위한 추가 입력 필드를 선택합니다.</p>
+    </header>
+code
+Code
+<!-- 메시지 출력 영역 -->
+<div id="messages" class="flex flex-col p-4 space-y-3 flex-grow">
+    <div class="ai-message">
+        🤖 안녕하세요! 모든 입력 필드(날짜, Location, Item)와 질문을 함께 입력하여 문의할 수 있습니다.
+    </div>
+</div>
+
+<!-- 입력 및 전송 영역 -->
+<div class="p-4 border-t border-gray-200 flex flex-col space-y-3">
+    
+    <!-- 데이터 필터 입력 필드 -->
+    <div class="flex flex-col space-y-3">
+        
+        <!-- ROW 1: 시작일 / 종료일 (가운데 정렬) -->
+        <div class="flex justify-center">
+            <div class="grid grid-cols-2 gap-3 w-full max-w-md">
+                
+                <!-- 시작일 필드 -->
+                <div class="input-group-container">
+                    <label for="start-date" class="input-label">시작일</label>
+                    <input type="date" id="start-date" 
+                           class="p-2 border border-gray-300 rounded-lg" 
+                           title="시작일" 
+                           placeholder="시작일">
+                </div>
+                
+                <!-- 종료일 필드 -->
+                <div class="input-group-container">
+                    <label for="end-date" class="input-label">종료일</label>
+                    <input type="date" id="end-date" 
+                           class="p-2 border border-gray-300 rounded-lg" 
+                           title="종료일" 
+                           placeholder="종료일">
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 2: Location / Item / Item Color -->
+        <div class="grid grid-cols-3 gap-3">
+            
+            <!-- Location (레이블 제거) -->
+            <div class="input-field-no-label">
+                <select id="location-input" class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Location">
+                    <option value="">-- Location 선택 --</option>
+                    <option value="">모두</option>
+                    <option value="1007">SEA</option>
+                    <option value="1008">SEG</option>
+                    <option value="1006">SEMA</option>
+                    <option value="1005">SEMS</option>
+                </select>
+            </div>
+
+            <!-- Item (제품명) (레이블 제거) -->
+            <div class="input-field-no-label">
+                <input type="text" id="item-input" placeholder="Item (제품명)" class="p-2 border border-gray-300 rounded-lg" title="Item (제품명)">
+            </div>
+            
+            <!-- Item Color (제품 색상) (레이블 제거) -->
+            <div class="input-field-no-label">
+                <input type="text" id="item-color-input" placeholder="Item Color (제품 색상)" class="p-2 border border-gray-300 rounded-lg" title="Item Color (제품 색상)">
+            </div>
+        </div>
+    </div>
+    
+    <!-- ROW 3: 프롬프트 선택 드롭다운 -->
+    <select id="preset-prompt" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <option value="">-- 미리 정의된 질문 선택 (선택 안함) --</option>
+        <option value="해당 기간 및 지역에서 가장 많이 팔린 제품은?">해당 기간 및 지역에서 가장 많이 구매한 제품은?</option>
+        <option value="업체별 단가 비교 표 작성">업체별 단가 비교 표 작성</option>
+    </select>
+    
+    <!-- ROW 4: 사용자 입력 및 전송 버튼 -->
+    <div class="flex space-x-3">
+        <input type="text" id="user-input" placeholder="또는 여기에 직접 질문을 입력하세요..." 
+               class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+               onkeypress="if(event.keyCode === 13) sendMessage()">
+        <button onclick="sendMessage()" id="send-button"
+                class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-150 shadow-md disabled:bg-gray-400">
+            전송
+        </button>
+    </div>
+</div>
+</div>
 <script>
     // ⭐ 여기에 Make에서 복사한 Webhook URL을 붙여넣으세요.
     // 형식: https://hook.eu1.make.com/xxxxxxxxxxxxxxx
@@ -147,3 +286,5 @@
         }
     }
 </script>
+</body>
+</html>
