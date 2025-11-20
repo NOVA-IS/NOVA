@@ -57,7 +57,7 @@
     <!-- 메시지 출력 영역 -->
     <div id="messages" class="flex flex-col p-4 space-y-3 flex-grow">
         <div class="ai-message">
-            🤖 안녕하세요! 모든 입력 필드(날짜, Location, Item)와 질문을 함께 입력하여 문의할 수 있습니다.
+            🤖 안녕하세요! 모든 입력 필드(날짜, Location, Item, AI 모드)와 질문을 함께 입력하여 문의할 수 있습니다.
         </div>
     </div>
 
@@ -141,19 +141,27 @@
                 
                 <!-- Item Color (제품 색상) (레이블 제거) -->
                 <div class="input-field-no-label">
-                    <input type="text" id="item-features-input" placeholder="Item features" class="p-2 border border-gray-300 rounded-lg" title="Item features">
+                    <input type="text" id="item-color-input" placeholder="Item Color (제품 색상)" class="p-2 border border-gray-300 rounded-lg" title="Item Color (제품 색상)">
                 </div>
             </div>
         </div>
         
-        <!-- ROW 3: 프롬프트 선택 드롭다운 -->
+        <!-- ROW 3: AI 분석 모드 선택 -->
+        <select id="ai-mode" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="">-- AI 분석 모드 선택 --</option>
+            <option value="sheet_only">구글시트만 분석</option>
+            <option value="sheet_and_search">구글시트 + 일반 AI 서치</option>
+            <option value="search_only">일반 AI 서치만</option>
+        </select>
+
+        <!-- ROW 4: 프롬프트 선택 드롭다운 -->
         <select id="preset-prompt" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
             <option value="">-- 미리 정의된 질문 선택 (선택 안함) --</option>
-            <option value="해당 기간 및 지역에서 가장 많이 팔린 제품은?">해당 기간 및 법인에서 가장 많이 구매한 제품은?</option>
+            <option value="해당 기간 및 지역에서 가장 많이 팔린 제품은?">해당 기간 및 지역에서 가장 많이 구매한 제품은?</option>
             <option value="단가 비교 표 작성">단가 비교 표 작성</option>
         </select>
         
-        <!-- ROW 4: 사용자 입력 및 전송 버튼 -->
+        <!-- ROW 5: 사용자 입력 및 전송 버튼 -->
         <div class="flex space-x-3">
             <input type="text" id="user-input" placeholder="또는 여기에 직접 질문을 입력하세요..." 
                    class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -218,6 +226,7 @@
     async function sendMessage() {
         const inputElement = document.getElementById('user-input');
         const selectElement = document.getElementById('preset-prompt');
+        const aiModeElement = document.getElementById('ai-mode');
         const sendButton = document.getElementById('send-button');
         const messagesDiv = document.getElementById('messages');
         
@@ -225,6 +234,13 @@
         const presetMessage = selectElement.value;
         const typedMessage = inputElement.value.trim();
         const message = presetMessage || typedMessage;
+
+        // AI 모드 값
+        const aiMode = aiModeElement.value;
+        let aiModeLabel = '';
+        if (aiMode === 'sheet_only') aiModeLabel = '구글시트만 분석';
+        else if (aiMode === 'sheet_and_search') aiModeLabel = '구글시트 + 일반 AI 서치';
+        else if (aiMode === 'search_only') aiModeLabel = '일반 AI 서치만';
 
         // 2. 날짜 데이터 수집
         const startDateValue = document.getElementById('start-date').value; // YYYY-MM-DD
@@ -274,6 +290,7 @@
         if (locationLabels.length > 0) filterDetails.push(`Location: ${locationLabels.join(', ')}`);
         if (itemLabel) filterDetails.push(`Item: ${itemLabel}`);
         if (itemColorInput) filterDetails.push(`Item Color: ${itemColorInput}`);
+        if (aiModeLabel) filterDetails.push(`AI 모드: ${aiModeLabel}`);
 
         if (filterDetails.length > 0) {
             displayMessage += `<br><span class="text-xs opacity-80">(필터: ${filterDetails.join(', ')})</span>`;
@@ -312,7 +329,12 @@
                     itemLabel: itemLabel,
                     itemIds: itemIds,
 
-                    itemColor: itemColorInput
+                    // 기타 필터
+                    itemColor: itemColorInput,
+
+                    // AI 모드
+                    aiMode: aiMode,
+                    aiModeLabel: aiModeLabel
                 })
             });
 
