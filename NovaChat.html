@@ -92,26 +92,51 @@
             <!-- ROW 2: Location / Item / Item Color -->
             <div class="grid grid-cols-3 gap-3">
                 
-                <!-- Location (레이블 제거) -->
+                <!-- Location (체크박스 버전) -->
                 <div class="input-field-no-label">
-                    <select id="location-input" class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Location">
-                        <option value=""> 모든 Location </option>
-                        <option value="1007">SEA</option>
-                        <option value="1008">SEG</option>
-                        <option value="1006">SEMA</option>
-                        <option value="1005">SEMS</option>
-                    </select>
+                    <div class="p-2 border border-gray-300 rounded-lg space-y-1">
+                        <div class="text-xs text-gray-500 mb-1">Location</div>
+
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="location-checkbox" value="1007" data-label="SEA">
+                            <span>SEA</span>
+                        </label>
+
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="location-checkbox" value="1008" data-label="SEG">
+                            <span>SEG</span>
+                        </label>
+
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="location-checkbox" value="1006" data-label="SEMA">
+                            <span>SEMA</span>
+                        </label>
+
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="location-checkbox" value="1005" data-label="SEMS">
+                            <span>SEMS</span>
+                        </label>
+                    </div>
                 </div>
 
-                <!-- Item (제품명) 셀렉트 박스 -->
+                <!-- Item (제품명) 체크박스 그룹 -->
                 <div class="input-field-no-label">
-                    <select id="item-input" class="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Item (제품명)">
-                        <option value="">-- Item 선택 --</option>
-                        <!-- value에 여러 ID를 콤마로 넣음 -->
-                        <option value="Label">Label</option>
-                        <option value="Ribbon">Ribbon</option>
-                        <option value="Film">Film</option>
-                    </select>
+                    <div class="p-2 border border-gray-300 rounded-lg space-y-1">
+                        <div class="text-xs text-gray-500 mb-1">Item</div>
+
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="item-checkbox" value="Label">
+                            <span>Label</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="item-checkbox" value="Ribbon">
+                            <span>Ribbon</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="item-checkbox" value="Film">
+                            <span>Film</span>
+                        </label>
+                    </div>
                 </div>
                 
                 <!-- Item Color (제품 색상) (레이블 제거) -->
@@ -216,14 +241,15 @@
         const startDateForWebhook = startDateObj ? formatWebhookDate(startDateObj) : '';
         const endDateForWebhook = endDateObj ? formatWebhookDate(endDateObj) : '';
 
-        const locationInput = document.getElementById('location-input').value; 
-        
-        const itemSelect = document.getElementById('item-input');
-        const selectedItemOption = itemSelect.options[itemSelect.selectedIndex];
-        const itemLabel = selectedItemOption && selectedItemOption.value !== "" ? selectedItemOption.text : '';
-        const itemIds = selectedItemOption && selectedItemOption.value !== "" 
-            ? selectedItemOption.value.split(',').map(id => id.trim()).filter(Boolean)
-            : [];
+        // ✅ Location 체크박스 처리
+        const checkedLocationBoxes = document.querySelectorAll('.location-checkbox:checked');
+        const locationIds = Array.from(checkedLocationBoxes).map(cb => cb.value);          // ["1007","1008"...]
+        const locationLabels = Array.from(checkedLocationBoxes).map(cb => cb.dataset.label); // ["SEA","SEG"...]
+
+        // ✅ Item 체크박스 처리
+        const checkedItemBoxes = document.querySelectorAll('.item-checkbox:checked');
+        const itemIds = Array.from(checkedItemBoxes).map(cb => cb.value); // ["Label","Ribbon"...]
+        const itemLabel = itemIds.join(', '); // 화면 표시용
 
         const itemColorInput = document.getElementById('item-color-input').value.trim();
 
@@ -245,8 +271,8 @@
         let filterDetails = [];
         if (startDateDisplay) filterDetails.push(`시작일: ${startDateDisplay}`);
         if (endDateDisplay) filterDetails.push(`종료일: ${endDateDisplay}`);
-        if (locationInput) filterDetails.push(`Location: ${locationInput}`);
-        if (itemLabel) filterDetails.push(`Item: ${itemLabel} (${itemIds.join(', ')})`);
+        if (locationLabels.length > 0) filterDetails.push(`Location: ${locationLabels.join(', ')}`);
+        if (itemLabel) filterDetails.push(`Item: ${itemLabel}`);
         if (itemColorInput) filterDetails.push(`Item Color: ${itemColorInput}`);
 
         if (filterDetails.length > 0) {
@@ -275,10 +301,17 @@
                     prompt: message,
                     startDate: startDateForWebhook, // MMDDYYYY
                     endDate: endDateForWebhook,     // MMDDYYYY
-                    location: locationInput,
+
+                    // Location 다중 선택
+                    location: locationIds.join(','), // 호환용 문자열 "1007,1008"
+                    locationIds: locationIds,        // ["1007","1008"]
+                    locationLabels: locationLabels,  // ["SEA","SEG"]
+
+                    // Item 다중 선택
                     item: itemLabel,
                     itemLabel: itemLabel,
                     itemIds: itemIds,
+
                     itemColor: itemColorInput
                 })
             });
