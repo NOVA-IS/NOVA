@@ -18,68 +18,54 @@
         }
     </script>
     <style>
-        /* 사용자 정의 스타일 */
         #messages {
-            height: 55vh; /* 높이를 줄여서 입력 필드 공간 확보 */
             overflow-y: auto;
-            border-bottom: 1px solid #e5e7eb;
         }
         .user-message {
-            @apply bg-indigo-500 text-white p-3 rounded-lg shadow-md mb-2 max-w-3/4 self-end ml-auto; 
+            @apply bg-indigo-500 text-white p-3 rounded-lg shadow-md mb-2 max-w-3xl self-end ml-auto;
         }
         .ai-message {
-            @apply bg-gray-100 text-gray-800 p-3 rounded-lg shadow-md mb-2 max-w-3/4 self-start mr-auto; 
+            @apply bg-gray-100 text-gray-800 p-3 rounded-lg shadow-md mb-2 max-w-3xl self-start mr-auto;
         }
         #loading {
             @apply text-sm text-gray-500 italic mb-2;
         }
-        /* 날짜 필드와 레이블을 묶는 컨테이너 스타일 */
         .input-group-container {
             @apply flex flex-col space-y-1;
         }
         .input-label {
             @apply text-xs font-semibold text-gray-600;
         }
-        /* Location, Item 등 레이블을 제거한 입력 필드의 스타일 조정 */
         .input-field-no-label {
-            @apply flex flex-col justify-end;
+            @apply flex flex-col;
         }
     </style>
 </head>
-<body class="bg-gray-50 font-sans flex items-center justify-center min-h-screen p-4">
+<body class="bg-gray-100 font-sans h-screen">
 
-<div id="chat-container" class="w-full max-w-3xl bg-white rounded-xl shadow-2xl flex flex-col h-[90vh]">
-    <header class="p-4 border-b bg-indigo-600 text-white rounded-t-xl">
-        <h1 class="text-xl font-bold">ERP-Gemini 챗봇</h1>
-        <p class="text-sm">데이터 필터를 위한 추가 입력 필드를 선택합니다.</p>
-    </header>
+<div class="flex h-screen">
 
-    <!-- 메시지 출력 영역 -->
-    <div id="messages" class="flex flex-col p-4 space-y-3 flex-grow">
-        <div class="ai-message">
-            🤖 안녕하세요! 모든 입력 필드(날짜, Location, Item, AI 모드)와 질문을 함께 입력하여 문의할 수 있습니다.
+    <!-- 왼쪽 사이드바: 필터 옵션들 -->
+    <aside class="w-80 bg-white border-r flex flex-col">
+        <div class="p-4 border-b">
+            <h1 class="text-lg font-bold text-indigo-600">ERP-Gemini 필터</h1>
+            <p class="text-xs text-gray-500 mt-1">
+                기간, Location, Item, AI 모드를 선택한 뒤 질문을 입력하세요.
+            </p>
         </div>
-    </div>
 
-    <!-- 입력 및 전송 영역 -->
-    <div class="p-4 border-t border-gray-200 flex flex-col space-y-3">
-        
-        <!-- 데이터 필터 입력 필드 -->
-        <div class="flex flex-col space-y-3">
-            
-            <!-- ROW 1: 시작일 / 종료일 (가운데 정렬) -->
-            <div class="flex justify-center">
-                <div class="grid grid-cols-2 gap-3 w-full max-w-md">
-                    
-                    <!-- 시작일 필드 (달력 살아있는 type="date") -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-4 text-sm">
+
+            <!-- 날짜 범위 -->
+            <section>
+                <h2 class="text-xs font-semibold text-gray-600 mb-2">기간 선택</h2>
+                <div class="space-y-2">
                     <div class="input-group-container">
                         <label for="start-date" class="input-label">시작일</label>
                         <input type="date" id="start-date"
                                class="p-2 border border-gray-300 rounded-lg"
                                title="시작일">
                     </div>
-                    
-                    <!-- 종료일 필드 -->
                     <div class="input-group-container">
                         <label for="end-date" class="input-label">종료일</label>
                         <input type="date" id="end-date"
@@ -87,118 +73,151 @@
                                title="종료일">
                     </div>
                 </div>
+            </section>
+
+            <!-- Location -->
+            <section>
+                <h2 class="text-xs font-semibold text-gray-600 mb-2">Location</h2>
+                <div class="p-2 border border-gray-300 rounded-lg space-y-1">
+                    <!-- 모두 선택 -->
+                    <label class="flex items-center space-x-2 font-semibold">
+                        <input type="checkbox" id="location-all" class="location-master">
+                        <span>모두 선택</span>
+                    </label>
+
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="location-checkbox" value="1007" data-label="SEA">
+                        <span>SEA</span>
+                    </label>
+
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="location-checkbox" value="1008" data-label="SEG">
+                        <span>SEG</span>
+                    </label>
+
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="location-checkbox" value="1006" data-label="SEMA">
+                        <span>SEMA</span>
+                    </label>
+
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="location-checkbox" value="1005" data-label="SEMS">
+                        <span>SEMS</span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Item -->
+            <section>
+                <h2 class="text-xs font-semibold text-gray-600 mb-2">Item (제품명)</h2>
+                <div class="p-2 border border-gray-300 rounded-lg space-y-1">
+                    <!-- 모두 선택 -->
+                    <label class="flex items-center space-x-2 font-semibold">
+                        <input type="checkbox" id="item-all" class="item-master">
+                        <span>모두 선택</span>
+                    </label>
+
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="item-checkbox" value="Label">
+                        <span>Label</span>
+                    </label>
+
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="item-checkbox" value="Ribbon">
+                        <span>Ribbon</span>
+                    </label>
+
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="item-checkbox" value="Film">
+                        <span>Film</span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Item Color -->
+            <section>
+                <h2 class="text-xs font-semibold text-gray-600 mb-2">Item Color (제품 색상)</h2>
+                <input type="text" id="item-color-input"
+                       placeholder="예: Black, White..."
+                       class="w-full p-2 border border-gray-300 rounded-lg"
+                       title="Item Color (제품 색상)">
+            </section>
+
+            <!-- AI 분석 모드 -->
+            <section>
+                <h2 class="text-xs font-semibold text-gray-600 mb-2">AI 분석 모드</h2>
+                <div class="p-2 border border-gray-300 rounded-lg space-y-2">
+                    <!-- 모두 선택 -->
+                    <label class="flex items-center space-x-2 font-semibold">
+                        <input type="checkbox" id="ai-all" class="ai-master">
+                        <span>모두 선택</span>
+                    </label>
+
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="ai-mode-checkbox" value="erp" data-label="ERP 분석">
+                        <span>ERP 분석</span>
+                    </label>
+
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="ai-mode-checkbox" value="ai" data-label="AI 서치">
+                        <span>AI 서치</span>
+                    </label>
+                </div>
+            </section>
+
+        </div>
+    </aside>
+
+    <!-- 오른쪽: 메인 채팅 영역 -->
+    <main class="flex-1 flex flex-col">
+
+        <!-- 상단 헤더 -->
+        <header class="h-14 px-6 flex items-center border-b bg-white">
+            <div>
+                <h2 class="text-base font-semibold">ERP-Gemini 챗봇</h2>
+                <p class="text-xs text-gray-500">
+                    왼쪽에서 조건을 선택하고 아래에서 질문을 입력하세요.
+                </p>
             </div>
+        </header>
 
-            <!-- ROW 2: Location / Item / Item Color -->
-            <div class="grid grid-cols-3 gap-3">
+        <!-- 메시지 영역 -->
+        <section id="messages" class="flex-1 flex flex-col p-4 space-y-3 bg-gray-50">
+            <div class="ai-message">
+                🤖 안녕하세요! 왼쪽에서 기간, Location, Item, AI 모드를 선택한 뒤<br>
+                아래에 미리 정의된 질문 또는 직접 입력한 질문으로 분석을 요청할 수 있습니다.
+            </div>
+        </section>
+
+        <!-- 입력 영역 (화면 가운데 아래) -->
+        <section class="border-t bg-white p-4">
+            <div class="max-w-3xl mx-auto space-y-3">
+
+                <!-- 미리 정의된 질문 -->
+                <select id="preset-prompt"
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <option value="">-- 미리 정의된 질문 선택 (선택 안함) --</option>
+                    <option value="해당 기간 및 지역에서 가장 많이 팔린 제품은?">
+                        해당 기간 및 지역에서 가장 많이 구매한 제품은?
+                    </option>
+                    <option value="단가 비교 표 작성">단가 비교 표 작성</option>
+                </select>
                 
-                <!-- Location (체크박스 + 모두 선택) -->
-                <div class="input-field-no-label">
-                    <div class="p-2 border border-gray-300 rounded-lg space-y-1">
-                        <div class="text-xs text-gray-500 mb-1">Location</div>
-
-                        <!-- 모두 선택 -->
-                        <label class="flex items-center space-x-2 font-semibold">
-                            <input type="checkbox" id="location-all" class="location-master">
-                            <span>모두 선택</span>
-                        </label>
-
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="location-checkbox" value="1007" data-label="SEA">
-                            <span>SEA</span>
-                        </label>
-
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="location-checkbox" value="1008" data-label="SEG">
-                            <span>SEG</span>
-                        </label>
-
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="location-checkbox" value="1006" data-label="SEMA">
-                            <span>SEMA</span>
-                        </label>
-
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="location-checkbox" value="1005" data-label="SEMS">
-                            <span>SEMS</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Item (체크박스 + 모두 선택) -->
-                <div class="input-field-no-label">
-                    <div class="p-2 border border-gray-300 rounded-lg space-y-1">
-                        <div class="text-xs text-gray-500 mb-1">Item</div>
-
-                        <!-- 모두 선택 -->
-                        <label class="flex items-center space-x-2 font-semibold">
-                            <input type="checkbox" id="item-all" class="item-master">
-                            <span>모두 선택</span>
-                        </label>
-
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="item-checkbox" value="Label">
-                            <span>Label</span>
-                        </label>
-
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="item-checkbox" value="Ribbon">
-                            <span>Ribbon</span>
-                        </label>
-
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="item-checkbox" value="Film">
-                            <span>Film</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <!-- Item Color (제품 색상) -->
-                <div class="input-field-no-label">
-                    <input type="text" id="item-color-input" placeholder="Item Color (제품 색상)" class="p-2 border border-gray-300 rounded-lg" title="Item Color (제품 색상)">
+                <!-- 프롬프트 + 전송 버튼 -->
+                <div class="flex space-x-3">
+                    <input type="text" id="user-input"
+                           placeholder="또는 여기에 직접 질문을 입력하세요..."
+                           class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                           onkeypress="if(event.keyCode === 13) sendMessage()">
+                    <button onclick="sendMessage()" id="send-button"
+                            class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-150 shadow-md disabled:bg-gray-400 text-sm">
+                        전송
+                    </button>
                 </div>
             </div>
-        </div>
-        
-        <!-- ROW 3: AI 분석 모드 (ERP / AI 서치 + 모두 선택) -->
-        <div class="p-2 border border-gray-300 rounded-lg space-y-2">
-            <div class="text-xs text-gray-500 mb-1">AI 분석 모드</div>
+        </section>
 
-            <!-- 모두 선택 -->
-            <label class="flex items-center space-x-2 font-semibold">
-                <input type="checkbox" id="ai-all" class="ai-master">
-                <span>모두 선택</span>
-            </label>
-
-            <label class="flex items-center space-x-2">
-                <input type="checkbox" class="ai-mode-checkbox" value="erp" data-label="ERP 분석">
-                <span>ERP 분석</span>
-            </label>
-
-            <label class="flex items-center space-x-2">
-                <input type="checkbox" class="ai-mode-checkbox" value="ai" data-label="AI 서치">
-                <span>AI 서치</span>
-            </label>
-        </div>
-
-        <!-- ROW 4: 프롬프트 선택 드롭다운 -->
-        <select id="preset-prompt" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <option value="">-- 미리 정의된 질문 선택 (선택 안함) --</option>
-            <option value="해당 기간 및 지역에서 가장 많이 팔린 제품은?">해당 기간 및 지역에서 가장 많이 구매한 제품은?</option>
-            <option value="단가 비교 표 작성">단가 비교 표 작성</option>
-        </select>
-        
-        <!-- ROW 5: 사용자 입력 및 전송 버튼 -->
-        <div class="flex space-x-3">
-            <input type="text" id="user-input" placeholder="또는 여기에 직접 질문을 입력하세요..." 
-                   class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                   onkeypress="if(event.keyCode === 13) sendMessage()">
-            <button onclick="sendMessage()" id="send-button"
-                    class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-150 shadow-md disabled:bg-gray-400">
-                전송
-            </button>
-        </div>
-    </div>
+    </main>
 </div>
 
 <script>
@@ -302,19 +321,19 @@
         const startDateForWebhook = startDateObj ? formatWebhookDate(startDateObj) : '';
         const endDateForWebhook = endDateObj ? formatWebhookDate(endDateObj) : '';
 
-        // ✅ Location 체크박스 처리
+        // Location 체크박스 처리
         const checkedLocationBoxes = document.querySelectorAll('.location-checkbox:checked');
-        const locationIds = Array.from(checkedLocationBoxes).map(cb => cb.value);            // ["1007","1008"...]
-        const locationLabels = Array.from(checkedLocationBoxes).map(cb => cb.dataset.label); // ["SEA","SEG"...]
+        const locationIds = Array.from(checkedLocationBoxes).map(cb => cb.value);
+        const locationLabels = Array.from(checkedLocationBoxes).map(cb => cb.dataset.label);
 
-        // ✅ Item 체크박스 처리
+        // Item 체크박스 처리
         const checkedItemBoxes = document.querySelectorAll('.item-checkbox:checked');
-        const itemIds = Array.from(checkedItemBoxes).map(cb => cb.value); // ["Label","Ribbon"...]
-        const itemLabel = itemIds.join(', '); // 화면 표시용
+        const itemIds = Array.from(checkedItemBoxes).map(cb => cb.value);
+        const itemLabel = itemIds.join(', ');
 
         const itemColorInput = document.getElementById('item-color-input').value.trim();
 
-        // ✅ AI 모드 체크박스 처리 (ERP / AI 서치)
+        // AI 모드 체크박스 처리
         const checkedAiMode = document.querySelectorAll('.ai-mode-checkbox:checked');
         const aiMode = Array.from(checkedAiMode).map(cb => cb.value);              // ["erp","ai"]
         const aiModeLabels = Array.from(checkedAiMode).map(cb => cb.dataset.label); // ["ERP 분석","AI 서치"]
@@ -347,8 +366,8 @@
         }
 
         messagesDiv.innerHTML += `<div class="user-message self-end">${displayMessage}</div>`;
-        inputElement.value = ''; 
-        selectElement.value = ''; 
+        inputElement.value = '';
+        selectElement.value = '';
 
         // 6. 로딩 메시지
         const loadingDiv = document.createElement('div');
@@ -366,13 +385,13 @@
                 },
                 body: JSON.stringify({
                     prompt: message,
-                    startDate: startDateForWebhook, // MMDDYYYY
-                    endDate: endDateForWebhook,     // MMDDYYYY
+                    startDate: startDateForWebhook,
+                    endDate: endDateForWebhook,
 
                     // Location 다중 선택
-                    location: locationIds.join(','), // 호환용 문자열 "1007,1008"
-                    locationIds: locationIds,        // ["1007","1008"]
-                    locationLabels: locationLabels,  // ["SEA","SEG"]
+                    location: locationIds.join(','),
+                    locationIds: locationIds,
+                    locationLabels: locationLabels,
 
                     // Item 다중 선택
                     item: itemLabel,
@@ -382,9 +401,9 @@
                     // 기타 필터
                     itemColor: itemColorInput,
 
-                    // AI 모드 (ERP / AI 서치)
-                    aiMode: aiMode,                 // ["erp","ai"]
-                    aiModeLabels: aiModeLabels      // ["ERP 분석","AI 서치"]
+                    // AI 모드
+                    aiMode: aiMode,
+                    aiModeLabels: aiModeLabels
                 })
             });
 
