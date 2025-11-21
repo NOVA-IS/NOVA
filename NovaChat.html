@@ -363,63 +363,36 @@ async function sendMessage() {
             location: locationIds.join(","),
             locationIds,
             locationLabels,
-
             item: itemLabel,
             itemIds,
             itemColor,
-
             aiMode,
             aiModeLabels
         })
     });
 
-    // ─────────────────────────────────────────
-    // ① 응답 원문을 먼저 문자열로 받기
-    // ─────────────────────────────────────────
     const rawText = await response.text();
 
-    // ② HTTP 상태 코드 체크 (200대가 아니면 에러 던지기)
+    // HTTP 상태 체크
     if (!response.ok) {
-        throw new Error(
-            `HTTP ${response.status} ${response.statusText} / body: ${rawText}`
-        );
+        throw new Error(`HTTP ${response.status} ${response.statusText} / body: ${rawText}`);
     }
 
-    // ③ JSON 파싱 시도
-    let data;
-    try {
-        data = JSON.parse(rawText);
-    } catch (e) {
-        throw new Error(
-            `응답을 JSON으로 파싱할 수 없습니다. raw: ${rawText}`
-        );
-    }
-
-    // ④ 우리가 기대하는 키가 없을 때도 에러로 처리
-    if (!data || typeof data.response_text === "undefined") {
-        throw new Error(
-            `response_text 필드가 없습니다. 응답: ${rawText}`
-        );
-    }
-
-    // 여기까지 오면 정상 응답
+    // ✅ 이제 rawText 자체가 응답 내용
     loadingDiv.remove();
 
     messagesDiv.innerHTML += `
-        <div class="ai-message">🤖: ${data.response_text}</div>
+        <div class="ai-message">🤖: ${rawText}</div>
     `;
 
-
-    } catch (err) {
+} catch (err) {
     loadingDiv.remove();
 
-    // 브라우저 콘솔에도 상세 로그 남기기
     console.error("웹훅 호출 중 오류 발생:", err);
 
-    // 화면에 에러 메시지 같이 표시 (HTML 태그 이스케이프)
     const msg = (err && err.message ? err.message : String(err))
-                  .replace(/</g, "&lt;")
-                  .replace(/>/g, "&gt;");
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
 
     messagesDiv.innerHTML += `
         <div class="ai-message bg-red-100 text-red-700 text-sm">
@@ -427,6 +400,7 @@ async function sendMessage() {
         </div>
     `;
 }
+
 
 
     isSending = false;
