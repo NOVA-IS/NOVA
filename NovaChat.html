@@ -30,14 +30,11 @@
         #loading {
             @apply text-sm text-gray-500 italic mb-2;
         }
-        .input-group-container {
-            @apply flex flex-col space-y-1;
-        }
-        .input-label {
-            @apply text-xs font-semibold text-gray-600;
-        }
-        .input-field-no-label {
-            @apply flex flex-col;
+
+        /* textarea 자동 높이 증가 */
+        textarea {
+            overflow-y: auto;
+            resize: none;
         }
     </style>
 </head>
@@ -45,7 +42,7 @@
 
 <div class="flex h-screen">
 
-    <!-- 왼쪽 사이드바: 필터 옵션들 -->
+    <!-- 왼쪽 사이드바 -->
     <aside class="w-80 bg-white border-r flex flex-col">
         <div class="p-4 border-b">
             <h1 class="text-lg font-bold text-indigo-600">ERP-Gemini 필터</h1>
@@ -56,22 +53,17 @@
 
         <div class="flex-1 overflow-y-auto p-4 space-y-4 text-sm">
 
-            <!-- 날짜 범위 -->
+            <!-- 기간 선택 -->
             <section>
                 <h2 class="text-xs font-semibold text-gray-600 mb-2">기간 선택</h2>
                 <div class="space-y-2">
-                    <div class="input-group-container">
-                        <label for="start-date" class="input-label">시작일</label>
-                        <input type="date" id="start-date"
-                               class="p-2 border border-gray-300 rounded-lg"
-                               title="시작일">
-                    </div>
-                    <div class="input-group-container">
-                        <label for="end-date" class="input-label">종료일</label>
-                        <input type="date" id="end-date"
-                               class="p-2 border border-gray-300 rounded-lg"
-                               title="종료일">
-                    </div>
+                    <label class="text-xs">시작일</label>
+                    <input type="date" id="start-date"
+                           class="w-full p-2 border border-gray-300 rounded-lg">
+
+                    <label class="text-xs">종료일</label>
+                    <input type="date" id="end-date"
+                           class="w-full p-2 border border-gray-300 rounded-lg">
                 </div>
             </section>
 
@@ -79,7 +71,7 @@
             <section>
                 <h2 class="text-xs font-semibold text-gray-600 mb-2">Location</h2>
                 <div class="p-2 border border-gray-300 rounded-lg space-y-1">
-                    <!-- 모두 선택 -->
+
                     <label class="flex items-center space-x-2 font-semibold">
                         <input type="checkbox" id="location-all" class="location-master">
                         <span>모두 선택</span>
@@ -111,7 +103,7 @@
             <section>
                 <h2 class="text-xs font-semibold text-gray-600 mb-2">Item (제품명)</h2>
                 <div class="p-2 border border-gray-300 rounded-lg space-y-1">
-                    <!-- 모두 선택 -->
+                    
                     <label class="flex items-center space-x-2 font-semibold">
                         <input type="checkbox" id="item-all" class="item-master">
                         <span>모두 선택</span>
@@ -134,27 +126,27 @@
                 </div>
             </section>
 
-            <!-- Item Color -->
+            <!-- Item 특성 -->
             <section>
-                <h2 class="text-xs font-semibold text-gray-600 mb-2">Item Color (제품 색상)</h2>
+                <h2 class="text-xs font-semibold text-gray-600 mb-2">Item 특성</h2>
                 <input type="text" id="item-color-input"
-                       placeholder="예: Black, White..."
-                       class="w-full p-2 border border-gray-300 rounded-lg"
-                       title="Item Color (제품 색상)">
+                       placeholder="예: Black, White, Strong..."
+                       class="w-full p-2 border border-gray-300 rounded-lg">
             </section>
 
             <!-- AI 분석 모드 -->
             <section>
                 <h2 class="text-xs font-semibold text-gray-600 mb-2">AI 분석 모드</h2>
                 <div class="p-2 border border-gray-300 rounded-lg space-y-2">
-                    <!-- 모두 선택 -->
+
                     <label class="flex items-center space-x-2 font-semibold">
                         <input type="checkbox" id="ai-all" class="ai-master">
                         <span>모두 선택</span>
                     </label>
 
                     <label class="flex items-center space-x-2">
-                        <input type="checkbox" class="ai-mode-checkbox" value="erp" data-label="ERP 분석">
+                        <!-- ⭐ 기본 체크됨 -->
+                        <input type="checkbox" class="ai-mode-checkbox" value="erp" data-label="ERP 분석" checked>
                         <span>ERP 분석</span>
                     </label>
 
@@ -162,6 +154,7 @@
                         <input type="checkbox" class="ai-mode-checkbox" value="ai" data-label="AI 서치">
                         <span>AI 서치</span>
                     </label>
+
                 </div>
             </section>
 
@@ -184,250 +177,223 @@
         <!-- 메시지 영역 -->
         <section id="messages" class="flex-1 flex flex-col p-4 space-y-3 bg-gray-50">
             <div class="ai-message">
-                🤖 안녕하세요! 왼쪽에서 기간, Location, Item, AI 모드를 선택한 뒤<br>
-                아래에 미리 정의된 질문 또는 직접 입력한 질문으로 분석을 요청할 수 있습니다.
+                🤖 안녕하세요! 왼쪽에서 조건을 선택한 뒤 아래에 질문을 입력해 주세요.
             </div>
         </section>
 
-        <!-- 입력 영역 (화면 가운데 아래) -->
+        <!-- 아래 입력 영역 -->
         <section class="border-t bg-white p-4">
             <div class="max-w-3xl mx-auto space-y-3">
 
                 <!-- 미리 정의된 질문 -->
                 <select id="preset-prompt"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
                     <option value="">-- 미리 정의된 질문 선택 (선택 안함) --</option>
                     <option value="해당 기간 및 지역에서 가장 많이 팔린 제품은?">
                         해당 기간 및 지역에서 가장 많이 구매한 제품은?
                     </option>
                     <option value="단가 비교 표 작성">단가 비교 표 작성</option>
                 </select>
-                
-                <!-- 프롬프트 + 전송 버튼 -->
-                <div class="flex space-x-3">
-                    <input type="text" id="user-input"
-                           placeholder="또는 여기에 직접 질문을 입력하세요..."
-                           class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
-                           onkeypress="if(event.keyCode === 13) sendMessage()">
+
+                <!-- 프롬프트 textarea -->
+                <div class="flex space-x-3 items-end">
+                    <textarea id="user-input"
+                              placeholder="여기에 질문을 입력하세요..."
+                              class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm leading-relaxed"
+                              rows="1"
+                              style="max-height: 200px;"
+                              oninput="autoResize(this)"
+                              onkeypress="if(event.keyCode === 13 && !event.shiftKey){ event.preventDefault(); sendMessage(); }"></textarea>
+
                     <button onclick="sendMessage()" id="send-button"
-                            class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-150 shadow-md disabled:bg-gray-400 text-sm">
+                            class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 shadow-md disabled:bg-gray-400 text-sm">
                         전송
                     </button>
                 </div>
+
             </div>
         </section>
 
     </main>
 </div>
 
+
 <script>
-    // ⭐ Make Webhook URL
-    const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/beojnrbam68450c5366anrdb2lfdi8uq"; 
-    
-    let isSending = false;
+/* --------------------------
+    textarea 자동 높이 증가
+---------------------------*/
+function autoResize(el) {
+    el.style.height = "auto";
+    el.style.height = (el.scrollHeight) + "px";
+}
 
-    // HTML date input 기본값 설정용 (YYYY-MM-DD)
-    function formatHtmlDate(date) {
-        const yyyy = date.getFullYear();
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const dd = String(date.getDate()).padStart(2, '0');
-        return `${yyyy}-${mm}-${dd}`;
-    }
+/* --------------------------
+   날짜 포맷 함수
+---------------------------*/
+function formatHtmlDate(date) {
+    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+}
+function formatDisplayDate(date) {
+    return `${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).padStart(2,'0')}/${date.getFullYear()}`;
+}
+function formatWebhookDate(date) {
+    return `${String(date.getMonth()+1).padStart(2,'0')}${String(date.getDate()).padStart(2,'0')}${date.getFullYear()}`;
+}
+function parseHtmlDate(str) {
+    const [y,m,d] = str.split("-");
+    return new Date(parseInt(y), parseInt(m)-1, parseInt(d));
+}
 
-    // 화면에 표시용 날짜 (MM/DD/YYYY)
-    function formatDisplayDate(date) {
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const dd = String(date.getDate()).padStart(2, '0');
-        const yyyy = date.getFullYear();
-        return `${mm}/${dd}/${yyyy}`;
-    }
+/* --------------------------
+   "모두 선택" 체크박스 기능
+---------------------------*/
+function setupMasterCheckbox(masterSelector, itemSelector) {
+    const master = document.querySelector(masterSelector);
+    const items = document.querySelectorAll(itemSelector);
 
-    // 웹훅 전송용 날짜 (MMDDYYYY)
-    function formatWebhookDate(date) {
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const dd = String(date.getDate()).padStart(2, '0');
-        const yyyy = date.getFullYear();
-        return `${mm}${dd}${yyyy}`;
-    }
+    if (!master || items.length === 0) return;
 
-    // "YYYY-MM-DD" → Date 객체
-    function parseHtmlDate(str) {
-        if (!str) return null;
-        const parts = str.split('-'); // [yyyy, mm, dd]
-        if (parts.length !== 3) return null;
-        const [yyyy, mm, dd] = parts;
-        return new Date(parseInt(yyyy, 10), parseInt(mm, 10) - 1, parseInt(dd, 10));
-    }
-
-    // ⭐ 공통 기능: 마스터 체크박스 제어 함수
-    function setupMasterCheckbox(masterSelector, itemSelector) {
-        const master = document.querySelector(masterSelector);
-        const items = document.querySelectorAll(itemSelector);
-
-        if (!master || items.length === 0) return;
-
-        // 모두 선택 클릭 시 전체 토글
-        master.addEventListener("change", () => {
-            items.forEach(cb => cb.checked = master.checked);
-        });
-
-        // 개별 체크 시 마스터 체크 업데이트
-        items.forEach(cb => {
-            cb.addEventListener("change", () => {
-                const allChecked = Array.from(items).every(x => x.checked);
-                master.checked = allChecked;
-            });
-        });
-    }
-
-    // 페이지 로드 시 초기 설정
-    document.addEventListener('DOMContentLoaded', () => {
-        const today = new Date();
-        const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(today.getFullYear() - 1);
-
-        document.getElementById('end-date').value = formatHtmlDate(today);
-        document.getElementById('start-date').value = formatHtmlDate(oneYearAgo);
-
-        // 마스터 체크박스들 초기화
-        setupMasterCheckbox('#location-all', '.location-checkbox');
-        setupMasterCheckbox('#item-all', '.item-checkbox');
-        setupMasterCheckbox('#ai-all', '.ai-mode-checkbox');
+    // 마스터 클릭 → 전체 토글
+    master.addEventListener("change", () => {
+        items.forEach(cb => cb.checked = master.checked);
     });
 
-    async function sendMessage() {
-        const inputElement = document.getElementById('user-input');
-        const selectElement = document.getElementById('preset-prompt');
-        const sendButton = document.getElementById('send-button');
-        const messagesDiv = document.getElementById('messages');
-        
-        // 1. 최종 질문
-        const presetMessage = selectElement.value;
-        const typedMessage = inputElement.value.trim();
-        const message = presetMessage || typedMessage;
+    // 개별 변경 → 마스터 상태 업데이트
+    items.forEach(cb => {
+        cb.addEventListener("change", () => {
+            const allChecked = Array.from(items).every(x => x.checked);
+            master.checked = allChecked;
+        });
+    });
+}
 
-        // 2. 날짜 데이터 수집
-        const startDateValue = document.getElementById('start-date').value; // YYYY-MM-DD
-        const endDateValue = document.getElementById('end-date').value;     // YYYY-MM-DD
+/* --------------------------
+   페이지 로드 시 초기화
+---------------------------*/
+document.addEventListener("DOMContentLoaded", () => {
+    const today = new Date();
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(today.getFullYear()-1);
 
-        const startDateObj = parseHtmlDate(startDateValue);
-        const endDateObj = parseHtmlDate(endDateValue);
+    document.getElementById("start-date").value = formatHtmlDate(oneYearAgo);
+    document.getElementById("end-date").value = formatHtmlDate(today);
 
-        // 화면 표시용은 MM/DD/YYYY
-        const startDateDisplay = startDateObj ? formatDisplayDate(startDateObj) : '';
-        const endDateDisplay = endDateObj ? formatDisplayDate(endDateObj) : '';
+    setupMasterCheckbox("#location-all", ".location-checkbox");
+    setupMasterCheckbox("#item-all", ".item-checkbox");
+    setupMasterCheckbox("#ai-all", ".ai-mode-checkbox");
+});
 
-        // 웹훅 전송용은 MMDDYYYY
-        const startDateForWebhook = startDateObj ? formatWebhookDate(startDateObj) : '';
-        const endDateForWebhook = endDateObj ? formatWebhookDate(endDateObj) : '';
 
-        // Location 체크박스 처리
-        const checkedLocationBoxes = document.querySelectorAll('.location-checkbox:checked');
-        const locationIds = Array.from(checkedLocationBoxes).map(cb => cb.value);
-        const locationLabels = Array.from(checkedLocationBoxes).map(cb => cb.dataset.label);
+/* --------------------------
+    전송 로직 (기존 유지)
+---------------------------*/
+const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/beojnrbam68450c5366anrdb2lfdi8uq";
+let isSending = false;
 
-        // Item 체크박스 처리
-        const checkedItemBoxes = document.querySelectorAll('.item-checkbox:checked');
-        const itemIds = Array.from(checkedItemBoxes).map(cb => cb.value);
-        const itemLabel = itemIds.join(', ');
+async function sendMessage() {
+    const textarea = document.getElementById("user-input");
+    const selectElement = document.getElementById("preset-prompt");
+    const sendButton = document.getElementById("send-button");
+    const messagesDiv = document.getElementById("messages");
 
-        const itemColorInput = document.getElementById('item-color-input').value.trim();
+    const presetMessage = selectElement.value;
+    const typedMessage = textarea.value.trim();
+    const message = presetMessage || typedMessage;
 
-        // AI 모드 체크박스 처리
-        const checkedAiMode = document.querySelectorAll('.ai-mode-checkbox:checked');
-        const aiMode = Array.from(checkedAiMode).map(cb => cb.value);              // ["erp","ai"]
-        const aiModeLabels = Array.from(checkedAiMode).map(cb => cb.dataset.label); // ["ERP 분석","AI 서치"]
+    if (!message || isSending) return;
 
-        // 3. 유효성 검사
-        if (!message || isSending) {
-            if (!message && !isSending) {
-                messagesDiv.innerHTML += `<div class="ai-message self-start bg-yellow-100 text-yellow-700">⚠️ 오류: 질문을 입력하거나 미리 정의된 질문을 선택해주세요.</div>`;
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }
-            return;
-        }
+    const startDateObj = parseHtmlDate(document.getElementById("start-date").value);
+    const endDateObj = parseHtmlDate(document.getElementById("end-date").value);
 
-        // 4. 전송 상태
-        isSending = true;
-        sendButton.disabled = true;
+    const startDateDisplay = formatDisplayDate(startDateObj);
+    const endDateDisplay = formatDisplayDate(endDateObj);
+    const startDateForWebhook = formatWebhookDate(startDateObj);
+    const endDateForWebhook = formatWebhookDate(endDateObj);
 
-        // 5. 사용자 메시지 표시 (필터 표시)
-        let displayMessage = message;
-        let filterDetails = [];
-        if (startDateDisplay) filterDetails.push(`시작일: ${startDateDisplay}`);
-        if (endDateDisplay) filterDetails.push(`종료일: ${endDateDisplay}`);
-        if (locationLabels.length > 0) filterDetails.push(`Location: ${locationLabels.join(', ')}`);
-        if (itemLabel) filterDetails.push(`Item: ${itemLabel}`);
-        if (itemColorInput) filterDetails.push(`Item Color: ${itemColorInput}`);
-        if (aiModeLabels.length > 0) filterDetails.push(`AI 모드: ${aiModeLabels.join(', ')}`);
+    const locBoxes = document.querySelectorAll(".location-checkbox:checked");
+    const locationIds = Array.from(locBoxes).map(cb => cb.value);
+    const locationLabels = Array.from(locBoxes).map(cb => cb.dataset.label);
 
-        if (filterDetails.length > 0) {
-            displayMessage += `<br><span class="text-xs opacity-80">(필터: ${filterDetails.join(', ')})</span>`;
-        }
+    const itemBoxes = document.querySelectorAll(".item-checkbox:checked");
+    const itemIds = Array.from(itemBoxes).map(cb => cb.value);
+    const itemLabel = itemIds.join(", ");
 
-        messagesDiv.innerHTML += `<div class="user-message self-end">${displayMessage}</div>`;
-        inputElement.value = '';
-        selectElement.value = '';
+    const itemColor = document.getElementById("item-color-input").value.trim();
 
-        // 6. 로딩 메시지
-        const loadingDiv = document.createElement('div');
-        loadingDiv.id = 'loading';
-        loadingDiv.textContent = '... AI가 분석 중입니다. 잠시만 기다려주세요...';
-        messagesDiv.appendChild(loadingDiv);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight; 
+    const aiBoxes = document.querySelectorAll(".ai-mode-checkbox:checked");
+    const aiMode = Array.from(aiBoxes).map(cb => cb.value);
+    const aiModeLabels = Array.from(aiBoxes).map(cb => cb.dataset.label);
 
-        try {
-            // 7. 웹훅 전송 (날짜 = MMDDYYYY)
-            const response = await fetch(MAKE_WEBHOOK_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    prompt: message,
-                    startDate: startDateForWebhook,
-                    endDate: endDateForWebhook,
+    // 화면에 사용자 메시지 출력
+    let filterTxt = [];
+    if (startDateDisplay) filterTxt.push(`시작일: ${startDateDisplay}`);
+    if (endDateDisplay) filterTxt.push(`종료일: ${endDateDisplay}`);
+    if (locationLabels.length) filterTxt.push(`Location: ${locationLabels.join(", ")}`);
+    if (itemLabel) filterTxt.push(`Item: ${itemLabel}`);
+    if (itemColor) filterTxt.push(`Item 특성: ${itemColor}`);
+    if (aiModeLabels.length) filterTxt.push(`AI 모드: ${aiModeLabels.join(", ")}`);
 
-                    // Location 다중 선택
-                    location: locationIds.join(','),
-                    locationIds: locationIds,
-                    locationLabels: locationLabels,
+    messagesDiv.innerHTML += `
+        <div class="user-message">
+            ${message}
+            ${filterTxt.length ? `<br><span class="text-xs opacity-80">(필터: ${filterTxt.join(", ")})</span>` : ""}
+        </div>`;
 
-                    // Item 다중 선택
-                    item: itemLabel,
-                    itemLabel: itemLabel,
-                    itemIds: itemIds,
+    textarea.value = "";
+    textarea.style.height = "auto";
+    selectElement.value = "";
 
-                    // 기타 필터
-                    itemColor: itemColorInput,
+    const loadingDiv = document.createElement("div");
+    loadingDiv.id = "loading";
+    loadingDiv.textContent = "… AI가 분석 중입니다. 잠시만 기다려주세요...";
+    messagesDiv.appendChild(loadingDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-                    // AI 모드
-                    aiMode: aiMode,
-                    aiModeLabels: aiModeLabels
-                })
-            });
+    isSending = true;
+    sendButton.disabled = true;
 
-            const data = await response.json();
-            
-            const currentLoadingDiv = document.getElementById('loading');
-            if (currentLoadingDiv) currentLoadingDiv.remove();
+    try {
+        const response = await fetch(MAKE_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                prompt: message,
+                startDate: startDateForWebhook,
+                endDate: endDateForWebhook,
+                location: locationIds.join(","),
+                locationIds,
+                locationLabels,
 
-            let responseText = data.response_text || "응답을 받지 못했습니다. Make 시나리오의 Webhook Response 모듈을 확인해주세요.";
-            messagesDiv.innerHTML += `<div class="ai-message self-start">🤖: ${responseText}</div>`;
-            
-        } catch (error) {
-            console.error("Fetch Error:", error);
-            
-            const currentLoadingDiv = document.getElementById('loading');
-            if (currentLoadingDiv) currentLoadingDiv.remove();
-            
-            messagesDiv.innerHTML += `<div class="ai-message self-start bg-red-100 text-red-700">⚠️ 통신 오류 발생: 웹훅 URL을 확인하거나 Make 시나리오가 실행 중인지 확인해주세요.</div>`;
-        } finally {
-            isSending = false;
-            sendButton.disabled = false;
-            messagesDiv.scrollTop = messagesDiv.scrollHeight; 
-        }
+                item: itemLabel,
+                itemIds,
+                itemColor,
+
+                aiMode,
+                aiModeLabels
+            })
+        });
+
+        const data = await response.json();
+
+        loadingDiv.remove();
+
+        messagesDiv.innerHTML += `
+            <div class="ai-message">🤖: ${data.response_text || "응답을 받지 못했습니다."}</div>
+        `;
+
+    } catch (err) {
+        loadingDiv.remove();
+        messagesDiv.innerHTML += `
+            <div class="ai-message bg-red-100 text-red-700">
+                ⚠️ 통신 오류: Make 시나리오 또는 인터넷을 확인하세요.
+            </div>
+        `;
     }
+
+    isSending = false;
+    sendButton.disabled = false;
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
 </script>
 
 </body>
