@@ -99,39 +99,42 @@
                 </div>
             </section>
 
-            <!-- Item -->
-            <section>
-                <h2 class="text-xs font-semibold text-gray-600 mb-2">Item (제품명)</h2>
-                <div class="p-2 border border-gray-300 rounded-lg space-y-1">
-                    
-                    <label class="flex items-center space-x-2 font-semibold">
-                        <input type="checkbox" id="item-all" class="item-master">
-                        <span>모두 선택</span>
-                    </label>
+            <!-- ERP일 때만 사용할 Item / Item 특성 섹션(둘 다 묶음) -->
+            <section id="erp-item-section" class="space-y-4">
+                <!-- Item -->
+                <div>
+                    <h2 class="text-xs font-semibold text-gray-600 mb-2">Item (제품명)</h2>
+                    <div class="p-2 border border-gray-300 rounded-lg space-y-1">
+                        
+                        <label class="flex items-center space-x-2 font-semibold">
+                            <input type="checkbox" id="item-all" class="item-master">
+                            <span>모두 선택</span>
+                        </label>
 
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" class="item-checkbox" value="Label, label, LABEL">
-                        <span>Label</span>
-                    </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="item-checkbox" value="Label">
+                            <span>Label</span>
+                        </label>
 
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" class="item-checkbox" value="Ribbon">
-                        <span>Ribbon</span>
-                    </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="item-checkbox" value="Ribbon">
+                            <span>Ribbon</span>
+                        </label>
 
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" class="item-checkbox" value="Film">
-                        <span>Film</span>
-                    </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="item-checkbox" value="Film">
+                            <span>Film</span>
+                        </label>
+                    </div>
                 </div>
-            </section>
 
-            <!-- Item 특성 -->
-            <section>
-                <h2 class="text-xs font-semibold text-gray-600 mb-2">Item 특성</h2>
-                <input type="text" id="item-color-input"
-                       placeholder="예: Black, White, Strong..."
-                       class="w-full p-2 border border-gray-300 rounded-lg">
+                <!-- Item 특성 -->
+                <div>
+                    <h2 class="text-xs font-semibold text-gray-600 mb-2">Item 특성</h2>
+                    <input type="text" id="item-color-input"
+                        placeholder="예: Black, White, Strong..."
+                        class="w-full p-2 border border-gray-300 rounded-lg">
+                </div>
             </section>
 
             <!-- AI 분석 모드 -->
@@ -268,6 +271,21 @@ function setupMasterCheckbox(masterSelector, itemSelector) {
 }
 
 /* --------------------------
+   ERP 선택 시 Item/특성 보이기/숨기기
+---------------------------*/
+function updateErpItemSectionVisibility() {
+    const erpCheckbox = document.querySelector('.ai-mode-checkbox[value="erp"]');
+    const erpSection = document.getElementById('erp-item-section');
+    if (!erpCheckbox || !erpSection) return;
+
+    if (erpCheckbox.checked) {
+        erpSection.classList.remove('hidden');
+    } else {
+        erpSection.classList.add('hidden');
+    }
+}
+
+/* --------------------------
    페이지 로드 시 초기화
 ---------------------------*/
 document.addEventListener("DOMContentLoaded", () => {
@@ -281,11 +299,18 @@ document.addEventListener("DOMContentLoaded", () => {
     setupMasterCheckbox("#location-all", ".location-checkbox");
     setupMasterCheckbox("#item-all", ".item-checkbox");
     setupMasterCheckbox("#ai-all", ".ai-mode-checkbox");
+
+    // ERP 선택에 따라 Item/특성 섹션 표시/숨김
+    const erpCheckbox = document.querySelector('.ai-mode-checkbox[value="erp"]');
+    if (erpCheckbox) {
+        erpCheckbox.addEventListener('change', updateErpItemSectionVisibility);
+    }
+    updateErpItemSectionVisibility(); // 초기 상태 반영 (기본 체크되어 있으므로 보임)
 });
 
 
 /* --------------------------
-    전송 로직 (기존 유지)
+    전송 로직
 ---------------------------*/
 const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/beojnrbam68450c5366anrdb2lfdi8uq";
 let isSending = false;
@@ -300,8 +325,7 @@ async function sendMessage() {
     const typedMessage = textarea.value.trim();
     const message = presetMessage || typedMessage;
 
-    if (!message || isSending) return;
-
+    // 날짜
     const startDateObj = parseHtmlDate(document.getElementById("start-date").value);
     const endDateObj = parseHtmlDate(document.getElementById("end-date").value);
 
@@ -310,19 +334,53 @@ async function sendMessage() {
     const startDateForWebhook = formatWebhookDate(startDateObj);
     const endDateForWebhook = formatWebhookDate(endDateObj);
 
+    // Location
     const locBoxes = document.querySelectorAll(".location-checkbox:checked");
     const locationIds = Array.from(locBoxes).map(cb => cb.value);
     const locationLabels = Array.from(locBoxes).map(cb => cb.dataset.label);
 
+    // Item
     const itemBoxes = document.querySelectorAll(".item-checkbox:checked");
     const itemIds = Array.from(itemBoxes).map(cb => cb.value);
     const itemLabel = itemIds.join(", ");
 
+    // Item 특성
     const itemColor = document.getElementById("item-color-input").value.trim();
 
+    // AI 모드
     const aiBoxes = document.querySelectorAll(".ai-mode-checkbox:checked");
     const aiMode = Array.from(aiBoxes).map(cb => cb.value);
     const aiModeLabels = Array.from(aiBoxes).map(cb => cb.dataset.label);
+
+    /* --------------------------
+       기본 유효성 검사
+    ---------------------------*/
+    if (!message || isSending) {
+        if (!message && !isSending) {
+            messagesDiv.innerHTML += `
+                <div class="ai-message self-start bg-yellow-100 text-yellow-700">
+                    ⚠️ 오류: 질문을 입력하거나 미리 정의된 질문을 선택해주세요.
+                </div>`;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        return;
+    }
+
+    /* --------------------------
+       ERP 선택 시: Item 또는 Item 특성 필수
+    ---------------------------*/
+    if (aiMode.includes('erp') && itemIds.length === 0 && !itemColor) {
+        messagesDiv.innerHTML += `
+            <div class="ai-message self-start bg-yellow-100 text-yellow-700">
+                ⚠️ ERP 분석을 선택한 경우, 최소 하나의 제품명 또는 Item 특성을 입력해야 합니다.
+            </div>`;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        return;
+    }
+
+    // 전송 상태 세팅
+    isSending = true;
+    sendButton.disabled = true;
 
     // 화면에 사용자 메시지 출력
     let filterTxt = [];
@@ -349,59 +407,43 @@ async function sendMessage() {
     messagesDiv.appendChild(loadingDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-    isSending = true;
-    sendButton.disabled = true;
+    try {
+        const response = await fetch(MAKE_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                prompt: message,
+                startDate: startDateForWebhook,
+                endDate: endDateForWebhook,
+                location: locationIds.join(","),
+                locationIds,
+                locationLabels,
 
-   try {
-    const response = await fetch(MAKE_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            prompt: message,
-            startDate: startDateForWebhook,
-            endDate: endDateForWebhook,
-            location: locationIds.join(","),
-            locationIds,
-            locationLabels,
-            item: itemLabel,
-            itemIds,
-            itemColor,
-            aiMode,
-            aiModeLabels
-        })
-    });
+                item: itemLabel,
+                itemIds,
+                itemColor,
 
-    const rawText = await response.text();
+                aiMode,
+                aiModeLabels
+            })
+        });
 
-    // HTTP 상태 체크
-    if (!response.ok) {
-        throw new Error(`HTTP ${response.status} ${response.statusText} / body: ${rawText}`);
+        const data = await response.json();
+
+        loadingDiv.remove();
+
+        messagesDiv.innerHTML += `
+            <div class="ai-message">🤖: ${data.response_text || "응답을 받지 못했습니다."}</div>
+        `;
+
+    } catch (err) {
+        loadingDiv.remove();
+        messagesDiv.innerHTML += `
+            <div class="ai-message bg-red-100 text-red-700">
+                ⚠️ 통신 오류: Make 시나리오 또는 인터넷을 확인하세요.
+            </div>
+        `;
     }
-
-    // ✅ 이제 rawText 자체가 응답 내용
-    loadingDiv.remove();
-
-    messagesDiv.innerHTML += `
-        <div class="ai-message">🤖: ${rawText}</div>
-    `;
-
-} catch (err) {
-    loadingDiv.remove();
-
-    console.error("웹훅 호출 중 오류 발생:", err);
-
-    const msg = (err && err.message ? err.message : String(err))
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-
-    messagesDiv.innerHTML += `
-        <div class="ai-message bg-red-100 text-red-700 text-sm">
-            ⚠️ 통신 오류: ${msg}
-        </div>
-    `;
-}
-
-
 
     isSending = false;
     sendButton.disabled = false;
