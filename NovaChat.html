@@ -45,14 +45,29 @@
         <div class="p-4 border-b">
             <h1 class="text-lg font-bold text-indigo-600">ERP-Gemini 필터</h1>
             <p class="text-xs text-gray-500 mt-1">
-                기간, AI 모드, Location, Item을 선택한 뒤 질문을 입력하세요.
+                AI 모드를 선택하고, ERP 모드일 때는 기간·Location·Item을 설정할 수 있습니다.
             </p>
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 space-y-4 text-sm">
 
-            <!-- 기간 선택 -->
+            <!-- AI 분석 모드 (맨 위, 라디오) -->
             <section>
+                <h2 class="text-xs font-semibold text-gray-600 mb-2">AI 분석 모드</h2>
+                <div class="p-2 border border-gray-300 rounded-lg space-y-2">
+                    <label class="flex items-center space-x-2">
+                        <input type="radio" name="ai-mode" value="erp" data-label="ERP 분석" checked>
+                        <span>ERP 분석</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="radio" name="ai-mode" value="ai" data-label="AI 서치">
+                        <span>AI 서치</span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- 기간 선택 (ERP 모드일 때만 표시) -->
+            <section id="period-section">
                 <h2 class="text-xs font-semibold text-gray-600 mb-2">기간 선택</h2>
                 <div class="space-y-2">
                     <label class="text-xs">시작일</label>
@@ -65,31 +80,7 @@
                 </div>
             </section>
 
-            <!-- AI 분석 모드 (위로 이동) -->
-            <section>
-                <h2 class="text-xs font-semibold text-gray-600 mb-2">AI 분석 모드</h2>
-                <div class="p-2 border border-gray-300 rounded-lg space-y-2">
-
-                    <label class="flex items-center space-x-2 font-semibold">
-                        <input type="checkbox" id="ai-all" class="ai-master">
-                        <span>모두 선택</span>
-                    </label>
-
-                    <label class="flex items-center space-x-2">
-                        <!-- ⭐ 기본 체크됨 -->
-                        <input type="checkbox" class="ai-mode-checkbox" value="erp" data-label="ERP 분석" checked>
-                        <span>ERP 분석</span>
-                    </label>
-
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" class="ai-mode-checkbox" value="ai" data-label="AI 서치">
-                        <span>AI 서치</span>
-                    </label>
-
-                </div>
-            </section>
-
-            <!-- ERP 선택일 때만 보이는 영역: Location + Item + 사용자 입력 -->
+            <!-- ERP 모드일 때만 보이는: Location + Item + 사용자 입력 -->
             <section id="erp-options-section" class="space-y-4">
 
                 <!-- Location -->
@@ -175,7 +166,7 @@
             <div>
                 <h2 class="text-base font-semibold">ERP-Gemini 챗봇</h2>
                 <p class="text-xs text-gray-500">
-                    왼쪽에서 조건을 선택하고 아래에서 질문을 입력하세요.
+                    ERP 모드일 때는 왼쪽 필터를 활용해 데이터를 분석할 수 있습니다.
                 </p>
             </div>
         </header>
@@ -183,7 +174,7 @@
         <!-- 메시지 영역 -->
         <section id="messages" class="flex-1 flex flex-col p-4 space-y-3 bg-gray-50">
             <div class="ai-message">
-                🤖 안녕하세요! 왼쪽에서 조건을 선택한 뒤 아래에 질문을 입력해 주세요.
+                🤖 안녕하세요! 왼쪽에서 AI 분석 모드를 선택한 뒤 아래에 질문을 입력해 주세요.
             </div>
         </section>
 
@@ -191,15 +182,17 @@
         <section class="border-t bg-white p-4">
             <div class="max-w-3xl mx-auto space-y-3">
 
-                <!-- 미리 정의된 질문 -->
-                <select id="preset-prompt"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
-                    <option value="">-- 미리 정의된 질문 선택 (선택 안함) --</option>
-                    <option value="해당 기간 및 지역에서 가장 많이 팔린 제품은?">
-                        해당 기간 및 지역에서 가장 많이 구매한 제품은?
-                    </option>
-                    <option value="단가 비교 표 작성">단가 비교 표 작성</option>
-                </select>
+                <!-- 미리 정의된 질문 (ERP일 때만 보임) -->
+                <section id="preset-prompt-wrapper">
+                    <select id="preset-prompt"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
+                        <option value="">-- 미리 정의된 질문 선택 (선택 안함) --</option>
+                        <option value="해당 기간 및 지역에서 가장 많이 팔린 제품은?">
+                            해당 기간 및 지역에서 가장 많이 구매한 제품은?
+                        </option>
+                        <option value="단가 비교 표 작성">단가 비교 표 작성</option>
+                    </select>
+                </section>
 
                 <!-- 프롬프트 textarea -->
                 <div class="flex space-x-3 items-end">
@@ -265,37 +258,48 @@ function setupMasterCheckbox(masterSelector, itemSelector) {
     });
 }
 
-/* ERP 선택 시: Location + Item + 사용자입력 보이기/숨기기 */
-function updateErpOptionsVisibility() {
-    const erpCheckbox = document.querySelector('.ai-mode-checkbox[value="erp"]');
-    const erpOptionsSection = document.getElementById('erp-options-section');
-    if (!erpCheckbox || !erpOptionsSection) return;
+/* 현재 선택된 AI 모드 값 가져오기 */
+function getCurrentAiMode() {
+    const selected = document.querySelector('input[name="ai-mode"]:checked');
+    return selected ? selected.value : null;
+}
 
-    if (erpCheckbox.checked) {
-        erpOptionsSection.classList.remove('hidden');
-    } else {
-        erpOptionsSection.classList.add('hidden');
-    }
+/* ERP 선택 시: 기간 + Location + Item + 미리정의 질문 보이기/숨기기 */
+function updateErpVisibility() {
+    const mode = getCurrentAiMode();
+    const isErp = (mode === 'erp');
+
+    const periodSection = document.getElementById('period-section');
+    const erpOptionsSection = document.getElementById('erp-options-section');
+    const presetWrapper = document.getElementById('preset-prompt-wrapper');
+
+    [periodSection, erpOptionsSection, presetWrapper].forEach(el => {
+        if (!el) return;
+        if (isErp) el.classList.remove('hidden');
+        else el.classList.add('hidden');
+    });
 }
 
 /* 페이지 로드 시 초기화 */
 document.addEventListener("DOMContentLoaded", () => {
     const today = new Date();
-    const oneYearAgo = new Date();
-    oneYearAgo.setFullYear(today.getFullYear()-1);
 
-    document.getElementById("start-date").value = formatHtmlDate(oneYearAgo);
+    // 종료일 = 오늘
     document.getElementById("end-date").value = formatHtmlDate(today);
+
+    // 시작일 = 종료일 기준 3개월 전
+    const start = new Date(today);
+    start.setMonth(start.getMonth() - 3);
+    document.getElementById("start-date").value = formatHtmlDate(start);
 
     setupMasterCheckbox("#location-all", ".location-checkbox");
     setupMasterCheckbox("#item-all", ".item-checkbox");
-    setupMasterCheckbox("#ai-all", ".ai-mode-checkbox");
 
-    const erpCheckbox = document.querySelector('.ai-mode-checkbox[value="erp"]');
-    if (erpCheckbox) {
-        erpCheckbox.addEventListener('change', updateErpOptionsVisibility);
-    }
-    updateErpOptionsVisibility(); // 초기 상태 반영
+    // AI 모드 라디오 변경 시 ERP 관련 영역 표시/숨김
+    document.querySelectorAll('input[name="ai-mode"]').forEach(r => {
+        r.addEventListener('change', updateErpVisibility);
+    });
+    updateErpVisibility(); // 초기 상태 반영 (기본 ERP이므로 표시)
 });
 
 /* 전송 로직 */
@@ -308,10 +312,13 @@ async function sendMessage() {
     const sendButton = document.getElementById("send-button");
     const messagesDiv = document.getElementById("messages");
 
-    const presetMessage = selectElement.value;
+    const presetMessage = !document.getElementById('preset-prompt-wrapper').classList.contains('hidden')
+        ? selectElement.value
+        : "";
     const typedMessage = textarea.value.trim();
     const message = presetMessage || typedMessage;
 
+    // 날짜
     const startDateObj = parseHtmlDate(document.getElementById("start-date").value);
     const endDateObj = parseHtmlDate(document.getElementById("end-date").value);
 
@@ -320,19 +327,23 @@ async function sendMessage() {
     const startDateForWebhook = formatWebhookDate(startDateObj);
     const endDateForWebhook = formatWebhookDate(endDateObj);
 
+    // Location
     const locBoxes = document.querySelectorAll(".location-checkbox:checked");
     const locationIds = Array.from(locBoxes).map(cb => cb.value);
     const locationLabels = Array.from(locBoxes).map(cb => cb.dataset.label);
 
+    // Item
     const itemBoxes = document.querySelectorAll(".item-checkbox:checked");
     const itemIds = Array.from(itemBoxes).map(cb => cb.value);
     const itemLabel = itemIds.join(", ");
 
+    // Item 사용자 입력
     const itemColor = document.getElementById("item-color-input").value.trim();
 
-    const aiBoxes = document.querySelectorAll(".ai-mode-checkbox:checked");
-    const aiMode = Array.from(aiBoxes).map(cb => cb.value);
-    const aiModeLabels = Array.from(aiBoxes).map(cb => cb.dataset.label);
+    // AI 모드 (라디오)
+    const aiRadio = document.querySelector('input[name="ai-mode"]:checked');
+    const aiMode = aiRadio ? aiRadio.value : null;
+    const aiModeLabel = aiRadio ? aiRadio.dataset.label : "";
 
     // 기본 유효성 검사
     if (!message || isSending) {
@@ -347,7 +358,7 @@ async function sendMessage() {
     }
 
     // ERP 선택 시: Item 또는 사용자 입력 필수
-    if (aiMode.includes('erp') && itemIds.length === 0 && !itemColor) {
+    if (aiMode === 'erp' && itemIds.length === 0 && !itemColor) {
         messagesDiv.innerHTML += `
             <div class="ai-message self-start bg-yellow-100 text-yellow-700">
                 ⚠️ ERP 분석을 선택한 경우, 최소 하나의 제품명 또는 Item 사용자 입력이 필요합니다.
@@ -361,12 +372,14 @@ async function sendMessage() {
 
     // 화면에 사용자 메시지 출력
     let filterTxt = [];
-    if (startDateDisplay) filterTxt.push(`시작일: ${startDateDisplay}`);
-    if (endDateDisplay) filterTxt.push(`종료일: ${endDateDisplay}`);
-    if (locationLabels.length) filterTxt.push(`Location: ${locationLabels.join(", ")}`);
-    if (itemLabel) filterTxt.push(`Item: ${itemLabel}`);
-    if (itemColor) filterTxt.push(`Item 사용자 입력: ${itemColor}`);
-    if (aiModeLabels.length) filterTxt.push(`AI 모드: ${aiModeLabels.join(", ")}`);
+    if (aiModeLabel) filterTxt.push(`AI 모드: ${aiModeLabel}`);
+    if (aiMode === 'erp') {
+        if (startDateDisplay) filterTxt.push(`시작일: ${startDateDisplay}`);
+        if (endDateDisplay) filterTxt.push(`종료일: ${endDateDisplay}`);
+        if (locationLabels.length) filterTxt.push(`Location: ${locationLabels.join(", ")}`);
+        if (itemLabel) filterTxt.push(`Item: ${itemLabel}`);
+        if (itemColor) filterTxt.push(`Item 사용자 입력: ${itemColor}`);
+    }
 
     messagesDiv.innerHTML += `
         <div class="user-message">
@@ -376,7 +389,9 @@ async function sendMessage() {
 
     textarea.value = "";
     textarea.style.height = "auto";
-    selectElement.value = "";
+    if (!document.getElementById('preset-prompt-wrapper').classList.contains('hidden')) {
+        selectElement.value = "";
+    }
 
     const loadingDiv = document.createElement("div");
     loadingDiv.id = "loading";
@@ -385,11 +400,14 @@ async function sendMessage() {
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
     try {
-        const response = await fetch(MAKE_WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                prompt: message,
+        const body = {
+            prompt: message,
+            aiMode,
+            aiModeLabel
+        };
+
+        if (aiMode === 'erp') {
+            Object.assign(body, {
                 startDate: startDateForWebhook,
                 endDate: endDateForWebhook,
                 location: locationIds.join(","),
@@ -397,10 +415,14 @@ async function sendMessage() {
                 locationLabels,
                 item: itemLabel,
                 itemIds,
-                itemColor,
-                aiMode,
-                aiModeLabels
-            })
+                itemColor
+            });
+        }
+
+        const response = await fetch(MAKE_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
         });
 
         const data = await response.json();
