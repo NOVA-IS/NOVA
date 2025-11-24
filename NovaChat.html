@@ -53,6 +53,24 @@
         #loading {
             @apply text-sm text-gray-500 italic mb-2;
         }
+        .loading-bubble {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f3f4f6; /* gray-100 */
+            color: #4b5563;      /* gray-600 */
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 200px;
+            font-size: 0.75rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        
+        .loading-gif {
+            width: 24px;
+            height: 24px;
+        }
+
         textarea {
             overflow-y: auto;
             resize: none;
@@ -418,9 +436,15 @@ async function sendMessage() {
 
     const loadingDiv = document.createElement("div");
     loadingDiv.id = "loading";
-    loadingDiv.textContent = "… AI가 분석 중입니다. 잠시만 기다려주세요...";
+    loadingDiv.innerHTML = `
+        <div class="loading-bubble">
+            <img src="https://i.gifer.com/ZZ5H.gif" class="loading-gif" />
+            <span>AI가 분석 중입니다...</span>
+        </div>
+    `;
     messagesDiv.appendChild(loadingDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
 
     try {
         const body = {
