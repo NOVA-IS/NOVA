@@ -437,7 +437,7 @@ async function sendMessage() {
         })
     });
 
-        const data = await response.text();
+        const rawText = await response.text();
 
         // HTTP 상태 체크
     if (!response.ok) {
