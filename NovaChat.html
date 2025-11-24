@@ -420,27 +420,53 @@ async function sendMessage() {
         }
 
         const response = await fetch(MAKE_WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body)
-        });
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            prompt: message,
+            startDate: startDateForWebhook,
+            endDate: endDateForWebhook,
+            location: locationIds.join(","),
+            locationIds,
+            locationLabels,
+            item: itemLabel,
+            itemIds,
+            itemColor,
+            aiMode,
+            aiModeLabels
+        })
+    });
 
-        const data = await response.json();
+        const data = await response.text();
 
-        loadingDiv.remove();
-
-        messagesDiv.innerHTML += `
-            <div class="ai-message">🤖: ${data.response_text || "응답을 받지 못했습니다."}</div>
-        `;
-
-    } catch (err) {
-        loadingDiv.remove();
-        messagesDiv.innerHTML += `
-            <div class="ai-message bg-red-100 text-red-700">
-                ⚠️ 통신 오류: Make 시나리오 또는 인터넷을 확인하세요.
-            </div>
-        `;
+        // HTTP 상태 체크
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status} ${response.statusText} / body: ${rawText}`);
     }
+
+
+    // ✅ 이제 rawText 자체가 응답 내용
+    loadingDiv.remove();
+
+    messagesDiv.innerHTML += `
+        <div class="ai-message">🤖: ${rawText}</div>
+    `;
+
+} catch (err) {
+    loadingDiv.remove();
+
+    console.error("웹훅 호출 중 오류 발생:", err);
+
+    const msg = (err && err.message ? err.message : String(err))
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+    messagesDiv.innerHTML += `
+        <div class="ai-message bg-red-100 text-red-700 text-sm">
+            ⚠️ 통신 오류: ${msg}
+        </div>
+    `;
+}
 
     isSending = false;
     sendButton.disabled = false;
