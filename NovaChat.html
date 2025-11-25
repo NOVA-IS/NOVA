@@ -55,6 +55,7 @@
         /* AI 검색 모드일 때 전송 버튼 색 */
         .ai-mode-active-button {
             background-color: #0284c7 !important; /* sky-700 */
+            height: 100% !important;              /* 버튼이 두 줄 전체 높이를 유지하도록 강제 */
         }
 
         /* 오른쪽 사용자 말풍선 */
@@ -279,7 +280,7 @@
                         </section>
                         <!-- 👉 오른쪽: 전송 버튼 (두 프롬프트 전체 높이에 맞춰 늘어남) -->
                         <button onclick="sendMessage()" id="send-button"
-                            class="bg-indigo-600 text-white px-5 rounded-lg font-semibold hover:bg-indigo-700 shadow-md disabled:bg-gray-400 text-sm h-ful items-bottom">
+                            class="row-span-2 bg-indigo-600 text-white px-5 rounded-lg font-semibold hover:bg-indigo-700 shadow-md disabled:bg-gray-400 text-sm">
                             전송
                         </button>
     
