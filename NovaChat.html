@@ -390,6 +390,18 @@ function updateAiModeStyling() {
         sendButton.classList.remove("ai-mode-active-button");
     }
 }
+/* ERP/AI 선택 시: 프롬프트 초기화 */
+    function resetPromptArea() {
+    const textarea = document.getElementById("user-input");
+
+    if (textarea) {
+        textarea.value = "";
+        if (typeof autoResize === "function") {
+            autoResize(textarea); // 높이 리셋
+        }
+    }
+}
+
 
 
 /* 페이지 로드 시 초기화 */
@@ -440,6 +452,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
         updateErpVisibility();
         updateAiModeStyling();
+        resetPromptArea();   // ⭐ 모드 바꿀 때 프롬프트 초기화
     });
 **/
     
@@ -462,6 +475,7 @@ if (aiToggleBtn) {
 
         updateErpVisibility();
         updateAiModeStyling();
+        resetPromptArea();   // ⭐ 모드 바꿀 때 프롬프트 초기화
     });
 
     // 라디오를 바꾸면 토글 상태도 따라감
@@ -476,6 +490,7 @@ if (aiToggleBtn) {
 
             updateErpVisibility();
             updateAiModeStyling();
+            resetPromptArea();   // ⭐ 모드 바꿀 때 프롬프트 초기화
         });
     });
 }
