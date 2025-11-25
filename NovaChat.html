@@ -21,51 +21,110 @@
         #messages {
             overflow-y: auto;
         }
-        /* 프롬프트 줄 양쪽 버튼 공통 스타일 */
-        .prompt-bar-btn {
-            height: 30px;                 /* 두 버튼 동일 높이 */
-            display: inline-flex;
+
+        /* GPT 스타일 입력바 */
+        .gpt-input-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;   /* gray-200~300 */
+            border-radius: 9999px;
+            padding: 6px 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+
+        /* 왼쪽 AI 모드 버튼 (프롬프트 안) */
+        .gpt-left-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 9999px;
+            border: none;
+            background: #f3f4f6;
+            color: #374151;
+            font-size: 0.75rem;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0 12px;
-            border-radius: 0.5rem;        /* rounded-lg 느낌 */
-            font-size: 0.75rem;           /* text-xs 정도 */
+            white-space: nowrap;
+            padding: 0 8px;
         }
-        /* 기본 토글 버튼 */
-        #ai-search-toggle {
-            border: 1px solid #d1d5db;      /* gray-300 */
-            color: #374151;                 /* gray-700 */
-        }
-        #send-button {
-            height: 48px !important;
-        }
-        /* textarea 위아래 스크롤 버튼 제거 */
-        textarea {
-            scrollbar-width: none;       /* Firefox */
-            -ms-overflow-style: none;    /* IE, Edge */
-        }
-        
-        textarea::-webkit-scrollbar {
-            display: none !important;    /* Chrome, Safari */
-        }
-      
-        /* 활성 상태 */
+
+        /* AI 모드 토글 활성화 시 */
         .ai-toggle-active {
             background-color: #0284c7 !important; /* sky-700 */
             border-color: #0284c7 !important;
             color: white !important;
         }
 
-        /* AI 검색 모드일 때 프롬프트 색 */
+        /* 가운데 프롬프트 입력창 */
+        .gpt-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            resize: none;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            padding: 6px 4px;
+            min-height: 28px;
+            max-height: 120px;
+            background: transparent;
+            scrollbar-width: none;
+        }
+        .gpt-input::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 오른쪽 전송 버튼 (원형) */
+        .gpt-send-btn {
+            background: #4f46e5;   /* indigo-600 */
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(79,70,229,0.4);
+        }
+        .gpt-send-btn:disabled {
+            background: #9ca3af; /* gray-400 */
+            box-shadow: none;
+        }
+
+        /* 프롬프트 줄 양쪽 버튼 공통 스타일 (지금은 사용 거의 안 하지만 남겨둠) */
+        .prompt-bar-btn {
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 12px;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        /* textarea 기본 스크롤/리사이즈 제거 (gpt-input에도 적용) */
+        textarea {
+            scrollbar-width: none;       /* Firefox */
+            -ms-overflow-style: none;    /* IE, Edge */
+            overflow-y: auto;
+            resize: none;
+        }
+        textarea::-webkit-scrollbar {
+            display: none !important;    /* Chrome, Safari */
+        }
+
+        /* AI 검색 모드일 때 프롬프트 텍스트 영역 스타일 */
         .ai-mode-active-textarea {
             background-color: #e0f2fe !important; /* sky-100 */
-            border-color: #38bdf8 !important;     /* sky-400 */
         }
-        
+
         /* AI 검색 모드일 때 전송 버튼 색 */
         .ai-mode-active-button {
             background-color: #0284c7 !important; /* sky-700 */
-            height: 100% !important;              /* 버튼이 두 줄 전체 높이를 유지하도록 강제 */
         }
 
         /* 오른쪽 사용자 말풍선 */
@@ -82,7 +141,7 @@
             font-size: 0.875rem;
             line-height: 1.5;
         }
-        
+
         /* 왼쪽 AI 말풍선 */
         .ai-message {
             background-color: #f3f4f6; /* gray-100 */
@@ -97,9 +156,14 @@
             font-size: 0.875rem;
             line-height: 1.5;
         }
+
         #loading {
-            @apply text-sm text-gray-500 italic mb-2;
+            font-size: 0.75rem;
+            color: #6b7280;
+            font-style: italic;
+            margin-bottom: 0.5rem;
         }
+
         .loading-bubble {
             display: flex;
             align-items: center;
@@ -112,15 +176,27 @@
             font-size: 0.75rem;
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
-        
+
         .loading-gif {
             width: 24px;
             height: 24px;
         }
 
-        textarea {
-            overflow-y: auto;
-            resize: none;
+        /* 모바일에서 살짝 압축 */
+        @media (max-width: 640px) {
+            .gpt-input-bar {
+                padding: 4px 8px;
+                gap: 6px;
+            }
+            .gpt-left-btn {
+                width: 28px;
+                height: 28px;
+                padding: 0 6px;
+            }
+            .gpt-send-btn {
+                width: 30px;
+                height: 30px;
+            }
         }
     </style>
 </head>
@@ -269,45 +345,41 @@
 
         <!-- 아래 입력 영역 -->
         <section class="border-t bg-white p-4">
-            <div class="max-w-3xl mx-auto">
-                    <div class="max-w-3xl mx-auto space-y-2">
+            <div class="max-w-3xl mx-auto space-y-2">
 
-                        <!-- 미리 정의된 질문 (ERP일 때만 보임) -->
-                        <section id="preset-prompt-wrapper" class="row-start-1 col-start-2 col-end-3">
-                            <select id="preset-prompt"
-                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
-                                <option value="">-- 미리 정의된 질문 선택 (선택 안함) --</option>
-                                <option value="해당 기간 및 Location에서 Tax와 Shpping fee를 제외하고 가장 많이 구매한 제품 순위 10개를 순위, item이름, 총금액, 구매횟수로 보여줘">
-                                    해당 기간 및 Lacation에서 가장 많이 구매한 제품 순위 10개
-                                </option>
-                                <option value="단가 비교를 업체명, 아이템명, 단가 표로 작성">단가 비교를 업체명, 아이템명, 단가 표로 작성</option>
-                            </select>
-                        </section>
-                    <!-- 아래: AI 검색모드 버튼 + 입력창 + 전송 버튼 (한 줄) -->
-                        <!--div class="flex items-stretch space-x-3"-->
+                <!-- 미리 정의된 질문 (ERP일 때만 보임) -->
+                <section id="preset-prompt-wrapper">
+                    <select id="preset-prompt"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
+                        <option value="">-- 미리 정의된 질문 선택 (선택 안함) --</option>
+                        <option value="해당 기간 및 Location에서 Tax와 Shpping fee를 제외하고 가장 많이 구매한 제품 순위 10개를 순위, item이름, 총금액, 구매횟수로 보여줘">
+                            해당 기간 및 Lacation에서 가장 많이 구매한 제품 순위 10개
+                        </option>
+                        <option value="단가 비교를 업체명, 아이템명, 단가 표로 작성">단가 비교를 업체명, 아이템명, 단가 표로 작성</option>
+                    </select>
+                </section>
 
-                        <!-- 프롬프트 textarea -->              
-                        <textarea id="user-input"
-                                  placeholder="여기에 질문을 입력하세요..."
-                                   class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm leading-relaxed"
-                                  rows="2"
-                                  style="max-height: 200px; width:100%"
-                                  oninput="autoResize(this)"
-                                  onkeypress="if(event.keyCode === 13 && !event.shiftKey){ event.preventDefault(); sendMessage(); }"></textarea>
+                <!-- GPT 스타일 프롬프트 바 -->
+                <div class="gpt-input-bar">
+                    <!-- 왼쪽: AI 모드 토글 버튼 -->
+                    <button id="ai-search-toggle" class="gpt-left-btn">
+                        AI
+                    </button>
 
-                      <!-- 👈 왼쪽: AI 검색 모드 버튼 -->
-                      <button id="ai-search-toggle"
-                               class="prompt-bar-btn border bg-white hover:bg-gray-100 transition">
-                        AI 검색모드
-                      </button>
-                            
-                      <!-- 오른쪽: 전송 버튼 -->
-                      <button onclick="sendMessage()" id="send-button"
-                               class="prompt-bar-btn bg-indigo-600 text-white font-semibold hover:bg-indigo-700 shadow-md disabled:bg-gray-400">
+                    <!-- 가운데: 프롬프트 textarea -->
+                    <textarea id="user-input"
+                              placeholder="무엇이든 물어보세요"
+                              class="gpt-input"
+                              rows="1"
+                              oninput="autoResize(this)"></textarea>
+
+                    <!-- 오른쪽: 전송 버튼 -->
+                    <button onclick="sendMessage()" id="send-button"
+                            class="gpt-send-btn">
                         전송
-                      </button>
+                    </button>
+                </div>
 
-                <!--/div-->
             </div>
         </section>
 
@@ -327,7 +399,8 @@ function formatHtmlDate(date) {
     return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
 }
 function formatDisplayDate(date) {
-    return `${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).padStart(2,'0')}/${date.getFullYear()}`;
+    return `${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).
+        padStart(2,'0')}/${date.getFullYear()}`;
 }
 function formatWebhookDate(date) {
     return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
@@ -377,6 +450,7 @@ function updateErpVisibility() {
         else el.classList.add('hidden');
     });
 }
+
 function updateAiModeStyling() {
     const aiMode = getCurrentAiMode();
     const textarea = document.getElementById("user-input");
@@ -390,19 +464,15 @@ function updateAiModeStyling() {
         sendButton.classList.remove("ai-mode-active-button");
     }
 }
-/* ERP/AI 선택 시: 프롬프트 초기화 */
-    function resetPromptArea() {
-    const textarea = document.getElementById("user-input");
 
+/* ERP/AI 선택 시: 프롬프트 초기화 */
+function resetPromptArea() {
+    const textarea = document.getElementById("user-input");
     if (textarea) {
         textarea.value = "";
-        if (typeof autoResize === "function") {
-            autoResize(textarea); // 높이 리셋
-        }
+        autoResize(textarea);
     }
 }
-
-
 
 /* 페이지 로드 시 초기화 */
 document.addEventListener("DOMContentLoaded", () => {
@@ -419,7 +489,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupMasterCheckbox("#location-all", ".location-checkbox");
     setupMasterCheckbox("#item-all", ".item-checkbox");
 
-        // ⭐ 미리 정의된 질문 선택 시 textarea에 자동 입력
+    // 미리 정의된 질문 선택 시 textarea에 자동 입력
     const presetSelect = document.getElementById("preset-prompt");
     const userInput = document.getElementById("user-input");
 
@@ -427,75 +497,65 @@ document.addEventListener("DOMContentLoaded", () => {
         presetSelect.addEventListener("change", () => {
             const value = presetSelect.value || "";
             userInput.value = value;
-            autoResize(userInput);     // 높이 자동 조절 함수 이미 있으니까 같이 호출
+            autoResize(userInput);
         });
     }
 
-    // AI 모드 라디오 변경 시 ERP 관련 영역 표시/숨김
-    // ✅ 프롬프트 옆 AI 검색 토글과 라디오 동기화
-    // 프롬프트 옆 AI 검색 토글 버튼
+    // GPT 스타일: Enter → 전송, Shift+Enter → 줄바꿈
+    if (userInput) {
+        userInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                if (!e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            }
+        });
+    }
+
+    // 프롬프트 옆 AI 검색 토글 버튼 & 라디오 동기화
     const aiToggleBtn = document.getElementById('ai-search-toggle');
+    const aiRadios = document.querySelectorAll('input[name="ai-mode"]');
 
-/** 
-    aiToggleBtn.addEventListener('click', () => {
-        const isActive = aiToggleBtn.classList.contains('ai-toggle-active');
-    
-        if (isActive) {
-            // AI 검색 → ERP-AI 분석으로 전환
-            document.querySelector('input[name="ai-mode"][value="erp"]').checked = true;
-            aiToggleBtn.classList.remove('ai-toggle-active');
-        } else {
-            // ERP-AI 분석 → AI 검색으로 전환
-            document.querySelector('input[name="ai-mode"][value="ai"]').checked = true;
-            aiToggleBtn.classList.add('ai-toggle-active');
-        }
-    
-        updateErpVisibility();
-        updateAiModeStyling();
-        resetPromptArea();   // ⭐ 모드 바꿀 때 프롬프트 초기화
-    });
-**/
-    
-// ✅ 프롬프트 옆 AI 검색 토글 버튼 & 라디오 동기화
-// const aiToggleBtn = document.getElementById('ai-search-toggle');
-const aiRadios = document.querySelectorAll('input[name="ai-mode"]');
+    if (aiToggleBtn) {
+        // 토글 버튼을 누르면 라디오도 같이 바뀜
+        aiToggleBtn.addEventListener('click', () => {
+            const isActive = aiToggleBtn.classList.toggle('ai-toggle-active'); // on/off
 
-if (aiToggleBtn) {
-    // 토글 버튼을 누르면 라디오도 같이 바뀜
-    aiToggleBtn.addEventListener('click', () => {
-        const isActive = aiToggleBtn.classList.toggle('ai-toggle-active'); // on/off
-
-        const targetValue = isActive ? 'ai' : 'erp';
-        const targetRadio = document.querySelector(
-            `input[name="ai-mode"][value="${targetValue}"]`
-        );
-        if (targetRadio) {
-            targetRadio.checked = true;
-        }
-
-        updateErpVisibility();
-        updateAiModeStyling();
-        resetPromptArea();   // ⭐ 모드 바꿀 때 프롬프트 초기화
-    });
-
-    // 라디오를 바꾸면 토글 상태도 따라감
-    aiRadios.forEach(r => {
-        r.addEventListener('change', () => {
-            const isAi = r.value === 'ai' && r.checked;
-            if (isAi) {
-                aiToggleBtn.classList.add('ai-toggle-active');
-            } else {
-                aiToggleBtn.classList.remove('ai-toggle-active');
+            const targetValue = isActive ? 'ai' : 'erp';
+            const targetRadio = document.querySelector(
+                `input[name="ai-mode"][value="${targetValue}"]`
+            );
+            if (targetRadio) {
+                targetRadio.checked = true;
             }
 
             updateErpVisibility();
             updateAiModeStyling();
-            resetPromptArea();   // ⭐ 모드 바꿀 때 프롬프트 초기화
+            resetPromptArea();
         });
-    });
-}
 
+        // 라디오를 바꾸면 토글 상태도 따라감
+        aiRadios.forEach(r => {
+            r.addEventListener('change', () => {
+                const isAi = r.value === 'ai' && r.checked;
+                if (isAi) {
+                    aiToggleBtn.classList.add('ai-toggle-active');
+                } else {
+                    aiToggleBtn.classList.remove('ai-toggle-active');
+                }
 
+                updateErpVisibility();
+                updateAiModeStyling();
+                resetPromptArea();
+            });
+        });
+    }
+
+    // 초기 표시 상태
+    updateErpVisibility();
+    updateAiModeStyling();
+    autoResize(userInput);
 });
 
 /* 전송 로직 */
@@ -507,13 +567,8 @@ async function sendMessage() {
     const selectElement = document.getElementById("preset-prompt");
     const sendButton = document.getElementById("send-button");
     const messagesDiv = document.getElementById("messages");
- // ⭐ 두개다 전송함
-    /**const presetMessage = !document.getElementById('preset-prompt-wrapper').classList.contains('hidden')
-        ? selectElement.value
-        : "";
-    const typedMessage = textarea.value.trim();
-    const message = presetMessage || typedMessage;**/
-        // ⭐ 프롬프트 창 내용만 전송함
+
+    // 프롬프트 창 내용만 전송
     const message = textarea.value.trim();
 
     if (!message || isSending) {
@@ -551,18 +606,6 @@ async function sendMessage() {
     const aiMode = aiRadio ? aiRadio.value : null;
     const aiModeLabel = aiRadio ? aiRadio.dataset.label : "";
 
-    // 기본 유효성 검사
-    if (!message || isSending) {
-        if (!message && !isSending) {
-            messagesDiv.innerHTML += `
-                <div class="ai-message self-start bg-yellow-100 text-yellow-700">
-                    ⚠️ 오류: 질문을 입력하거나 미리 정의된 질문을 선택해주세요.
-                </div>`;
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-        return;
-    }
-
     // ERP 선택 시: Item 또는 사용자 입력 필수
     if (aiMode === 'erp' && itemIds.length === 0 && !itemColor) {
         messagesDiv.innerHTML += `
@@ -594,7 +637,7 @@ async function sendMessage() {
         </div>`;
 
     textarea.value = "";
-    textarea.style.height = "auto";
+    autoResize(textarea);
     if (!document.getElementById('preset-prompt-wrapper').classList.contains('hidden')) {
         selectElement.value = "";
     }
@@ -610,31 +653,8 @@ async function sendMessage() {
     messagesDiv.appendChild(loadingDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-
     try {
         const body = {
-            prompt: message,
-            aiMode,
-            aiModeLabel
-        };
-
-        if (aiMode === 'erp') {
-            Object.assign(body, {
-                startDate: startDateForWebhook,
-                endDate: endDateForWebhook,
-                location: locationIds.join(","),
-                locationIds,
-                locationLabels,
-                item: itemLabel,
-                itemIds,
-                itemColor
-            });
-        }
-
-        const response = await fetch(MAKE_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
             prompt: message,
             startDate: startDateForWebhook,
             endDate: endDateForWebhook,
@@ -646,39 +666,41 @@ async function sendMessage() {
             itemColor,
             aiMode,
             aiModeLabel
-        })
-    });
+        };
+
+        const response = await fetch(MAKE_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
 
         const rawText = await response.text();
 
-        // HTTP 상태 체크
-    if (!response.ok) {
-        throw new Error(`HTTP ${response.status} ${response.statusText} / body: ${rawText}`);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status} ${response.statusText} / body: ${rawText}`);
+        }
+
+        loadingDiv.remove();
+
+        messagesDiv.innerHTML += `
+            <div class="ai-message">🤖: ${rawText}</div>
+        `;
+
+    } catch (err) {
+        loadingDiv.remove();
+
+        console.error("웹훅 호출 중 오류 발생:", err);
+
+        const msg = (err && err.message ? err.message : String(err))
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+
+        messagesDiv.innerHTML += `
+            <div class="ai-message bg-red-100 text-red-700 text-sm">
+                ⚠️ 통신 오류: ${msg}
+            </div>
+        `;
     }
-
-
-    // ✅ 이제 rawText 자체가 응답 내용
-    loadingDiv.remove();
-
-    messagesDiv.innerHTML += `
-        <div class="ai-message">🤖: ${rawText}</div>
-    `;
-
-} catch (err) {
-    loadingDiv.remove();
-
-    console.error("웹훅 호출 중 오류 발생:", err);
-
-    const msg = (err && err.message ? err.message : String(err))
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-
-    messagesDiv.innerHTML += `
-        <div class="ai-message bg-red-100 text-red-700 text-sm">
-            ⚠️ 통신 오류: ${msg}
-        </div>
-    `;
-}
 
     isSending = false;
     sendButton.disabled = false;
