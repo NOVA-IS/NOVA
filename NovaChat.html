@@ -271,6 +271,11 @@
         <section class="border-t bg-white p-4">
             <div class="max-w-3xl mx-auto">
                     <div class="max-w-3xl mx-auto space-y-2">
+                                            <!-- 👈 왼쪽: AI 검색 모드 버튼 -->
+                      <button id="ai-search-toggle"
+                               class="prompt-bar-btn border bg-white hover:bg-gray-100 transition">
+                        AI 검색모드
+                      </button>
                         <!-- 미리 정의된 질문 (ERP일 때만 보임) -->
                         <section id="preset-prompt-wrapper" class="row-start-1 col-start-2 col-end-3">
                             <select id="preset-prompt"
@@ -283,18 +288,14 @@
                             </select>
                         </section>
                     <!-- 아래: AI 검색모드 버튼 + 입력창 + 전송 버튼 (한 줄) -->
-                        <div class="flex items-stretch space-x-3">
-                    <!-- 👈 왼쪽: AI 검색 모드 버튼 -->
-                      <button id="ai-search-toggle"
-                               class="prompt-bar-btn border bg-white hover:bg-gray-100 transition">
-                        AI 검색모드
-                      </button>
+                        <!--div class="flex items-stretch space-x-3"-->
+
                         <!-- 프롬프트 textarea -->              
                         <textarea id="user-input"
                                   placeholder="여기에 질문을 입력하세요..."
                                    class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm leading-relaxed"
                                   rows="2"
-                                  style="max-height: 200px;"
+                                  style="max-height: 200px; width:100%"
                                   oninput="autoResize(this)"
                                   onkeypress="if(event.keyCode === 13 && !event.shiftKey){ event.preventDefault(); sendMessage(); }"></textarea>
                             
@@ -304,7 +305,7 @@
                         전송
                       </button>
 
-                </div>
+                <!--/div-->
             </div>
         </section>
 
