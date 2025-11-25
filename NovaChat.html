@@ -260,13 +260,7 @@
         <!-- 아래 입력 영역 -->
         <section class="border-t bg-white p-4">
             <div class="max-w-3xl mx-auto">
-                    <div class="grid grid-cols-[auto,1fr,auto] grid-rows-2 gap-2 items-stretch">
-                      <!-- 👈 왼쪽: AI 검색 모드 버튼 -->
-                      <button id="ai-search-toggle"
-                              class="row-span-2 px-3 py-2 text-xs border rounded-lg bg-white hover:bg-gray-100 transition">
-                        AI 검색모드
-                      </button>
-
+                    <div class="max-w-3xl mx-auto space-y-2">
                         <!-- 미리 정의된 질문 (ERP일 때만 보임) -->
                         <section id="preset-prompt-wrapper" class="row-start-1 col-start-2 col-end-3">
                             <select id="preset-prompt"
@@ -278,22 +272,27 @@
                                 <option value="단가 비교를 업체명, 아이템명, 단가 표로 작성">단가 비교를 업체명, 아이템명, 단가 표로 작성</option>
                             </select>
                         </section>
-                        <!-- 👉 오른쪽: 전송 버튼 (두 프롬프트 전체 높이에 맞춰 늘어남) -->
-                        <button onclick="sendMessage()" id="send-button"
-                            class="row-span-2 bg-indigo-600 text-white px-5 rounded-lg font-semibold hover:bg-indigo-700 shadow-md disabled:bg-gray-400 text-sm">
-                            전송
-                        </button>
-    
+                    <!-- 아래: AI 검색모드 버튼 + 입력창 + 전송 버튼 (한 줄) -->
+                        <div class="flex items-stretch space-x-3">
+                    <!-- 👈 왼쪽: AI 검색 모드 버튼 -->
+                      <button id="ai-search-toggle"
+                               class="px-3 py-2 text-xs border rounded-lg bg-white hover:bg-gray-100 transition">
+                        AI 검색모드
+                      </button>
                         <!-- 프롬프트 textarea -->              
                         <textarea id="user-input"
                                   placeholder="여기에 질문을 입력하세요..."
-                                   class="row-start-2 col-start-2 col-end-3 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm leading-relaxed"
-                                  rows="1"
+                                   class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm leading-relaxed"
+                                  rows="2"
                                   style="max-height: 200px;"
                                   oninput="autoResize(this)"
                                   onkeypress="if(event.keyCode === 13 && !event.shiftKey){ event.preventDefault(); sendMessage(); }"></textarea>
-                     
-                        
+                            
+                      <!-- 오른쪽: 전송 버튼 -->
+                      <button onclick="sendMessage()" id="send-button"
+                              class="bg-indigo-600 text-white px-5 rounded-lg font-semibold hover:bg-indigo-700 shadow-md disabled:bg-gray-400 text-sm">
+                        전송
+                      </button>
 
                 </div>
             </div>
