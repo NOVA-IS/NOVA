@@ -26,6 +26,15 @@
             border: 1px solid #d1d5db;      /* gray-300 */
             color: #374151;                 /* gray-700 */
         }
+        #send-button {
+            height: 48px !important;
+        }
+        #user-input {
+            height: 48px !important;
+            max-height: 48px !important;
+            padding-top: 14px !important;
+        }
+
         
         /* 활성 상태 */
         .ai-toggle-active {
@@ -262,7 +271,7 @@
                 </section>
 
                 <!-- 프롬프트 textarea -->
-                <div class="flex space-x-3 items-end">
+                <div class="flex space-x-3 items-center">
                     <!-- ✅ AI 검색 토글 -->
                 <button id="ai-search-toggle"
                         class="px-3 py-2 text-xs border rounded-lg bg-white hover:bg-gray-100 transition">
@@ -408,32 +417,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 1여기까지
     
-    if (aiToggle) {
-        // 토글을 바꾸면 라디오도 같이 바뀜
-        aiToggle.addEventListener('change', () => {
-            const targetValue = aiToggle.checked ? 'ai' : 'erp';
-            const targetRadio = document.querySelector(`input[name="ai-mode"][value="${targetValue}"]`);
-            if (targetRadio) {
-                targetRadio.checked = true;
-                updateErpVisibility();
-                updateAiModeStyling();   // ← 이것도 추가
+// ✅ 프롬프트 옆 AI 검색 토글 버튼 & 라디오 동기화
+// const aiToggleBtn = document.getElementById('ai-search-toggle');
+const aiRadios = document.querySelectorAll('input[name="ai-mode"]');
 
+if (aiToggleBtn) {
+    // 토글 버튼을 누르면 라디오도 같이 바뀜
+    aiToggleBtn.addEventListener('click', () => {
+        const isActive = aiToggleBtn.classList.toggle('ai-toggle-active'); // on/off
+
+        const targetValue = isActive ? 'ai' : 'erp';
+        const targetRadio = document.querySelector(
+            `input[name="ai-mode"][value="${targetValue}"]`
+        );
+        if (targetRadio) {
+            targetRadio.checked = true;
+        }
+
+        updateErpVisibility();
+        updateAiModeStyling();
+    });
+
+    // 라디오를 바꾸면 토글 상태도 따라감
+    aiRadios.forEach(r => {
+        r.addEventListener('change', () => {
+            const isAi = r.value === 'ai' && r.checked;
+            if (isAi) {
+                aiToggleBtn.classList.add('ai-toggle-active');
+            } else {
+                aiToggleBtn.classList.remove('ai-toggle-active');
             }
-        });
-    
-        // 라디오를 바꾸면 토글 상태도 따라감
-        document.querySelectorAll('input[name="ai-mode"]').forEach(r => {
-            r.addEventListener('change', () => {
-                const mode = r.value;
-                if (mode === "ai") aiToggleBtn.classList.add("ai-toggle-active");
-                else aiToggleBtn.classList.remove("ai-toggle-active");
-        
-                updateErpVisibility();
-                updateAiModeStyling();
-            });
-        });
 
-    }
+            updateErpVisibility();
+            updateAiModeStyling();
+        });
+    });
+}
+
 
 });
 
