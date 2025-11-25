@@ -29,6 +29,15 @@
         #send-button {
             height: 48px !important;
         }
+        /* textarea 위아래 스크롤 버튼 제거 */
+        textarea {
+            scrollbar-width: none;       /* Firefox */
+            -ms-overflow-style: none;    /* IE, Edge */
+        }
+        
+        textarea::-webkit-scrollbar {
+            display: none !important;    /* Chrome, Safari */
+        }
       
         /* 활성 상태 */
         .ai-toggle-active {
