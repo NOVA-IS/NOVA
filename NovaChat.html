@@ -21,6 +21,19 @@
         #messages {
             overflow-y: auto;
         }
+        /* 기본 토글 버튼 */
+        #ai-search-toggle {
+            border: 1px solid #d1d5db;      /* gray-300 */
+            color: #374151;                 /* gray-700 */
+        }
+        
+        /* 활성 상태 */
+        .ai-toggle-active {
+            background-color: #0284c7 !important; /* sky-700 */
+            border-color: #0284c7 !important;
+            color: white !important;
+        }
+
         /* AI 검색 모드일 때 프롬프트 색 */
         .ai-mode-active-textarea {
             background-color: #e0f2fe !important; /* sky-100 */
@@ -251,10 +264,11 @@
                 <!-- 프롬프트 textarea -->
                 <div class="flex space-x-3 items-end">
                     <!-- ✅ AI 검색 토글 -->
-                    <label class="flex items-center space-x-2 text-xs text-gray-600">
-                        <input type="checkbox" id="ai-search-toggle" class="h-4 w-4">
-                        <span>AI 검색</span>
-                    </label>
+                <button id="ai-search-toggle"
+                        class="px-3 py-2 text-xs border rounded-lg bg-white hover:bg-gray-100 transition">
+                    AI 검색모
+                </button>
+
                 
                     <textarea id="user-input"
                               placeholder="여기에 질문을 입력하세요..."
@@ -372,17 +386,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // AI 모드 라디오 변경 시 ERP 관련 영역 표시/숨김
     // ✅ 프롬프트 옆 AI 검색 토글과 라디오 동기화
-    const aiToggle = document.getElementById('ai-search-toggle');
-    const aiRadios = document.querySelectorAll('input[name="ai-mode"]');
-// 1맞나?
-    document.querySelectorAll('input[name="ai-mode"]').forEach(r => {
-    r.addEventListener('change', () => {
+    // 프롬프트 옆 AI 검색 토글 버튼
+    const aiToggleBtn = document.getElementById('ai-search-toggle');
+    
+    aiToggleBtn.addEventListener('click', () => {
+        const isActive = aiToggleBtn.classList.contains('ai-toggle-active');
+    
+        if (isActive) {
+            // AI 검색 → ERP-AI 분석으로 전환
+            document.querySelector('input[name="ai-mode"][value="erp"]').checked = true;
+            aiToggleBtn.classList.remove('ai-toggle-active');
+        } else {
+            // ERP-AI 분석 → AI 검색으로 전환
+            document.querySelector('input[name="ai-mode"][value="ai"]').checked = true;
+            aiToggleBtn.classList.add('ai-toggle-active');
+        }
+    
         updateErpVisibility();
-        updateAiModeStyling();  // ← 추가
-        });
+        updateAiModeStyling();
     });
-    updateErpVisibility();
-    updateAiModeStyling(); // ← 초기 상태도 적용
+
 // 1여기까지
     
     if (aiToggle) {
@@ -399,12 +422,17 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     
         // 라디오를 바꾸면 토글 상태도 따라감
-        aiRadios.forEach(r => {
+        document.querySelectorAll('input[name="ai-mode"]').forEach(r => {
             r.addEventListener('change', () => {
-                if (r.value === 'ai' && r.checked) aiToggle.checked = true;
-                if (r.value === 'erp' && r.checked) aiToggle.checked = false;
+                const mode = r.value;
+                if (mode === "ai") aiToggleBtn.classList.add("ai-toggle-active");
+                else aiToggleBtn.classList.remove("ai-toggle-active");
+        
+                updateErpVisibility();
+                updateAiModeStyling();
             });
         });
+
     }
 
 });
