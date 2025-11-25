@@ -23,7 +23,7 @@
         }
         /* 프롬프트 줄 양쪽 버튼 공통 스타일 */
         .prompt-bar-btn {
-            height: 100%;                 /* 두 버튼 동일 높이 */
+            height: 30px;                 /* 두 버튼 동일 높이 */
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -271,11 +271,7 @@
         <section class="border-t bg-white p-4">
             <div class="max-w-3xl mx-auto">
                     <div class="max-w-3xl mx-auto space-y-2">
-                                            <!-- 👈 왼쪽: AI 검색 모드 버튼 -->
-                      <button id="ai-search-toggle"
-                               class="prompt-bar-btn border bg-white hover:bg-gray-100 transition">
-                        AI 검색모드
-                      </button>
+
                         <!-- 미리 정의된 질문 (ERP일 때만 보임) -->
                         <section id="preset-prompt-wrapper" class="row-start-1 col-start-2 col-end-3">
                             <select id="preset-prompt"
@@ -298,6 +294,12 @@
                                   style="max-height: 200px; width:100%"
                                   oninput="autoResize(this)"
                                   onkeypress="if(event.keyCode === 13 && !event.shiftKey){ event.preventDefault(); sendMessage(); }"></textarea>
+
+                      <!-- 👈 왼쪽: AI 검색 모드 버튼 -->
+                      <button id="ai-search-toggle"
+                               class="prompt-bar-btn border bg-white hover:bg-gray-100 transition">
+                        AI 검색모드
+                      </button>
                             
                       <!-- 오른쪽: 전송 버튼 -->
                       <button onclick="sendMessage()" id="send-button"
@@ -490,12 +492,22 @@ async function sendMessage() {
     const selectElement = document.getElementById("preset-prompt");
     const sendButton = document.getElementById("send-button");
     const messagesDiv = document.getElementById("messages");
-
-    const presetMessage = !document.getElementById('preset-prompt-wrapper').classList.contains('hidden')
+ // ⭐ 두개다 전송함
+    /**const presetMessage = !document.getElementById('preset-prompt-wrapper').classList.contains('hidden')
         ? selectElement.value
         : "";
     const typedMessage = textarea.value.trim();
-    const message = presetMessage || typedMessage;
+    const message = presetMessage || typedMessage;**/
+        // ⭐ 프롬프트 창 내용만 전송함
+    const message = inputElement.value.trim();
+
+    if (!message || isSending) {
+        if (!message && !isSending) {
+            messagesDiv.innerHTML += `<div class="ai-message self-start bg-yellow-100 text-yellow-700">⚠️ 오류: 질문을 입력해주세요.</div>`;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        return;
+    }
 
     // 날짜
     const startDateObj = parseHtmlDate(document.getElementById("start-date").value);
