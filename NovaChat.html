@@ -404,10 +404,23 @@ document.addEventListener("DOMContentLoaded", () => {
     setupMasterCheckbox("#location-all", ".location-checkbox");
     setupMasterCheckbox("#item-all", ".item-checkbox");
 
+        // ⭐ 미리 정의된 질문 선택 시 textarea에 자동 입력
+    const presetSelect = document.getElementById("preset-prompt");
+    const userInput = document.getElementById("user-input");
+
+    if (presetSelect && userInput) {
+        presetSelect.addEventListener("change", () => {
+            const value = presetSelect.value || "";
+            userInput.value = value;
+            autoResize(userInput);     // 높이 자동 조절 함수 이미 있으니까 같이 호출
+        });
+    }
+
     // AI 모드 라디오 변경 시 ERP 관련 영역 표시/숨김
     // ✅ 프롬프트 옆 AI 검색 토글과 라디오 동기화
     // 프롬프트 옆 AI 검색 토글 버튼
     const aiToggleBtn = document.getElementById('ai-search-toggle');
+
 /** 
     aiToggleBtn.addEventListener('click', () => {
         const isActive = aiToggleBtn.classList.contains('ai-toggle-active');
