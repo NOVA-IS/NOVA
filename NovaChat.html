@@ -514,7 +514,7 @@ async function sendMessage() {
     const typedMessage = textarea.value.trim();
     const message = presetMessage || typedMessage;**/
         // ⭐ 프롬프트 창 내용만 전송함
-    const message = inputElement.value.trim();
+    const message = textarea.value.trim();
 
     if (!message || isSending) {
         if (!message && !isSending) {
