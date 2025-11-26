@@ -235,6 +235,8 @@
 
             <!-- 기간 선택 (ERP 모드일 때만 표시) -->
             <section id="period-section">
+                <p id="sheet-update-display" class="text-xs text-gray-500 mb-1"></p>
+
                 <h2 class="text-xs font-semibold text-gray-600 mb-2">기간 선택</h2>
                 <div class="space-y-2">
                     <label class="text-xs">시작일</label>
@@ -419,11 +421,21 @@ async function setEndDateFromSheet() {
         const res = await fetch(SHEET_LAST_UPDATE_URL);
         const data = await res.json();
 
-        document.getElementById("end-date").value = data.lastUpdated;
-    } catch(e) {
+        // 종료일 input 채우기
+        document.getElementById("end-date").value = data.lastUpdatedDate;
+
+        // 👉 화면에 텍스트 표시
+        const display = document.getElementById("sheet-update-display");
+        if (display) {
+            display.textContent = `📌 ERP 최신 업데이트 날짜: ${data.lastUpdatedText}`;
+        }
+
+    } catch (e) {
         console.error("업데이트 날짜 불러오기 실패", e);
     }
 }
+
+
 
 /* 날짜 포맷 함수 */
 function formatHtmlDate(date) {
