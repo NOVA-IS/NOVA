@@ -625,14 +625,14 @@ async function sendMessage() {
 
     // 신규 입력 필드
     const SupplierName = document.getElementById("SupplierName").value.trim();
-    const invoiceNo = document.getElementById("invoiceNo").value.trim();
+    const InvoiceNo = document.getElementById("InvoiceNo").value.trim();
     
     // ERP 선택 시: 4개 중 하나는 필수
     if (aiMode === 'erp' &&
         itemIds.length === 0 &&
         !itemColor &&
         !vendorName &&
-        !invoiceNo
+        !InvoiceNo
     ) {
         messagesDiv.innerHTML += `
             <div class="ai-message self-start bg-yellow-100 text-yellow-700">
