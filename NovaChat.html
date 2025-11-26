@@ -235,7 +235,6 @@
 
             <!-- 기간 선택 (ERP 모드일 때만 표시) -->
             <section id="period-section">
-                <p id="sheet-update-display" class="text-xs text-gray-500 mb-1"></p>
 
                 <h2 class="text-xs font-semibold text-gray-600 mb-2">기간 선택</h2>
                 <div class="space-y-2">
@@ -247,6 +246,7 @@
                     <input type="date" id="end-date"
                            class="w-full p-2 border border-gray-300 rounded-lg">
                 </div>
+                <p id="sheet-update-display" class="text-xs text-gray-500 mb-1"></p>
             </section>
 
             <!-- ERP 모드일 때만 보이는: Location + Item + 사용자 입력 -->
@@ -363,7 +363,7 @@
         </section>
 
         <!-- 아래 입력 영역 -->
-        <section class="border-t bg-white p-4">
+        <section class="bg-white p-4">
             <div class="max-w-3xl mx-auto space-y-2">
 
                 <!-- 미리 정의된 질문 (ERP일 때만 보임) -->
@@ -427,7 +427,7 @@ async function setEndDateFromSheet() {
         // 👉 화면에 텍스트 표시
         const display = document.getElementById("sheet-update-display");
         if (display) {
-            display.textContent = `📌 ERP 최신 업데이트 날짜: ${data.lastUpdatedText}`;
+            display.textContent = `<center>📌 ERP 최신 업데이트 날짜:<br> ${data.lastUpdatedText}</center>`;
         }
 
     } catch (e) {
