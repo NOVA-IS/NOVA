@@ -431,7 +431,7 @@ async function setEndDateFromSheet() {
         // 👉 화면에 텍스트 표시
         const display = document.getElementById("sheet-update-display");
         if (display) {
-            display.textContent = `📌 ERP 최신 업데이트 날짜:\n${data.lastUpdated}`;
+            display.textContent = `📌 ERP 최신 업데이트 날짜:\n${data.lastUpdatedText}`;
         }
 
     } catch (e) {
