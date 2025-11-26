@@ -246,7 +246,11 @@
                     <input type="date" id="end-date"
                            class="w-full p-2 border border-gray-300 rounded-lg">
                 </div>
-                <p id="sheet-update-display" class="text-xs text-gray-500 mb-1"></p>
+                <!-- ERP 날짜 프린트 -->
+                <p id="sheet-update-display"
+                   class="text-xs text-gray-600 mb-1 text-center leading-relaxed whitespace-pre-line">
+                </p>
+
             </section>
 
             <!-- ERP 모드일 때만 보이는: Location + Item + 사용자 입력 -->
@@ -427,7 +431,7 @@ async function setEndDateFromSheet() {
         // 👉 화면에 텍스트 표시
         const display = document.getElementById("sheet-update-display");
         if (display) {
-            display.textContent = `<center>📌 ERP 최신 업데이트 : <br> ${data.lastUpdatedText}</center>`;
+            display.textContent = `📌 ERP 최신 업데이트 날짜:\n${data.lastUpdated}`;
         }
 
     } catch (e) {
