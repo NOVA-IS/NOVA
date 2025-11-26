@@ -491,6 +491,22 @@ function resetPromptArea() {
         autoResize(textarea);
     }
 }
+    /* ERP/AI 선택 시: 프롬프트 placeholder 변 */
+function updatePromptPlaceholder() {
+    const textarea = document.getElementById("user-input");
+    const aiMode = getCurrentAiMode();
+
+    if (!textarea) return;
+
+    if (aiMode === "erp") {
+        textarea.placeholder =
+            "Location, Item, Invoice No. 등은 왼쪽 필터에서 선택하고, 여기에는 AI에게 원하는 내용을 입력합니다.";
+    } else {
+        textarea.placeholder =
+            "무엇이든 자유롭게 질문해보세요.";
+    }
+}
+
 
 /* 페이지 로드 시 초기화 */
 document.addEventListener("DOMContentLoaded", () => {
@@ -550,6 +566,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             updateErpVisibility();
             updateAiModeStyling();
+            updatePromptPlaceholder();
             resetPromptArea();
         });
 
@@ -565,6 +582,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 updateErpVisibility();
                 updateAiModeStyling();
+                updatePromptPlaceholder();
                 resetPromptArea();
             });
         });
