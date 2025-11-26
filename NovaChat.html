@@ -411,6 +411,19 @@ function autoResize(el) {
     el.style.height = "auto";
     el.style.height = (el.scrollHeight) + "px";
 }
+    
+/* 데이터 마지막 업데이트 날짜 불러오 */
+const SHEET_LAST_UPDATE_URL = "https://hook.us2.make.com/3xywupvm8a60lrh5l1l6kwpqe4sjake1";
+async function setEndDateFromSheet() {
+    try {
+        const res = await fetch(SHEET_LAST_UPDATE_URL);
+        const data = await res.json();
+
+        document.getElementById("end-date").value = data.lastUpdated;
+    } catch(e) {
+        console.error("업데이트 날짜 불러오기 실패", e);
+    }
+}
 
 /* 날짜 포맷 함수 */
 function formatHtmlDate(date) {
@@ -589,6 +602,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 초기 표시 상태
+    setEndDateFromSheet();
     updateErpVisibility();
     updateAiModeStyling();
     autoResize(userInput);
