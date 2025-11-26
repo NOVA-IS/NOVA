@@ -623,15 +623,25 @@ async function sendMessage() {
     const aiMode = aiRadio ? aiRadio.value : null;
     const aiModeLabel = aiRadio ? aiRadio.dataset.label : "";
 
-    // ERP 선택 시: Item 또는 사용자 입력 필수
-    if (aiMode === 'erp' && itemIds.length === 0 && !itemColor) {
+    // 신규 입력 필드
+    const SupplierName = document.getElementById("SupplierName").value.trim();
+    const invoiceNo = document.getElementById("invoiceNo").value.trim();
+    
+    // ERP 선택 시: 4개 중 하나는 필수
+    if (aiMode === 'erp' &&
+        itemIds.length === 0 &&
+        !itemColor &&
+        !vendorName &&
+        !invoiceNo
+    ) {
         messagesDiv.innerHTML += `
             <div class="ai-message self-start bg-yellow-100 text-yellow-700">
-                ⚠️ ERP 분석을 선택한 경우, 최소 하나의 제품명 또는 Item 사용자 입력이 필요합니다.
+                ⚠️ ERP 분석을 선택한 경우, 제품명·Item 사용자 입력·업체명·Invoice No 중 최소 1개를 입력해야 합니다.
             </div>`;
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
         return;
     }
+
 
     isSending = true;
     sendButton.disabled = true;
@@ -645,6 +655,8 @@ async function sendMessage() {
         if (locationLabels.length) filterTxt.push(`Location: ${locationLabels.join(", ")}`);
         if (itemLabel) filterTxt.push(`Item: ${itemLabel}`);
         if (itemColor) filterTxt.push(`Item 사용자 입력: ${itemColor}`);
+        if (SupplierName) filterTxt.push(`업체명: ${SupplierName}`);
+        if (InvoiceNo) filterTxt.push(`Invoice No: ${InvoiceNo}`);
     }
 
     messagesDiv.innerHTML += `
@@ -682,7 +694,9 @@ async function sendMessage() {
             itemIds,
             itemColor,
             aiMode,
-            aiModeLabel
+            aiModeLabel,
+            SupplierName,
+            InvoiceNo
         };
 
         const response = await fetch(MAKE_WEBHOOK_URL, {
