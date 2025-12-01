@@ -427,6 +427,10 @@ async function setEndDateFromSheet() {
 
         // 종료일 input 채우기
         document.getElementById("end-date").value = data.lastUpdatedDate;
+        
+        // 시작일 input 채우기
+    data.lastUpdatedDate.setMonth(data.lastUpdatedDate.getMonth() - 1);
+    document.getElementById("start-date").value = formatHtmlDate(start);
 
         // 👉 화면에 텍스트 표시
         const display = document.getElementById("sheet-update-display");
