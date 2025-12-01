@@ -421,24 +421,50 @@ function autoResize(el) {
 /* 데이터 마지막 업데이트 날짜 불러오 */
 const SHEET_LAST_UPDATE_URL = "https://hook.us2.make.com/3xywupvm8a60lrh5l1l6kwpqe4sjake1";
 async function setEndDateFromSheet() {
+    const endInput = document.getElementById("end-date");
+    const startInput = document.getElementById("start-date");
+    const display = document.getElementById("sheet-update-display");
+
     try {
         const res = await fetch(SHEET_LAST_UPDATE_URL);
         const data = await res.json();
 
-        // 종료일 input 채우기
-        document.getElementById("end-date").value = data.lastUpdatedDate;
+        // 1) 시트에서 받은 업데이트 날짜 (YYYY-MM-DD 형식이라고 가정)
+        const endStr = data.lastUpdatedDate;   // ← Make 응답 키 이름에 맞게 사용
+        if (!endStr || !endInput || !startInput) return;
 
+        // 종료일 = 업데이트일
+        endInput.value = endStr;
 
-        // 👉 화면에 텍스트 표시
-        const display = document.getElementById("sheet-update-display");
+        // 2) 시작일 = 종료일 기준 1개월 전
+        const endDateObj = parseHtmlDate(endStr); // "YYYY-MM-DD" → Date
+        const start = new Date(endDateObj);
+        start.setMonth(start.getMonth() - 1);     // 한 달 전
+        startInput.value = formatHtmlDate(start);
+
+        // 3) 화면에 설명 텍스트 표시 (예: 11/21/2025 (금요일) 2:36:46 오후)
         if (display) {
-            display.textContent = `📌 ERP 최신 업데이트 날짜: ${data.lastUpdatedText}`;
+            const text = data.lastUpdatedText || endStr; // 예쁘게 포맷된 문자열이 있으면 사용
+            display.textContent = `📌 ERP 최신 업데이트 날짜: ${text}`;
         }
 
     } catch (e) {
-        console.error("업데이트 날짜 불러오기 실패", e);
+        console.error("업데이트 날짜 불러오기 실패, 오늘 기준으로 설정:", e);
+
+        // 실패 시 fallback: 오늘을 종료일, 한 달 전을 시작일
+        const today = new Date();
+        if (endInput) endInput.value = formatHtmlDate(today);
+
+        const start = new Date(today);
+        start.setMonth(start.getMonth() - 1);
+        if (startInput) startInput.value = formatHtmlDate(start);
+
+        if (display) {
+            display.textContent = "📌 ERP 최신 업데이트 날짜를 불러오지 못해, 오늘 날짜 기준으로 설정했습니다.";
+        }
     }
 }
+
 
 
 
@@ -540,15 +566,6 @@ function updatePromptPlaceholder() {
 
 /* 페이지 로드 시 초기화 */
 document.addEventListener("DOMContentLoaded", () => {
-    const today = new Date();
-
-    // 종료일 = 오늘
-    document.getElementById("end-date").value = formatHtmlDate(today);
-
-    // 시작일 = 종료일 기준 2개월 전
-    const start = new Date(today);
-    start.setMonth(start.getMonth() - 2);
-    document.getElementById("start-date").value = formatHtmlDate(start);
 
     setupMasterCheckbox("#location-all", ".location-checkbox");
     setupMasterCheckbox("#item-all", ".item-checkbox");
