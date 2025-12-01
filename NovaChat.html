@@ -543,7 +543,7 @@ function updatePromptPlaceholder() {
 
 /* 페이지 로드 시 초기화 */
 document.addEventListener("DOMContentLoaded", () => {
-    const today = new Date();
+    /*const today = new Date();
 
     // 종료일 = 오늘
     document.getElementById("end-date").value = formatHtmlDate(today);
@@ -552,7 +552,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const start = new Date(today);
     start.setMonth(start.getMonth() - 2);
     document.getElementById("start-date").value = formatHtmlDate(start);
-
+*/
     setupMasterCheckbox("#location-all", ".location-checkbox");
     setupMasterCheckbox("#item-all", ".item-checkbox");
 
