@@ -542,11 +542,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const today = new Date();
 
     // 종료일 = 오늘
-    document.getElementById("end-date").value = formatHtmlDate(today);
+   // document.getElementById("end-date").value = formatHtmlDate(today);
 
     // 시작일 = 종료일 기준 3개월 전
-    const start = new Date(today);
-    start.setMonth(start.getMonth() - 3);
+    const start = new Date(data.lastUpdatedDate);
+    start.setMonth(start.getMonth() - 1);
     document.getElementById("start-date").value = formatHtmlDate(start);
 
     setupMasterCheckbox("#location-all", ".location-checkbox");
