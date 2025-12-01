@@ -544,9 +544,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // 종료일 = 오늘
     document.getElementById("end-date").value = formatHtmlDate(today);
 
-    // 시작일 = 종료일 기준 3개월 전
+    // 시작일 = 종료일 기준 2개월 전
     const start = new Date(today);
-    start.setMonth(start.getMonth() - 1);
+    start.setMonth(start.getMonth() - 2);
     document.getElementById("start-date").value = formatHtmlDate(start);
 
     setupMasterCheckbox("#location-all", ".location-checkbox");
