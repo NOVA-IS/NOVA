@@ -244,6 +244,28 @@
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 space-y-4 text-sm">
+            <!-- 🔹 AI 엔진 선택 (GPT / Gemini 등) -->
+<section class="mb-3">
+    <h2 class="text-xs font-semibold text-gray-600 mb-2">AI 엔진 선택</h2>
+    <div class="p-2 border border-gray-300 rounded-lg space-y-2">
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="ai-engine" value="gemini" data-label="Gemini" checked>
+            <span>Gemini</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="ai-engine" value="gpt" data-label="GPT" >
+            <span>GPT</span>
+        </label>
+        <!-- 필요하면 나중에 확장 -->
+        <!--
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="ai-engine" value="claude" data-label="Claude">
+            <span>Claude</span>
+        </label>
+        -->
+    </div>
+</section>
+
 
             <!-- AI 분석 모드 (맨 위, 라디오) -->
             <section>
@@ -718,6 +740,12 @@ async function sendMessage() {
     const aiMode = aiRadio ? aiRadio.value : null;
     const aiModeLabel = aiRadio ? aiRadio.dataset.label : "";
 
+    // 선택된 AI 엔진 (GPT / Gemini 등)
+    const aiEngineRadio = document.querySelector('input[name="ai-engine"]:checked');
+    const aiEngine = aiEngineRadio ? aiEngineRadio.value : null;        // "gpt", "gemini" ...
+    const aiEngineLabel = aiEngineRadio ? aiEngineRadio.dataset.label : ""; // "GPT", "Gemini"
+
+
     // 신규 입력 필드
     const SupplierName = document.getElementById("SupplierName").value.trim();
     const InvoiceNo = document.getElementById("InvoiceNo").value.trim();
@@ -743,6 +771,7 @@ async function sendMessage() {
 
     // 화면에 사용자 메시지 출력
     let filterTxt = [];
+    if (aiEngineLabel) filterTxt.push(`AI 엔진: ${aiEngineLabel}`);
     if (aiModeLabel) filterTxt.push(`AI 모드: ${aiModeLabel}`);
     if (aiMode === 'erp') {
         if (startDateDisplay) filterTxt.push(`시작일: ${startDateDisplay}`);
@@ -790,7 +819,9 @@ async function sendMessage() {
             aiMode,
             aiModeLabel,
             SupplierName,
-            InvoiceNo
+            InvoiceNo,
+            aiEngine,
+            aiEngineLabel
         };
 
         const response = await fetch(MAKE_WEBHOOK_URL, {
