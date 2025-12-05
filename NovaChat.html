@@ -676,16 +676,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     aiToggleBtn.classList.remove('ai-toggle-active');
                 }
-                // 🔥 AI 모델 변경 → Session 초기화
-                window.conversationId = null;
-                window.responseId = null;
-        
-                const isAi = r.value === 'ai' && r.checked;
-                if (isAi) {
-                    aiToggleBtn.classList.add('ai-toggle-active');
-                } else {
-                    aiToggleBtn.classList.remove('ai-toggle-active');
-                }
+    
 
                 updateErpVisibility();
                 updateAiModeStyling();
