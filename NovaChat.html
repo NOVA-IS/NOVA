@@ -821,7 +821,8 @@ async function sendMessage() {
             SupplierName,
             InvoiceNo,
             aiEngine,
-            aiEngineLabel
+            aiEngineLabel,
+            conversationId: window.conversationId || null  // ⭐ 추가 부분
         };
 
         const response = await fetch(MAKE_WEBHOOK_URL, {
