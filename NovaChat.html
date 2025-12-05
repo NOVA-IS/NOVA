@@ -676,6 +676,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     aiToggleBtn.classList.remove('ai-toggle-active');
                 }
+                // 🔥 AI 모델 변경 → Session 초기화
+                window.conversationId = null;
+                window.responseId = null;
+        
+                const isAi = r.value === 'ai' && r.checked;
+                if (isAi) {
+                    aiToggleBtn.classList.add('ai-toggle-active');
+                } else {
+                    aiToggleBtn.classList.remove('ai-toggle-active');
+                }
 
                 updateErpVisibility();
                 updateAiModeStyling();
@@ -749,6 +759,15 @@ async function sendMessage() {
     // 신규 입력 필드
     const SupplierName = document.getElementById("SupplierName").value.trim();
     const InvoiceNo = document.getElementById("InvoiceNo").value.trim();
+
+ // 🔥 AI 모델이 바뀌었으면 session 초기화
+    if (window.lastAiModel && window.lastAiModel !== aiMode) {
+        window.conversationId = null;
+        window.responseId = null;
+    }
+
+    // 현재 ai 모델 기록
+    window.lastAiModel = aiMode;
     
     // ERP 선택 시: 4개 중 하나는 필수
     if (aiMode === 'erp' &&
