@@ -830,30 +830,10 @@ async function sendMessage() {
             body: JSON.stringify(body)
         });
 
-        //const rawText = await response.text();
-        const data = await response.json();
+        const rawText = await response.text();
 
         if (!response.ok) {
-        // 에러 메시지도 보기 좋게
-            throw new Error(`HTTP ${response.status} ${response.statusText} / body: ${JSON.stringify(data)}`);
-        }
-        // 🔽 2) 실제 AI 답변 / Conversation ID 꺼내쓰기
-        const rawText = data.response_text || "";
-        const conversationId = data.conversationId || null;
-        const responseId = data.responseId || null;
-
-        // ⬇️ ConversationID → 없으면 ResponseID로 fallback
-        
-        if (data.conversationId && data.conversationId !== "") {
-            conversationId = data.conversationId;
-        } else if (data.responseId && data.responseId !== "") {
-            conversationId = data.responseId;
-        }
-        
-        // 저장 (필요하면 localStorage에도 저장 가능)
-        if (conversationId) {
-            window.conversationId = conversationId;
-            // localStorage.setItem("conversationId", conversationId);
+            throw new Error(`HTTP ${response.status} ${response.statusText} / body: ${rawText}`);
         }
 
         loadingDiv.remove();
