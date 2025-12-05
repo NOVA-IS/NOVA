@@ -843,7 +843,7 @@ async function sendMessage() {
         const responseId = data.responseID || null;
 
         // ⬇️ ConversationID → 없으면 ResponseID로 fallback
-        let convId = null;
+        let conversationId = null;
         
         if (data.conversationId && data.conversationId !== "") {
             convId = data.conversationId;
@@ -852,7 +852,7 @@ async function sendMessage() {
         }
         
         // 저장 (필요하면 localStorage에도 저장 가능)
-        if (convId) {
+        if (conversationId) {
             window.conversationId = convId;
             // localStorage.setItem("conversationId", convId);
         }
