@@ -823,6 +823,7 @@ async function sendMessage() {
             aiEngine,
             aiEngineLabel,
             conversationId: window.conversationId || null  // ⭐ 추가 부분
+            responseId: window.responseId || null  // ⭐ 추가 부분
         };
 
         const response = await fetch(MAKE_WEBHOOK_URL, {
@@ -838,19 +839,21 @@ async function sendMessage() {
         const responseId = response.headers.get("ResponseID");
         const conversationId = response.headers.get("ConversationID");
         
-        // 🔥 3) ConversationID → ResponseID fallback 적용
-        let finalConversationId = null;
+        // 값 정리용(문자열 "null" / 빈 문자열 제거)
+        const clean = v => (v && v !== "null" && v !== "") ? v : null;
         
-        if (conversationId && conversationId !== "null" && conversationId !== "") {
-            finalConversationId = conversationId;
-        } else if (responseId && responseId !== "null" && responseId !== "") {
-            finalConversationId = responseId;
+        const responseId = clean(rawResponseId);
+        const conversationId = clean(rawConversationId);
+        
+        // 🔥 3) 각각 따로 저장 (window 또는 localStorage)
+        if (conversationId) {
+            window.conversationId = conversationId;
+            // localStorage.setItem("conversationId", conversationId);
         }
         
-        // 🔥 4) 저장 (window 또는 localStorage)
-        if (finalConversationId) {
-            window.conversationId = finalConversationId;
-            // localStorage.setItem("conversationId", finalConversationId);
+        if (responseId) {
+            window.responseId = responseId;
+            // localStorage.setItem("responseId", responseId);
         }
 
 
