@@ -840,7 +840,7 @@ async function sendMessage() {
         // 🔽 2) 실제 AI 답변 / Conversation ID 꺼내쓰기
         const rawText = data.response_text || "";
         const conversationId = data.conversationId || null;
-        const responseId = data.responseID || null;
+        const responseId = data.responseId || null;
 
         // ⬇️ ConversationID → 없으면 ResponseID로 fallback
         let conversationId = null;
