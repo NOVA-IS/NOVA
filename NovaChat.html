@@ -829,8 +829,29 @@ async function sendMessage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
         });
-
+        
+        // 🔥 1) 응답 본문은 순수 텍스트
         const rawText = await response.text();
+
+        // 🔥 2) Header에서 ResponseID / ConversationID 가져오기
+        const responseId = response.headers.get("ResponseID");
+        const conversationId = response.headers.get("ConversationID");
+        
+        // 🔥 3) ConversationID → ResponseID fallback 적용
+        let finalConversationId = null;
+        
+        if (conversationId && conversationId !== "null" && conversationId !== "") {
+            finalConversationId = conversationId;
+        } else if (responseId && responseId !== "null" && responseId !== "") {
+            finalConversationId = responseId;
+        }
+        
+        // 🔥 4) 저장 (window 또는 localStorage)
+        if (finalConversationId) {
+            window.conversationId = finalConversationId;
+            // localStorage.setItem("conversationId", finalConversationId);
+        }
+
 
         if (!response.ok) {
             throw new Error(`HTTP ${response.status} ${response.statusText} / body: ${rawText}`);
