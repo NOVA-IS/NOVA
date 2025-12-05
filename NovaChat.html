@@ -840,10 +840,10 @@ async function sendMessage() {
         const conversationId = response.headers.get("ConversationID");
         
         // 값 정리용(문자열 "null" / 빈 문자열 제거)
-        const clean = v => (v && v !== "null" && v !== "") ? v : null;
+        //const clean = v => (v && v !== "null" && v !== "") ? v : null;
         
-        const responseId = clean(rawResponseId);
-        const conversationId = clean(rawConversationId);
+       // const responseId = clean(rawResponseId);
+       // const conversationId = clean(rawConversationId);
         
         // 🔥 3) 각각 따로 저장 (window 또는 localStorage)
         if (conversationId) {
