@@ -843,7 +843,6 @@ async function sendMessage() {
         const responseId = data.responseId || null;
 
         // ⬇️ ConversationID → 없으면 ResponseID로 fallback
-        let conversationId = null;
         
         if (data.conversationId && data.conversationId !== "") {
             conversationId = data.conversationId;
