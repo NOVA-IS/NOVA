@@ -846,15 +846,15 @@ async function sendMessage() {
         let conversationId = null;
         
         if (data.conversationId && data.conversationId !== "") {
-            convId = data.conversationId;
+            conversationId = data.conversationId;
         } else if (data.responseId && data.responseId !== "") {
-            convId = data.responseId;
+            conversationId = data.responseId;
         }
         
         // 저장 (필요하면 localStorage에도 저장 가능)
         if (conversationId) {
-            window.conversationId = convId;
-            // localStorage.setItem("conversationId", convId);
+            window.conversationId = conversationId;
+            // localStorage.setItem("conversationId", conversationId);
         }
 
         loadingDiv.remove();
