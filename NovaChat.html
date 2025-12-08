@@ -890,15 +890,14 @@ async function sendMessage() {
             responseId: window.responseId || null  // ⭐ 추가 부분
         };
 
-        
-        // 🔥 1) 응답 본문은 순수 텍스트
-        const rawText = await response.text();
-
         const response = await fetch(MAKE_WEBHOOK_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
         });
+        
+        // 🔥 1) 응답 본문은 순수 텍스트
+        const rawText = await response.text();
 
         // 🔥 2) Header에서 ResponseID / ConversationID 가져오기
         responseId = response.headers.get("ResponseID");
