@@ -465,6 +465,24 @@
 window.currentEngine = null;   // 'gpt' 또는 'gemini'
 window.lastEngine = null;
     
+// 🔹 "정말 새로운 대화"를 시작할 때만 호출할 함수
+function resetConversationState() {
+    window.conversationId = null;
+    window.responseId = null;
+}
+const engineRadios = document.querySelectorAll('input[name="ai-engine"]');
+
+engineRadios.forEach(r => {
+    r.addEventListener('change', () => {
+        // 엔진이 바뀌면 대화 맥락 완전 새로 시작
+        resetConversationState();   // 🔹 여기서만 ID 초기화
+        resetPromptArea();          // 프롬프트 내용도 초기화 (원하면 유지해도 되고)
+
+        // 필요하면 화면에 "새 대화 시작" 안내 메시지를 추가해도 됨
+    });
+});
+
+    
 /* textarea 자동 높이 증가 */
 function autoResize(el) {
     el.style.height = "auto";
