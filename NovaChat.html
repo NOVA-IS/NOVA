@@ -820,9 +820,9 @@ async function sendMessage() {
         if (itemColor) filterTxt.push(`Item 사용자 입력: ${itemColor}`);
         if (SupplierName) filterTxt.push(`업체명: ${SupplierName}`);
         if (InvoiceNo) filterTxt.push(`Invoice No: ${InvoiceNo}`);
-        filterTxt.push(`conversationId: ${conversationId}`);
+        if (conversationId) filterTxt.push(`conversationId: ${conversationId}`);
     } else {
-filterTxt.push(`conversationId: ${conversationId}`);
+        if (conversationId) filterTxt.push(`conversationId: ${conversationId}`);
     }
 
     messagesDiv.innerHTML += `
