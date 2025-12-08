@@ -850,12 +850,6 @@ async function sendMessage() {
     `;
     messagesDiv.appendChild(loadingDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-
-
-        // 🔥 2) Header에서 ResponseID / ConversationID 가져오기
-        responseId = response.headers.get("ResponseID");
-        conversationId = response.headers.get("ConversationID");
         
         // 값 정리용(문자열 "null" / 빈 문자열 제거)
         //const clean = v => (v && v !== "null" && v !== "") ? v : null;
@@ -905,6 +899,10 @@ async function sendMessage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
         });
+
+        // 🔥 2) Header에서 ResponseID / ConversationID 가져오기
+        responseId = response.headers.get("ResponseID");
+        conversationId = response.headers.get("ConversationID");
 
         // GPT일 때 + resp_ 로 시작할 때만 previous_response_id 후보로 보냄
         if (aiEngine === 'gpt' && window.responseId && window.responseId.startsWith('resp_')) {
