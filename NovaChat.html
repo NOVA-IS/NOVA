@@ -820,6 +820,9 @@ async function sendMessage() {
         if (itemColor) filterTxt.push(`Item 사용자 입력: ${itemColor}`);
         if (SupplierName) filterTxt.push(`업체명: ${SupplierName}`);
         if (InvoiceNo) filterTxt.push(`Invoice No: ${InvoiceNo}`);
+        filterTxt.push(`conversationId: ${conversationId}`);
+    } else {
+filterTxt.push(`conversationId: ${conversationId}`);
     }
 
     messagesDiv.innerHTML += `
@@ -846,6 +849,26 @@ async function sendMessage() {
     // 우선 변수 선언 (try 밖)
     let responseId = null;
     let conversationId = null;
+        // 🔥 2) Header에서 ResponseID / ConversationID 가져오기
+        responseId = response.headers.get("ResponseID");
+        conversationId = response.headers.get("ConversationID");
+        
+        // 값 정리용(문자열 "null" / 빈 문자열 제거)
+        //const clean = v => (v && v !== "null" && v !== "") ? v : null;
+        
+       // const responseId = clean(rawResponseId);
+       // const conversationId = clean(rawConversationId);
+        
+        // 🔥 3) 각각 따로 저장 (window 또는 localStorage)
+        if (conversationId) {
+            window.conversationId = conversationId;
+            // localStorage.setItem("conversationId", conversationId);
+        }
+        
+        if (responseId) {
+            window.responseId = responseId;
+            // localStorage.setItem("responseId", responseId);
+        }
 
     try {
         const body = {
@@ -882,26 +905,6 @@ async function sendMessage() {
         // 🔥 1) 응답 본문은 순수 텍스트
         const rawText = await response.text();
 
-        // 🔥 2) Header에서 ResponseID / ConversationID 가져오기
-        responseId = response.headers.get("ResponseID");
-        conversationId = response.headers.get("ConversationID");
-        
-        // 값 정리용(문자열 "null" / 빈 문자열 제거)
-        //const clean = v => (v && v !== "null" && v !== "") ? v : null;
-        
-       // const responseId = clean(rawResponseId);
-       // const conversationId = clean(rawConversationId);
-        
-        // 🔥 3) 각각 따로 저장 (window 또는 localStorage)
-        if (conversationId) {
-            window.conversationId = conversationId;
-            // localStorage.setItem("conversationId", conversationId);
-        }
-        
-        if (responseId) {
-            window.responseId = responseId;
-            // localStorage.setItem("responseId", responseId);
-        }
 
 
         if (!response.ok) {
