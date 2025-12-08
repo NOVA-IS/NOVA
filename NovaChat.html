@@ -465,6 +465,10 @@
 window.currentEngine = null;   // 'gpt' 또는 'gemini'
 window.lastEngine = null;
     
+// 우선 변수 선언 (try 밖)
+let responseId = null;
+let conversationId = null;
+    
 // 🔹 "정말 새로운 대화"를 시작할 때만 호출할 함수
 function resetConversationState() {
     window.conversationId = null;
@@ -846,9 +850,7 @@ async function sendMessage() {
     `;
     messagesDiv.appendChild(loadingDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    // 우선 변수 선언 (try 밖)
-    //let responseId = null;
-    //let conversationId = null;
+
         // 🔥 2) Header에서 ResponseID / ConversationID 가져오기
         responseId = response.headers.get("ResponseID");
         conversationId = response.headers.get("ConversationID");
