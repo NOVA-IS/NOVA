@@ -851,6 +851,12 @@ async function sendMessage() {
     messagesDiv.appendChild(loadingDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
+        const response = await fetch(MAKE_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
         // 🔥 2) Header에서 ResponseID / ConversationID 가져오기
         responseId = response.headers.get("ResponseID");
         conversationId = response.headers.get("ConversationID");
@@ -897,12 +903,6 @@ async function sendMessage() {
         if (aiEngine === 'gpt' && window.responseId && window.responseId.startsWith('resp_')) {
             body.responseId = window.responseId;
         }
-
-        const response = await fetch(MAKE_WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body)
-        });
         
         // 🔥 1) 응답 본문은 순수 텍스트
         const rawText = await response.text();
