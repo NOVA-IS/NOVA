@@ -777,17 +777,14 @@ async function sendMessage() {
         window.conversationId = null;
         window.responseId = null;
     }
-     // 어떤 엔진 선택했는지 읽기
-    const engineRadio = document.querySelector('input[name="ai-engine"]:checked');
-    const engine = engineRadio ? engineRadio.value : 'gpt'; // 기본 gpt
 
     // 엔진 바뀌었으면 session 관련 ID 싹 지우기
-    if (window.lastEngine && window.lastEngine !== engine) {
+    if (window.lastEngine && window.lastEngine !== aiEngine) {
         window.conversationId = null;
         window.responseId = null;
     }
-    window.currentEngine = engine;
-    window.lastEngine = engine;
+    window.currentEngine = aiEngine;
+    window.lastEngine = aiEngine;
 
     // 현재 ai 모델 기록
     window.lastAiModel = aiMode;
@@ -864,12 +861,12 @@ async function sendMessage() {
             InvoiceNo,
             aiEngine,
             aiEngineLabel,
-            engine,  // 위에서 계산한 'gpt' | 'gemini'
+            //engine,  // 위에서 계산한 'gpt' | 'gemini'
             conversationId: window.conversationId || null,  // ⭐ 추가 부분
             responseId: window.responseId || null  // ⭐ 추가 부분
         };
         // GPT일 때 + resp_ 로 시작할 때만 previous_response_id 후보로 보냄
-        if (engine === 'gpt' && window.responseId && window.responseId.startsWith('resp_')) {
+        if (aiEngine === 'gpt' && window.responseId && window.responseId.startsWith('resp_')) {
             body.responseId = window.responseId;
         }
 
