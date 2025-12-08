@@ -825,9 +825,7 @@ async function sendMessage() {
         if (SupplierName) filterTxt.push(`업체명: ${SupplierName}`);
         if (InvoiceNo) filterTxt.push(`Invoice No: ${InvoiceNo}`);
         if (conversationId) filterTxt.push(`conversationId: ${conversationId}`);
-    } else {
-        if (conversationId) filterTxt.push(`conversationId: ${conversationId}`);
-    }
+    } 
 
     messagesDiv.innerHTML += `
         <div class="user-message">
