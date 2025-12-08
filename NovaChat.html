@@ -847,8 +847,8 @@ async function sendMessage() {
     messagesDiv.appendChild(loadingDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
     // 우선 변수 선언 (try 밖)
-    let responseId = null;
-    let conversationId = null;
+    //let responseId = null;
+    //let conversationId = null;
         // 🔥 2) Header에서 ResponseID / ConversationID 가져오기
         responseId = response.headers.get("ResponseID");
         conversationId = response.headers.get("ConversationID");
