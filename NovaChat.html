@@ -489,7 +489,7 @@ function autoResize(el) {
     el.style.height = (el.scrollHeight) + "px";
 }
     
-/* 데이터 마지막 업데이트 날짜 불러오 */
+/* 데이터 마지막 업데이트 날짜 불러오기 */
 const SHEET_LAST_UPDATE_URL = "https://hook.us2.make.com/3xywupvm8a60lrh5l1l6kwpqe4sjake1";
 async function setEndDateFromSheet() {
     const endInput = document.getElementById("end-date");
@@ -843,6 +843,9 @@ async function sendMessage() {
     `;
     messagesDiv.appendChild(loadingDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    // 우선 변수 선언 (try 밖)
+    let responseId = null;
+    let conversationId = null;
 
     try {
         const body = {
@@ -880,8 +883,8 @@ async function sendMessage() {
         const rawText = await response.text();
 
         // 🔥 2) Header에서 ResponseID / ConversationID 가져오기
-        const responseId = response.headers.get("ResponseID");
-        const conversationId = response.headers.get("ConversationID");
+        responseId = response.headers.get("ResponseID");
+        conversationId = response.headers.get("ConversationID");
         
         // 값 정리용(문자열 "null" / 빈 문자열 제거)
         //const clean = v => (v && v !== "null" && v !== "") ? v : null;
@@ -925,7 +928,21 @@ async function sendMessage() {
                 ⚠️ 통신 오류: ${msg}
             </div>
         `;
+    } finally {
+    // ✨ 항상 실행됨 (에러가 나도 실행됨)
+
+    // 값이 있을 때만 덮어쓰기
+    if (conversationId && conversationId !== "null" && conversationId !== "") {
+        window.conversationId = conversationId;
     }
+
+    if (responseId && responseId !== "null" && responseId !== "") {
+        window.responseId = responseId;
+    }
+
+    // 버튼 복구
+    sendButton.disabled = false;
+}
 
     isSending = false;
     sendButton.disabled = false;
