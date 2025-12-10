@@ -815,7 +815,7 @@ document.addEventListener("DOMContentLoaded", () => {
             labelSpan.textContent = labels.join(", ");
         } else {
             // 3개 이상이면 "첫번째 외 n개" 형식 (원하면 바꿔도 됨)
-            labelSpan.textContent = `${labels[0]} 외 ${labels.length - 1}개`;
+            labelSpan.textContent = `${labels[0]},${labels[1]},${labels[2]},${labels[3]} 외 ${labels.length - 1}개`;
         }
     }
     
