@@ -364,14 +364,16 @@
                                 <input type="checkbox" class="item-checkbox" value="FILM">
                                 <span>Film</span>
                             </label>
-                            <!-- ✅ 사용자 입력 옵션 추가 -->
+                             <!-- 사용자 입력 체크박스 + 입력창 -->
+                            <div class="space-y-1 pt-1">
+                            <!-- 체크박스 라벨 -->
+                            <label class="flex items-center space-x-2">
                                 <input type="checkbox" id="item-custom-toggle">
-                                <!--label for="item-custom-toggle">직접 입력하기</label-->
-                    
-                            <!-- ✅ 표시/숨김 인풋 박스 -->
-                                <input type="text" id="item-color-input"
+                                <span><input type="text" id="item-color-input"
                                     placeholder="여러값은 쉼표(,)로 구분"
-                                    class="w-full p-2 border border-gray-300 rounded-lg">
+                                    class="w-full p-2 border border-gray-300 rounded-lg pl-6"></span>
+                            </label>
+                                
                         </div>
                     </div>
 
