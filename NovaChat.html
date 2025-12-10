@@ -375,6 +375,79 @@
                             class="w-full p-2 border border-gray-300 rounded-lg">
                     </div>
                 </div>
+                <!-- 프로젝트 -->
+                <div class="relative">
+                  <!-- 드롭다운 버튼 -->
+                  <button id="projectDropdownBtn"
+                          class="w-full p-2 border border-gray-300 rounded-lg flex justify-between items-center bg-white">
+                      Project
+                      <span>▼</span>
+                  </button>
+                
+                  <!-- 드롭다운 내용 -->
+                  <div id="projectDropdownMenu"
+                       class="absolute left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg p-2 hidden z-20">
+                
+                      <label class="flex items-center space-x-2 font-semibold">
+                          <input type="checkbox" id="project-all" class="project-master">
+                          <span>모두 선택</span>
+                      </label>
+                
+                      <label class="flex items-center space-x-2">
+                          <input type="checkbox" class="project-checkbox" value="P001" data-label="Project A">
+                          <span>MRO 구매대행 (General Purchasing)</span>
+                      </label>
+                
+                      <label class="flex items-center space-x-2">
+                          <input type="checkbox" class="project-checkbox" value="P018" data-label="Project B">
+                          <span>경비 (Security)</span>
+                      </label>
+                
+                      <label class="flex items-center space-x-2">
+                          <input type="checkbox" class="project-checkbox" value="P020" data-label="Project C">
+                          <span>보전 (Maintenance Management)</span>
+                      </label>
+                      <label class="flex items-center space-x-2">
+                          <input type="checkbox" class="project-checkbox" value="P011" data-label="Project C">
+                          <span>생관 물류 (Transportation Shipping)</span>
+                      </label>
+                      <label class="flex items-center space-x-2">
+                          <input type="checkbox" class="project-checkbox" value="P008" data-label="Project C">
+                          <span>생산지원 (Production Service)</span>
+                      </label>
+                      <label class="flex items-center space-x-2">
+                          <input type="checkbox" class="project-checkbox" value="P009" data-label="Project C">
+                          <span>인력공급 (Staffing)</span>
+                      </label>
+                      <label class="flex items-center space-x-2">
+                          <input type="checkbox" class="project-checkbox" value="P016" data-label="Project C">
+                          <span>자산관리 (Property Management)</span>
+                      </label>
+                      <label class="flex items-center space-x-2">
+                          <input type="checkbox" class="project-checkbox" value="P013" data-label="Project C">
+                          <span>자재 물류 (Transportation Material)</span>
+                      </label>
+                      <label class="flex items-center space-x-2">
+                          <input type="checkbox" class="project-checkbox" value="P010" data-label="Project C">
+                          <span>장비임대 (Equipment Lease)</span>
+                      </label>
+                      <label class="flex items-center space-x-2">
+                          <input type="checkbox" class="project-checkbox" value="P002" data-label="Project C">
+                          <span>청소 (Janitorial)</span>
+                      </label>
+                      <label class="flex items-center space-x-2">
+                          <input type="checkbox" class="project-checkbox" value="P017" data-label="Project C">
+                          <span>케이터링 (Catering)</span>
+                      </label>
+                      <label class="flex items-center space-x-2">
+                          <input type="checkbox" class="project-checkbox" value="P019" data-label="Project C">
+                          <span>폐기물 처리 대행 (Waste Management)</span>
+                      </label>
+
+                  </div>
+                </div>
+
+
                 <!-- 업체명 -->
                 <div>
                     <h2 class="text-xs font-semibold text-gray-600 mb-2">업체명</h2>
@@ -637,6 +710,21 @@ function updatePromptPlaceholder() {
             "무엇이든 자유롭게 질문해보세요.";
     }
 }
+    //프로젝트선택을 위
+const projectBtn = document.getElementById("projectDropdownBtn");
+const projectMenu = document.getElementById("projectDropdownMenu");
+
+// 버튼 클릭 → 토글 열기/닫기
+projectBtn.addEventListener("click", () => {
+    projectMenu.classList.toggle("hidden");
+});
+
+// 바깥 클릭 시 닫기
+document.addEventListener("click", (e) => {
+    if (!projectBtn.contains(e.target) && !projectMenu.contains(e.target)) {
+        projectMenu.classList.add("hidden");
+    }
+});
 
 
 /* 페이지 로드 시 초기화 */
@@ -644,6 +732,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setupMasterCheckbox("#location-all", ".location-checkbox");
     setupMasterCheckbox("#item-all", ".item-checkbox");
+    setupMasterCheckbox("#project-all", ".project-checkbox");
 
     // 미리 정의된 질문 선택 시 textarea에 자동 입력
     const presetSelect = document.getElementById("preset-prompt");
