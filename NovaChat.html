@@ -381,7 +381,7 @@
                   <!-- 드롭다운 버튼 -->
                   <button id="projectDropdownBtn"
                           class="w-full p-2 border border-gray-300 rounded-lg flex justify-between items-center bg-white">
-                      Project
+                      <span id="projectDropdownLabel">Project</span>   <!-- ✅ 라벨 span 추가 -->
                       <span>▼</span>
                   </button>
                 
@@ -800,6 +800,33 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+    // 🔹 Project 드롭다운 라벨 업데이트 함수
+    function updateProjectLabel() {
+        const labelSpan = document.getElementById("projectDropdownLabel");
+        if (!labelSpan) return;
+    
+        const checked = document.querySelectorAll(".project-checkbox:checked");
+        const labels = Array.from(checked).map(cb => cb.dataset.label || cb.value);
+    
+        if (labels.length === 0) {
+            labelSpan.textContent = "Project"; // 기본 텍스트
+        } else if (labels.length <= 2) {
+            // 1~2개까지는 이름 그대로 표시
+            labelSpan.textContent = labels.join(", ");
+        } else {
+            // 3개 이상이면 "첫번째 외 n개" 형식 (원하면 바꿔도 됨)
+            labelSpan.textContent = `${labels[0]} 외 ${labels.length - 1}개`;
+        }
+    }
+    
+    // ✅ Project 체크박스 변경 시마다 라벨 갱신
+    document.querySelectorAll(".project-checkbox, #project-all").forEach(el => {
+        el.addEventListener("change", updateProjectLabel);
+    });
+    
+    // 페이지 처음 로드할 때도 한 번 맞춰주기
+    updateProjectLabel();
+
 
     // 초기 표시 상태
     setEndDateFromSheet();
