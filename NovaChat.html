@@ -862,10 +862,6 @@ async function sendMessage() {
     const selectElement = document.getElementById("preset-prompt");
     const sendButton = document.getElementById("send-button");
     const messagesDiv = document.getElementById("messages");
-    const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
-    const projectIds = Array.from(projectBoxes).map(cb => cb.value);
-    const projectLabels = Array.from(projectBoxes).map(cb => cb.dataset.label);
-
 
     // 프롬프트 창 내용만 전송
     const message = textarea.value.trim();
