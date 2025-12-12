@@ -396,7 +396,7 @@
                   </button>
                 
                   <!-- 드롭다운 내용 -->
-                  <div id="projectDropdownMenu"
+                  <div id="ProjectCodeCheckbox"
                        class="absolute left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg p-2 hidden z-20">
                 
                       <!--label class="flex items-center space-x-2 font-semibold">
@@ -900,6 +900,11 @@ async function sendMessage() {
     // Item 사용자 입력
     const itemColor = document.getElementById("item-color-input").value.trim();
 
+    // ProjectCode
+    const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
+    const projectIds = Array.from(projectBoxes).map(cb => cb.value);
+    const ProjectCode = projectIds.join(", ");
+
     // AI 모드 (라디오)
     const aiRadio = document.querySelector('input[name="ai-mode"]:checked');
     const aiMode = aiRadio ? aiRadio.value : null;
@@ -963,6 +968,7 @@ async function sendMessage() {
         if (itemColor) filterTxt.push(`Item 사용자 입력: ${itemColor}`);
         if (SupplierName) filterTxt.push(`업체명: ${SupplierName}`);
         if (InvoiceNo) filterTxt.push(`Invoice No: ${InvoiceNo}`);
+        if (ProjectCode) filterTxt.push(`ProjectCode: ${ProjectCode}`);
     } 
 
     messagesDiv.innerHTML += `
@@ -1021,6 +1027,7 @@ async function sendMessage() {
             InvoiceNo,
             aiEngine,
             aiEngineLabel,
+            ProjectCode,
             //engine,  // 위에서 계산한 'gpt' | 'gemini'
             conversationId: window.conversationId || null,  // ⭐ 추가 부분
             responseId: window.responseId || null  // ⭐ 추가 부분
