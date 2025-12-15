@@ -184,6 +184,38 @@
             width: 24px;
             height: 24px;
         }
+
+        /* 파일첨부용 */
+        .thumb {
+          width: 56px;
+          height: 56px;
+          border-radius: 12px;
+          object-fit: cover;
+          border: 1px solid #e5e7eb;
+        }
+        .thumb-wrap {
+          position: relative;
+          display: inline-block;
+        }
+        .thumb-remove {
+          position: absolute;
+          top: -8px;
+          right: -8px;
+          width: 22px;
+          height: 22px;
+          border-radius: 9999px;
+          border: 1px solid #e5e7eb;
+          background: #fff;
+          font-size: 12px;
+          line-height: 20px;
+          text-align: center;
+          cursor: pointer;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+        .drop-hint {
+          outline: 2px dashed rgba(99,102,241,0.55);
+          outline-offset: 4px;
+        }
         
         /* 새롭게 추가*/
         .stage {
@@ -869,6 +901,113 @@ document.addEventListener("DOMContentLoaded", () => {
     autoResize(userInput);
 });
 
+// ✅ 첨부 파일(이미지) 목록: 여러 장 지원
+window.attachedImages = []; // File[]
+
+// ✅ 미리보기 렌더
+function renderAttachments() {
+  const wrap = document.getElementById("attachment-preview");
+  if (!wrap) return;
+
+  wrap.innerHTML = "";
+
+  window.attachedImages.forEach((file, idx) => {
+    const url = URL.createObjectURL(file);
+
+    const item = document.createElement("div");
+    item.className = "thumb-wrap";
+
+    const img = document.createElement("img");
+    img.className = "thumb";
+    img.src = url;
+    img.alt = file.name || `image-${idx}`;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "thumb-remove";
+    btn.textContent = "×";
+    btn.onclick = () => {
+      window.attachedImages.splice(idx, 1);
+      renderAttachments();
+    };
+
+    item.appendChild(img);
+    item.appendChild(btn);
+    wrap.appendChild(item);
+  });
+}
+
+// ✅ FileList / Clipboard items에서 이미지 File만 추출하여 추가
+function addImageFiles(files) {
+  const arr = Array.from(files || []);
+  const images = arr.filter(f => f && f.type && f.type.startsWith("image/"));
+  if (!images.length) return;
+
+  // (옵션) 너무 많이 붙는 거 방지하고 싶으면 제한 가능
+   const MAX = 2;
+  // window.attachedImages = window.attachedImages.concat(images).slice(0, MAX);
+
+  window.attachedImages = window.attachedImages.concat(images);
+  renderAttachments();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const textarea = document.getElementById("user-input");
+  const fileInput = document.getElementById("file-input");
+  const attachBtn = document.getElementById("attach-btn");
+
+  // ① 파일 선택 버튼 → file input 열기
+  if (attachBtn && fileInput) {
+    attachBtn.addEventListener("click", () => fileInput.click());
+  }
+
+  // ② 파일 선택 input 변경 → 첨부 추가
+  if (fileInput) {
+    fileInput.addEventListener("change", () => {
+      addImageFiles(fileInput.files);
+      fileInput.value = ""; // 같은 파일 다시 선택 가능하게
+    });
+  }
+
+  // ③ 붙여넣기(Ctrl/Cmd+V) → 첨부 추가
+  if (textarea) {
+    textarea.addEventListener("paste", (e) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      const files = [];
+      for (const it of items) {
+        if (it.type && it.type.startsWith("image/")) {
+          const f = it.getAsFile();
+          if (f) files.push(f);
+        }
+      }
+      if (files.length) addImageFiles(files);
+    });
+  }
+
+  // ④ 드래그&드롭 → 첨부 추가 (textarea 위로 드롭)
+  if (textarea) {
+    textarea.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      textarea.classList.add("drop-hint");
+    });
+
+    textarea.addEventListener("dragleave", () => {
+      textarea.classList.remove("drop-hint");
+    });
+
+    textarea.addEventListener("drop", (e) => {
+      e.preventDefault();
+      textarea.classList.remove("drop-hint");
+
+      const files = e.dataTransfer?.files;
+      if (files && files.length) addImageFiles(files);
+    });
+  }
+});
+
+
 /* 전송 로직 */
 const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/beojnrbam68450c5366anrdb2lfdi8uq";
 let isSending = false;
@@ -1046,12 +1185,35 @@ async function sendMessage() {
             conversationId: window.conversationId || null,  // ⭐ 추가 부분
             responseId: window.responseId || null  // ⭐ 추가 부분
         };
-
+/* 파일첨부기능전 
         const response = await fetch(MAKE_WEBHOOK_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
         });
+        */
+        /* 파일첨부기능*/
+        const formData = new FormData();
+
+        // (기존 body의 필드들을 FormData에 담기)
+        Object.entries(body).forEach(([k, v]) => {
+          // 배열/객체는 문자열로
+          if (typeof v === "object") formData.append(k, JSON.stringify(v));
+          else formData.append(k, v ?? "");
+        });
+        
+        // ✅ 첨부 이미지들 추가 (여러장)
+        (window.attachedImages || []).forEach((file, idx) => {
+          formData.append("images", file, file.name || `paste-${idx}.png`);
+        });
+        
+        // ✅ 전송
+        const response = await fetch(MAKE_WEBHOOK_URL, {
+          method: "POST",
+          body: formData
+        });
+
+        
         
         // 🔥 1) 응답 본문은 순수 텍스트
         const rawText = await response.text();
@@ -1103,6 +1265,11 @@ async function sendMessage() {
 
     // 버튼 복구
     sendButton.disabled = false;
+
+    //첨부초기화
+    window.attachedImages = [];
+    renderAttachments();
+
 }
 
     isSending = false;
