@@ -721,12 +721,21 @@ function updatePromptPlaceholder() {
             "무엇이든 자유롭게 질문해보세요.";
     }
 }
+    //프로젝트선택을 위
+    const projectBtn = document.getElementById("projectDropdownBtn");
+    const projectMenu = document.getElementById("projectDropdownMenu");
 
+    // ✅ 둘 다 있을 때만 이벤트 등록
+    if (projectBtn && projectMenu) {
+      projectBtn.addEventListener("click", () => {
+        projectMenu.classList.toggle("hidden");
+      });
+    }
 
 // 버튼 클릭 → 토글 열기/닫기
-projectBtn.addEventListener("click", () => {
-    projectMenu.classList.toggle("hidden");
-});
+//projectBtn.addEventListener("click", () => {
+//    projectMenu.classList.toggle("hidden");
+//});
 
 // 바깥 클릭 시 닫기
 document.addEventListener("click", (e) => {
@@ -808,16 +817,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
-    //프로젝트선택을 위
-    const projectBtn = document.getElementById("projectDropdownBtn");
-    const projectMenu = document.getElementById("projectDropdownMenu");
 
-    // ✅ 둘 다 있을 때만 이벤트 등록
-    if (projectBtn && projectMenu) {
-      projectBtn.addEventListener("click", () => {
-        projectMenu.classList.toggle("hidden");
-      });
-    }
     
     // 🔹 Project 드롭다운 라벨 업데이트 함수
     function updateProjectLabel() {
