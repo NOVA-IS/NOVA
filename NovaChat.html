@@ -523,6 +523,20 @@
                     <button id="ai-search-toggle" class="gpt-left-btn">
                         AI모드
                     </button>
+                      <!-- 📎 첨부 버튼 (여기에!) -->
+                      <button id="attach-btn"
+                              type="button"
+                              class="gpt-attach-btn"
+                              title="이미지 첨부">
+                        📎
+                      </button>
+                    
+                      <!-- 숨겨진 파일 input -->
+                      <input id="file-input"
+                             type="file"
+                             accept="image/*"
+                             multiple
+                             class="hidden" />
 
                     <!-- 가운데: 프롬프트 textarea -->
                     <textarea id="user-input"
@@ -537,6 +551,8 @@
                         ➤
                     </button>
                 </div>
+                <!-- 🔽 첨부 미리보기는 bar 아래 -->
+                <div id="attachment-preview" class="gpt-attachment-preview"></div>
 
             </div>
         </section>
