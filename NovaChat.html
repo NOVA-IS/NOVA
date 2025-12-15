@@ -909,7 +909,7 @@ async function sendMessage() {
     // ✅ Project (체크된 것만)
     const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
     const projectIds = Array.from(projectBoxes).map(cb => cb.value.trim()).filter(Boolean);
-    const projectLabels = Array.from(projectBoxes).map(cb => cb.data-label.trim()).filter(Boolean);
+    const projectLabels = Array.from(projectBoxes).map(cb => cb.label.trim()).filter(Boolean);
     
     // Make로 보낼 "ProjectCode" (콤마로 합침)
     const projectCode = projectIds.join(",");
