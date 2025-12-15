@@ -396,7 +396,7 @@
                   </button>
                 
                   <!-- 드롭다운 내용 -->
-                  <div id="ProjectCodeCheckbox"
+                  <div id="projectDropdownMenu"
                        class="absolute left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg p-2 hidden z-20">
                 
                       <!--label class="flex items-center space-x-2 font-semibold">
@@ -722,20 +722,13 @@ function updatePromptPlaceholder() {
     }
 }
     //프로젝트선택을 위
-    const projectBtn = document.getElementById("projectDropdownBtn");
-    const projectMenu = document.getElementById("projectDropdownMenu");
-
-    // ✅ 둘 다 있을 때만 이벤트 등록
-    if (projectBtn && projectMenu) {
-      projectBtn.addEventListener("click", () => {
-        projectMenu.classList.toggle("hidden");
-      });
-    }
+const projectBtn = document.getElementById("projectDropdownBtn");
+const projectMenu = document.getElementById("projectDropdownMenu");
 
 // 버튼 클릭 → 토글 열기/닫기
-//projectBtn.addEventListener("click", () => {
-//    projectMenu.classList.toggle("hidden");
-//});
+projectBtn.addEventListener("click", () => {
+    projectMenu.classList.toggle("hidden");
+});
 
 // 바깥 클릭 시 닫기
 document.addEventListener("click", (e) => {
@@ -817,8 +810,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
-
-    
     // 🔹 Project 드롭다운 라벨 업데이트 함수
     function updateProjectLabel() {
         const labelSpan = document.getElementById("projectDropdownLabel");
@@ -872,6 +863,9 @@ async function sendMessage() {
     const sendButton = document.getElementById("send-button");
     const messagesDiv = document.getElementById("messages");
     const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
+    const projectIds = Array.from(projectBoxes).map(cb => cb.value);
+    const projectLabels = Array.from(projectBoxes).map(cb => cb.dataset.label);
+
 
     // 프롬프트 창 내용만 전송
     const message = textarea.value.trim();
@@ -905,10 +899,6 @@ async function sendMessage() {
 
     // Item 사용자 입력
     const itemColor = document.getElementById("item-color-input").value.trim();
-
-    // ProjectCode
-    const projectIds = Array.from(projectBoxes).map(cb => cb.value);
-    const ProjectCode = projectIds.join(", ");
 
     // AI 모드 (라디오)
     const aiRadio = document.querySelector('input[name="ai-mode"]:checked');
@@ -973,7 +963,6 @@ async function sendMessage() {
         if (itemColor) filterTxt.push(`Item 사용자 입력: ${itemColor}`);
         if (SupplierName) filterTxt.push(`업체명: ${SupplierName}`);
         if (InvoiceNo) filterTxt.push(`Invoice No: ${InvoiceNo}`);
-        if (ProjectCode) filterTxt.push(`ProjectCode: ${ProjectCode}`);
     } 
 
     messagesDiv.innerHTML += `
@@ -1032,7 +1021,6 @@ async function sendMessage() {
             InvoiceNo,
             aiEngine,
             aiEngineLabel,
-            ProjectCode,
             //engine,  // 위에서 계산한 'gpt' | 'gemini'
             conversationId: window.conversationId || null,  // ⭐ 추가 부분
             responseId: window.responseId || null  // ⭐ 추가 부분
