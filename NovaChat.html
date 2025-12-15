@@ -721,9 +721,7 @@ function updatePromptPlaceholder() {
             "무엇이든 자유롭게 질문해보세요.";
     }
 }
-    //프로젝트선택을 위
-const projectBtn = document.getElementById("projectDropdownBtn");
-const projectMenu = document.getElementById("projectDropdownMenu");
+
 
 // 버튼 클릭 → 토글 열기/닫기
 projectBtn.addEventListener("click", () => {
@@ -810,6 +808,17 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+    //프로젝트선택을 위
+    const projectBtn = document.getElementById("projectDropdownBtn");
+    const projectMenu = document.getElementById("projectDropdownMenu");
+
+    // ✅ 둘 다 있을 때만 이벤트 등록
+    if (projectBtn && projectMenu) {
+      projectBtn.addEventListener("click", () => {
+        projectMenu.classList.toggle("hidden");
+      });
+    }
+    
     // 🔹 Project 드롭다운 라벨 업데이트 함수
     function updateProjectLabel() {
         const labelSpan = document.getElementById("projectDropdownLabel");
@@ -862,6 +871,7 @@ async function sendMessage() {
     const selectElement = document.getElementById("preset-prompt");
     const sendButton = document.getElementById("send-button");
     const messagesDiv = document.getElementById("messages");
+    const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
 
     // 프롬프트 창 내용만 전송
     const message = textarea.value.trim();
@@ -897,7 +907,6 @@ async function sendMessage() {
     const itemColor = document.getElementById("item-color-input").value.trim();
 
     // ProjectCode
-    const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
     const projectIds = Array.from(projectBoxes).map(cb => cb.value);
     const ProjectCode = projectIds.join(", ");
 
