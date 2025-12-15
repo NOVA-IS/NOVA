@@ -910,6 +910,12 @@ async function sendMessage() {
     const aiEngine = aiEngineRadio ? aiEngineRadio.value : null;        // "gpt", "gemini" ...
     const aiEngineLabel = aiEngineRadio ? aiEngineRadio.dataset.label : ""; // "GPT", "Gemini"
 
+    // ✅ Project (체크된 것만)
+    const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
+    const projectIds = Array.from(projectBoxes).map(cb => cb.value.trim()).filter(Boolean);
+    
+    // Make로 보낼 "ProjectCode" (콤마로 합침)
+    const projectCode = projectIds.join(",");
 
     // 신규 입력 필드
     const SupplierName = document.getElementById("SupplierName").value.trim();
@@ -963,6 +969,7 @@ async function sendMessage() {
         if (itemColor) filterTxt.push(`Item 사용자 입력: ${itemColor}`);
         if (SupplierName) filterTxt.push(`업체명: ${SupplierName}`);
         if (InvoiceNo) filterTxt.push(`Invoice No: ${InvoiceNo}`);
+        if (projectCode) filterTxt.push(`Project: ${projectCode}`);
     } 
 
     messagesDiv.innerHTML += `
@@ -1019,6 +1026,7 @@ async function sendMessage() {
             aiModeLabel,
             SupplierName,
             InvoiceNo,
+            ProjectCode: projectCode,
             aiEngine,
             aiEngineLabel,
             //engine,  // 위에서 계산한 'gpt' | 'gemini'
