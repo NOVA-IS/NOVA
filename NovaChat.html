@@ -216,6 +216,21 @@
           outline: 2px dashed rgba(99,102,241,0.55);
           outline-offset: 4px;
         }
+        .msg-attachments {
+          margin-top: 8px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+        
+        .msg-attachments img {
+          width: 64px;
+          height: 64px;
+          border-radius: 12px;
+          object-fit: cover;
+          border: 1px solid rgba(255,255,255,0.35); /* user bubble 대비 */
+        }
+
         
         /* 새롭게 추가*/
         .stage {
@@ -938,18 +953,71 @@ function renderAttachments() {
 }
 
 // ✅ FileList / Clipboard items에서 이미지 File만 추출하여 추가
+function bytesToMB(bytes) {
+  return (bytes / (1024 * 1024)).toFixed(2);
+}
+
+function currentTotalBytes() {
+  return (window.attachedImages || []).reduce((sum, f) => sum + (f?.size || 0), 0);
+}
+
+// 메시지 영역에 경고 표시 (alert 대신)
+function pushWarn(text) {
+  const messagesDiv = document.getElementById("messages");
+  if (!messagesDiv) {
+    alert(text);
+    return;
+  }
+
+  messagesDiv.innerHTML += `
+    <div class="ai-message self-start bg-yellow-100 text-yellow-700 text-sm">
+      ⚠️ ${String(text).replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+    </div>
+  `;
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
 function addImageFiles(files) {
   const arr = Array.from(files || []);
   const images = arr.filter(f => f && f.type && f.type.startsWith("image/"));
   if (!images.length) return;
 
-  // (옵션) 너무 많이 붙는 거 방지하고 싶으면 제한 가능
-   const MAX = 2;
-  // window.attachedImages = window.attachedImages.concat(images).slice(0, MAX);
+  const MAX_IMAGES = 3;                 // ✅ 최대 장수
+  const MAX_TOTAL_BYTES = 10 * 1024 * 1024; // ✅ 총 10MB
 
-  window.attachedImages = window.attachedImages.concat(images);
+  window.attachedImages = window.attachedImages || [];
+
+  // 1) 장수 제한
+  const remain = MAX_IMAGES - window.attachedImages.length;
+  if (remain <= 0) {
+    pushWarn(`이미지는 최대 ${MAX_IMAGES}장까지 첨부할 수 있어요.`);
+    return;
+  }
+
+  const candidates = images.slice(0, remain);
+
+  // 2) 용량 제한
+  let total = currentTotalBytes();
+  const accepted = [];
+
+  for (const file of candidates) {
+    const next = total + file.size;
+    if (next > MAX_TOTAL_BYTES) {
+      pushWarn(`총 첨부 용량은 ${bytesToMB(MAX_TOTAL_BYTES)}MB까지 가능합니다.`);
+      break;
+    }
+    accepted.push(file);
+    total = next;
+  }
+
+  if (!accepted.length) return;
+
+  window.attachedImages = window.attachedImages.concat(accepted);
+
+  // 3) 미리보기 렌더
   renderAttachments();
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const textarea = document.getElementById("user-input");
@@ -1126,11 +1194,29 @@ async function sendMessage() {
         if (projectLabel) filterTxt.push(`Project: ${projectLabel}`);
     } 
 
+    // 사용자 메시지 출력용 썸네일 HTML 생성
+    const attachmentsForBubble = (window.attachedImages || []).map(file => {
+      const url = URL.createObjectURL(file);
+      return `<img src="${url}" data-temp-url="${url}" alt="attachment" />`;
+    }).join("");
+    
     messagesDiv.innerHTML += `
-        <div class="user-message">
-            ${message}
-            ${filterTxt.length ? `<br><span class="text-xs opacity-80">(필터: ${filterTxt.join(", ")})</span>` : ""}
-        </div>`;
+      <div class="user-message">
+        ${message}
+        ${filterTxt.length ? `<br><span class="text-xs opacity-80">(필터: ${filterTxt.join(", ")})</span>` : ""}
+        ${attachmentsForBubble ? `<div class="msg-attachments">${attachmentsForBubble}</div>` : ""}
+      </div>
+    `;
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    // 방금 만든 objectURL들 해제(이미지 렌더 후)
+    setTimeout(() => {
+      document.querySelectorAll('img[data-temp-url]').forEach(img => {
+        const u = img.getAttribute('data-temp-url');
+        if (u) URL.revokeObjectURL(u);
+        img.removeAttribute('data-temp-url');
+      });
+    }, 2000);
 
     textarea.value = "";
     autoResize(textarea);
