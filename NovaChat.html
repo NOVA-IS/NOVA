@@ -862,10 +862,6 @@ async function sendMessage() {
     const selectElement = document.getElementById("preset-prompt");
     const sendButton = document.getElementById("send-button");
     const messagesDiv = document.getElementById("messages");
-    const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
-    const projectIds = Array.from(projectBoxes).map(cb => cb.value);
-    const projectLabels = Array.from(projectBoxes).map(cb => cb.dataset.label);
-
 
     // 프롬프트 창 내용만 전송
     const message = textarea.value.trim();
@@ -913,9 +909,11 @@ async function sendMessage() {
     // ✅ Project (체크된 것만)
     const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
     const projectIds = Array.from(projectBoxes).map(cb => cb.value.trim()).filter(Boolean);
+    const projectLabels = Array.from(projectBoxes).map(cb => cb.value.trim()).filter(Boolean);
     
     // Make로 보낼 "ProjectCode" (콤마로 합침)
     const projectCode = projectIds.join(",");
+    const projectLabel = projectLabels.join(",");
 
     // 신규 입력 필드
     const SupplierName = document.getElementById("SupplierName").value.trim();
@@ -969,7 +967,7 @@ async function sendMessage() {
         if (itemColor) filterTxt.push(`Item 사용자 입력: ${itemColor}`);
         if (SupplierName) filterTxt.push(`업체명: ${SupplierName}`);
         if (InvoiceNo) filterTxt.push(`Invoice No: ${InvoiceNo}`);
-        if (projectCode) filterTxt.push(`Project: ${projectCode}`);
+        if (projectLabel) filterTxt.push(`Project: ${projectLabel}`);
     } 
 
     messagesDiv.innerHTML += `
