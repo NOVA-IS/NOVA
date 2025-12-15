@@ -887,6 +887,7 @@ async function sendMessage() {
     const locBoxes = document.querySelectorAll(".location-checkbox:checked");
     const locationIds = Array.from(locBoxes).map(cb => cb.value);
     const locationLabels = Array.from(locBoxes).map(cb => cb.dataset.label);
+    const locationLabel = locationLabels.join(", ");
 
     // Item
     const itemBoxes = document.querySelectorAll(".item-checkbox:checked");
@@ -962,7 +963,7 @@ async function sendMessage() {
     if (aiMode === 'erp') {
         if (startDateDisplay) filterTxt.push(`시작일: ${startDateDisplay}`);
         if (endDateDisplay) filterTxt.push(`종료일: ${endDateDisplay}`);
-        if (locationLabels.length) filterTxt.push(`Location: ${locationLabels.join(", ")}`);
+        if (locationLabels.length) filterTxt.push(`Location: ${locationLabel}`);
         if (itemLabel) filterTxt.push(`Item: ${itemLabel}`);
         if (itemColor) filterTxt.push(`Item 사용자 입력: ${itemColor}`);
         if (SupplierName) filterTxt.push(`업체명: ${SupplierName}`);
@@ -1015,10 +1016,8 @@ async function sendMessage() {
             startDate: startDateForWebhook,
             endDate: endDateForWebhook,
             location: locationIds.join(","),
-            locationIds,
-            locationLabels,
+            locationLabel,
             item: itemLabel,
-            itemIds,
             itemColor,
             aiMode,
             aiModeLabel,
