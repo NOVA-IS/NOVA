@@ -710,15 +710,69 @@ async function setEndDateFromSheet() {
         }
     }
 }
+/**
+ * 현재 선택된 필터 데이터를 수집하여 객체로 반환합니다.
+ */
+function collectFilterData() {
+    // Dates
+    const startDateValue = document.getElementById("start-date").value;
+    const endDateValue = document.getElementById("end-date").value;
+    const startDateObj = startDateValue ? parseHtmlDate(startDateValue) : new Date();
+    const endDateObj = endDateValue ? parseHtmlDate(endDateValue) : new Date();
 
+    const startDateDisplay = formatDisplayDate(startDateObj);
+    const endDateDisplay = formatDisplayDate(endDateObj);
+
+    // Location
+    const locBoxes = document.querySelectorAll(".location-checkbox:checked");
+    const locationLabels = Array.from(locBoxes).map(cb => cb.dataset.label).filter(Boolean);
+    
+    // Item (체크박스)
+    const itemBoxes = document.querySelectorAll(".item-checkbox:checked");
+    const itemIds = Array.from(itemBoxes).map(cb => cb.value);
+    
+    // Project
+    const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
+    const projectLabels = Array.from(projectBoxes).map(cb => cb.dataset.label.trim()).filter(Boolean);
+
+    // Text inputs
+    const itemColor = document.getElementById("item-color-input").value.trim();
+    const SupplierName = document.getElementById("SupplierName").value.trim();
+    const InvoiceNo = document.getElementById("InvoiceNo").value.trim();
+
+    return {
+        startDate: startDateDisplay,
+        endDate: endDateDisplay,
+        location: locationLabels.join(", ") || 'ALL Locations',
+        itemNames: itemIds.join(", ") || 'ALL Items (Checked)',
+        itemCustom: itemColor || 'None',
+        projects: projectLabels.join(", ") || 'ALL Projects',
+        supplier: SupplierName || 'ALL Suppliers',
+        invoice: InvoiceNo || 'None'
+    };
+}
 
 /**
  * Gemini API 호출을 위한 특별 프롬프트를 입력하고 sendMessage를 호출합니다.
  * 이 함수는 Gemini의 분석 능력(Criticism/Insight)을 특정 조건 없이 활용하도록 합니다.
  */
 function requestCritique() {
-    const critiquePrompt = "Critique the provided ERP filters (dates, locations, items, projects, suppliers, invoices) and suggest potential deep-dive analysis questions or data integrity checks based on these parameters. If the filters are too wide (e.g., no location or item is specified), suggest narrowing them down for a meaningful analysis. Use the current date and time as context, if necessary, for timeliness critique.";
+    const filters = collectFilterData();
     
+    // 필터 값을 포함하는 구체적인 프롬프트 생성
+    const critiquePrompt = `Critique the currently selected ERP filter set for meaningful analysis and suggest deep-dive questions.
+    
+    --- Current Filters ---
+    1. Period: ${filters.startDate} to ${filters.endDate}
+    2. Location(s): ${filters.location}
+    3. Item Names (Checkboxes): ${filters.itemNames}
+    4. Item Custom Filter (Text): ${filters.itemCustom}
+    5. Projects: ${filters.projects}
+    6. Supplier Name: ${filters.supplier}
+    7. Invoice No: ${filters.invoice}
+    
+    Based on these specific filters, suggest a focused analysis or point out any potential data integrity issues (e.g., if the time range is too long, or conflicting filters are applied).
+    `;
     // Set the critique prompt into the user input field (for user visibility)
     const inputElement = document.getElementById('user-input');
     if (inputElement) {
