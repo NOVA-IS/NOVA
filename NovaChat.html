@@ -404,9 +404,9 @@
                         <div class="p-2 border border-gray-300 rounded-lg space-y-1">
                             
                             <label class="flex items-center space-x-2 font-semibold">
-                                <input type="checkbox" id="item-all" class="item-master">
-                                <span>모두 선택</span>
-                            </label>
+                            <input type="checkbox" id="item-all" class="item-master">
+                            <span>모두 선택</span>
+                        </label>
 
                             <label class="flex items-center space-x-2">
                                 <input type="checkbox" class="item-checkbox" value="LABEL">
@@ -536,10 +536,13 @@
                 </div>
 
                 <!-- ⭐ New Feature Button: Data Critique (Gemini API) -->
-                <button id="critique-btn" onclick="requestCritique()"
-                        class="w-full p-3 bg-green-500 text-white rounded-lg font-bold shadow-md hover:bg-green-600 transition duration-150 disabled:bg-gray-400">
-                    ✨ 데이터 필터 Critique (Gemini)
-                </button>
+                <!-- 래퍼 추가 및 기본 숨김 처리 -->
+                <div id="critique-btn-wrapper">
+                    <button id="critique-btn" onclick="requestCritique()"
+                            class="w-full p-3 bg-green-500 text-white rounded-lg font-bold shadow-md hover:bg-green-600 transition duration-150 disabled:bg-gray-400">
+                        ✨ 데이터 필터 Critique (Gemini)
+                    </button>
+                </div>
             </section>
 
         </div>
@@ -610,10 +613,10 @@
                     </button>
                 </div>
                 
-                <!-- 숨겨진 파일 input (gpt-input-bar 밖으로 이동) 모든 파일 타입 허용 -->
+                <!-- 숨겨진 파일 input (gpt-input-bar 밖으로 이동) -->
                 <input id="file-input"
                         type="file"
-                        accept="*/*"
+                        accept="*/*" <!-- ⭐ 모든 파일 타입 허용 -->
                         multiple
                         class="hidden" />
                         
@@ -652,11 +655,29 @@ engineRadios.forEach(r => {
         // 엔진이 바뀌면 대화 맥락 완전 새로 시작
         resetConversationState();   // 🔹 여기서만 ID 초기화
         resetPromptArea();          // 프롬프트 내용도 초기화 (원하면 유지해도 되고)
+        
+        // ⭐ 엔진 변경 시 버튼 가시성 업데이트
+        updateCritiqueButtonVisibility();
 
         // 필요하면 화면에 "새 대화 시작" 안내 메시지를 추가해도 됨
     });
 });
 
+/**
+ * 현재 AI 엔진 선택 상태에 따라 Critique 버튼의 가시성을 토글합니다.
+ */
+function updateCritiqueButtonVisibility() {
+    const selectedEngine = document.querySelector('input[name="ai-engine"]:checked')?.value;
+    const critiqueWrapper = document.getElementById('critique-btn-wrapper');
+    
+    if (critiqueWrapper) {
+        if (selectedEngine === 'gemini') {
+            critiqueWrapper.classList.remove('hidden');
+        } else {
+            critiqueWrapper.classList.add('hidden');
+        }
+    }
+}
     
 /* textarea 자동 높이 증가 */
 function autoResize(el) {
@@ -710,6 +731,8 @@ async function setEndDateFromSheet() {
         }
     }
 }
+
+
 /**
  * 현재 선택된 필터 데이터를 수집하여 객체로 반환합니다.
  */
@@ -752,6 +775,7 @@ function collectFilterData() {
     };
 }
 
+
 /**
  * Gemini API 호출을 위한 특별 프롬프트를 입력하고 sendMessage를 호출합니다.
  * 이 함수는 Gemini의 분석 능력(Criticism/Insight)을 특정 조건 없이 활용하도록 합니다.
@@ -761,7 +785,7 @@ function requestCritique() {
     
     // 필터 값을 포함하는 구체적인 프롬프트 생성
     const critiquePrompt = `Critique the currently selected ERP filter set for meaningful analysis and suggest deep-dive questions.
-    
+
     --- Current Filters ---
     1. Period: ${filters.startDate} to ${filters.endDate}
     2. Location(s): ${filters.location}
@@ -773,6 +797,7 @@ function requestCritique() {
     
     Based on these specific filters, suggest a focused analysis or point out any potential data integrity issues (e.g., if the time range is too long, or conflicting filters are applied).
     `;
+    
     // Set the critique prompt into the user input field (for user visibility)
     const inputElement = document.getElementById('user-input');
     if (inputElement) {
@@ -797,8 +822,11 @@ function formatWebhookDate(date) {
     return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
 }
 function parseHtmlDate(str) {
-    const [y,m,d] = str.split("-");
-    return new Date(parseInt(y), parseInt(m)-1, parseInt(d));
+    // YYYY-MM-DD 형식 문자열을 Date 객체로 변환
+    if (!str) return new Date(); // 빈 문자열 처리
+    const [y,m,d] = str.split("-").map(Number);
+    // 월은 0부터 시작하므로 -1
+    return new Date(y, m - 1, d);
 }
 
 /* "모두 선택" 체크박스 기능 */
@@ -947,6 +975,7 @@ document.addEventListener("DOMContentLoaded", () => {
             updateErpVisibility();
             updateAiModeStyling();
             updatePromptPlaceholder();
+            updateCritiqueButtonVisibility(); // ⭐ 가시성 업데이트
             resetPromptArea();
         });
 
@@ -964,10 +993,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateErpVisibility();
                 updateAiModeStyling();
                 updatePromptPlaceholder();
+                updateCritiqueButtonVisibility(); // ⭐ 가시성 업데이트
                 resetPromptArea();
             });
         });
     }
+    
+    // AI 엔진 라디오 (Gemini/GPT) 변경 시
+    document.querySelectorAll('input[name="ai-engine"]').forEach(r => {
+        r.addEventListener('change', updateCritiqueButtonVisibility);
+    });
+
     // 🔹 Project 드롭다운 라벨 업데이트 함수
     function updateProjectLabel() {
         const labelSpan = document.getElementById("projectDropdownLabel");
@@ -1004,6 +1040,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setEndDateFromSheet();
     updateErpVisibility();
     updateAiModeStyling();
+    updateCritiqueButtonVisibility(); // ⭐ 초기 로드 시 가시성 설정
     autoResize(userInput);
 });
 
@@ -1186,7 +1223,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /* 전송 로직 */
-const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/beojnrbam68450c5366anrdb2lfdi8uq";//"https://nova1518.app.n8n.cloud/webhook-test/f43a2d6f-94d9-474f-bdcf-63dabbe67636";
+// ⭐ 수정: 사용자가 실제 URL을 입력하도록 주석을 추가합니다.
+const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/beojnrbam68450c5366anrdb2lfdi8uq"; 
+// 👆 WARNING: 이 URL은 임시 예시 주소입니다. Make에서 발급받은 실제 Webhook 주소로 변경해야 합니다.
 let isSending = false;
 
 async function sendMessage() {
@@ -1206,14 +1245,8 @@ async function sendMessage() {
         return;
     }
 
-    // 날짜
-    const startDateObj = parseHtmlDate(document.getElementById("start-date").value);
-    const endDateObj = parseHtmlDate(document.getElementById("end-date").value);
-
-    const startDateDisplay = formatDisplayDate(startDateObj);
-    const endDateDisplay = formatDisplayDate(endDateObj);
-    const startDateForWebhook = formatWebhookDate(startDateObj);
-    const endDateForWebhook = formatWebhookDate(endDateObj);
+    // ⭐ 필터 데이터 수집
+    const filterData = collectFilterData();
 
     // Location
     const locBoxes = document.querySelectorAll(".location-checkbox:checked");
@@ -1251,6 +1284,11 @@ async function sendMessage() {
     // 신규 입력 필드
     const SupplierName = document.getElementById("SupplierName").value.trim();
     const InvoiceNo = document.getElementById("InvoiceNo").value.trim();
+    
+    // Webhook 전송을 위한 YYYY-MM-DD 형식 데이터
+    const startDateForWebhook = document.getElementById('start-date').value;
+    const endDateForWebhook = document.getElementById('end-date').value;
+
 
  // 🔥 AI 모델이 바뀌었으면 session 초기화
     if (window.lastAiModel && window.lastAiModel !== aiMode) {
@@ -1303,8 +1341,8 @@ async function sendMessage() {
     if (aiEngineLabel) filterTxt.push(`AI 엔진: ${aiEngineLabel}`);
     if (aiModeLabel) filterTxt.push(`AI 모드: ${aiModeLabel}`);
     if (aiMode === 'erp') {
-        if (startDateDisplay) filterTxt.push(`시작일: ${startDateDisplay}`);
-        if (endDateDisplay) filterTxt.push(`종료일: ${endDateDisplay}`);
+        if (filterData.startDate) filterTxt.push(`시작일: ${filterData.startDate}`);
+        if (filterData.endDate) filterTxt.push(`종료일: ${filterData.endDate}`);
         if (locationLabels.length) filterTxt.push(`Location: ${locationLabel}`);
         if (itemLabel) filterTxt.push(`Item: ${itemLabel}`);
         if (itemColor) filterTxt.push(`Item 사용자 입력: ${itemColor}`);
@@ -1370,7 +1408,7 @@ async function sendMessage() {
         //const clean = v => (v && v !== "null" && v !== "") ? v : null;
         
        // const responseId = clean(rawResponseId);
-       // const conversationId = clean(rawConversationId);
+       // const conversationId = clean(rawResponseId);
         
         // 🔥 3) 각각 따로 저장 (window 또는 localStorage)
         if (conversationId) {
@@ -1384,10 +1422,14 @@ async function sendMessage() {
         }
 
     try {
+        if (!MAKE_WEBHOOK_URL || MAKE_WEBHOOK_URL.length < 10) {
+            throw new Error("Make Webhook URL이 설정되지 않았습니다. URL을 확인하고 다시 시도해주세요.");
+        }
+
         const body = {
             prompt: message,
-            startDate: startDateForWebhook,
-            endDate: endDateForWebhook,
+            startDate: startDateForWebhook, // YYYY-MM-DD
+            endDate: endDateForWebhook,     // YYYY-MM-DD
             location: locationIds.join(","),
             locationLabel,
             item: itemLabel,
@@ -1468,7 +1510,7 @@ async function sendMessage() {
         // ⭐ 500 오류에 대한 명확한 안내 추가
         messagesDiv.innerHTML += `
             <div class="ai-message bg-red-100 text-red-700 text-sm">
-                ⚠️ 서버 실행 오류: ${msg}. 시나리오의 로그를 확인하세요.
+                ⚠️ 서버(Make) 실행 오류: ${msg}. Make 시나리오의 로그를 확인하세요.
             </div>
         `;
     } finally {
