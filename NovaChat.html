@@ -143,15 +143,20 @@
             box-shadow: 0 4px 10px rgba(15,23,42,0.18);
             font-size: 0.875rem;
             line-height: 1.5;
+            position: relative; /* 버튼 배치를 위해 추가 */
         }
 
         /* 왼쪽 AI 말풍선 */
         .ai-message {
+            /*background-color: #f3f4f6; /* gray-100 */
+            /*color: #111827;           /* gray-900 */
             padding: 0.75rem 1rem;
             border-radius: 1rem;
             margin: 10px 10px;
             max-width: 100%;
             align-self: flex-start;
+            /*margin-right: auto;*/
+            /*box-shadow: 0 4px 10px rgba(15,23,42,0.10);*/
             font-size: 0.875rem;
             line-height: 1.5;
         }
@@ -192,6 +197,7 @@
         .thumb-wrap {
           position: relative;
           display: inline-block;
+          /* 이미지 외 파일용 스타일 추가 */
           min-width: 56px;
           min-height: 56px;
           padding: 8px;
@@ -304,6 +310,12 @@
             0% { left: calc(-50% - 5px); }
             75% { left: calc(50% + 105px); }
             100% { left: calc(50% + 105px); }
+        }
+
+        /* 메시지 수정/재사용 버튼 스타일 */
+        .reuse-btn {
+            @apply absolute -top-2 -right-2 bg-indigo-100 text-indigo-600 w-6 h-6 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-indigo-200 cursor-pointer border border-indigo-200;
+            font-size: 10px;
         }
 
         @media (max-width: 640px) {
@@ -577,6 +589,18 @@ function closeImageModal() {
     document.getElementById('image-modal').style.display = "none";
 }
 
+// 메시지 재사용 함수 (입력창으로 복사)
+function reuseMessage(text) {
+    const userInput = document.getElementById("user-input");
+    if (userInput) {
+        userInput.value = text;
+        userInput.focus();
+        autoResize(userInput);
+        // 부드럽게 입력창으로 스크롤
+        userInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
 function resetConversationState() {
     window.conversationId = null;
     window.responseId = null;
@@ -771,7 +795,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const updateProjectLabel = () => {
         const checked = document.querySelectorAll(".project-checkbox:checked");
         const labels = Array.from(checked).map(cb => cb.dataset.label || cb.value);
-        if (labels.length > 2) { event.target.checked = false; alert("프로젝트는 최대 2개까지만 선택 가능합니다."); return; }
+        if (labels.length > 2) { event.target.checked = false; alert("최대 2개까지만 선택 가능합니다."); return; }
         document.getElementById("projectDropdownLabel").textContent = labels.length ? labels.join(", ") : "Project";
     };
     document.querySelectorAll(".project-checkbox").forEach(el => el.addEventListener("change", updateProjectLabel));
@@ -810,7 +834,7 @@ function addImageFiles(files) {
     let currentSize = window.attachedImages.reduce((s, f) => s + f.size, 0);
     const accepted = [];
     for (const f of finalCandidates) {
-        if (currentSize + f.size > MAX_TOTAL_BYTES) { pushWarn("총 첨부 용량 10MB를 초과했습니다."); break; }
+        if (currentSize + f.size > MAX_TOTAL_BYTES) { pushWarn("총 용량 10MB를 초과했습니다."); break; }
         accepted.push(f);
         currentSize += f.size;
     }
@@ -852,7 +876,7 @@ async function sendMessage() {
     isSending = true;
     sendButton.disabled = true;
 
-    // 사용자 메시지 표시 (이미지 확대 기능 적용)
+    // 사용자 메시지 표시 (이미지 확대 기능 및 재사용 버튼 적용)
     const attachmentParts = await Promise.all(window.attachedImages.map(async (file) => {
         if (file.type.startsWith("image/")) {
             const base64Data = await readFileAsDataURL(file);
@@ -861,9 +885,13 @@ async function sendMessage() {
         return `<div class="w-16 h-16 rounded-lg bg-indigo-700 flex flex-col items-center justify-center p-1"><span class="text-xs text-white truncate w-full text-center">${file.name.substring(0, 10)}</span></div>`;
     }));
     
+    // 메시지 내용을 JSON 문자열로 안전하게 변환하여 속성에 삽입
+    const safeMessage = message.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+
     messagesDiv.innerHTML += `
-      <div class="user-message">
-        ${message}
+      <div class="user-message group">
+        <button class="reuse-btn" title="이 메시지 수정하여 다시 사용" onclick="reuseMessage('${safeMessage}')">✏️</button>
+        <div class="message-content">${message}</div>
         <div class="msg-attachments">${attachmentParts.join("")}</div>
       </div>
     `;
