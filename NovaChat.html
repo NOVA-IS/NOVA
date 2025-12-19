@@ -147,15 +147,11 @@
 
         /* 왼쪽 AI 말풍선 */
         .ai-message {
-            /*background-color: #f3f4f6; /* gray-100 */
-            /*color: #111827;           /* gray-900 */
             padding: 0.75rem 1rem;
             border-radius: 1rem;
             margin: 10px 10px;
             max-width: 100%;
             align-self: flex-start;
-            /*margin-right: auto;*/
-            /*box-shadow: 0 4px 10px rgba(15,23,42,0.10);*/
             font-size: 0.875rem;
             line-height: 1.5;
         }
@@ -196,7 +192,6 @@
         .thumb-wrap {
           position: relative;
           display: inline-block;
-          /* 이미지 외 파일용 스타일 추가 */
           min-width: 56px;
           min-height: 56px;
           padding: 8px;
@@ -240,10 +235,52 @@
           border-radius: 12px;
           object-fit: cover;
           border: 1px solid rgba(255,255,255,0.35); /* user bubble 대비 */
+          cursor: pointer;
+          transition: opacity 0.2s;
+        }
+        .msg-attachments img:hover {
+            opacity: 0.8;
         }
 
-        
-        /* 새롭게 추가*/
+        /* 이미지 확대 모달 스타일 */
+        #image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        #modal-img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+        #modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        #modal-close:hover {
+            color: #bbb;
+        }
+
+        /* 애니메이션 효과 */
         .stage {
             display: flex;
             justify-content: center;
@@ -268,9 +305,7 @@
             75% { left: calc(50% + 105px); }
             100% { left: calc(50% + 105px); }
         }
-        @use 'three-dots';
 
-        /* 모바일에서 살짝 압축 */
         @media (max-width: 640px) {
             .gpt-input-bar {
                 padding: 4px 8px;
@@ -302,30 +337,20 @@
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 space-y-4 text-sm">
-            <!-- 🔹 AI 엔진 선택 (GPT / Gemini 등) -->
-<section class="mb-3">
-    <h2 class="text-xs font-semibold text-gray-600 mb-2">AI 엔진 선택</h2>
-    <div class="p-2 border border-gray-300 rounded-lg space-y-2">
-        <label class="flex items-center space-x-2">
-            <input type="radio" name="ai-engine" value="gemini" data-label="Gemini" checked>
-            <span>Gemini</span>
-        </label>
-        <label class="flex items-center space-x-2">
-            <input type="radio" name="ai-engine" value="gpt" data-label="GPT" >
-            <span>GPT</span>
-        </label>
-        <!-- 필요하면 나중에 확장 -->
-        <!--
-        <label class="flex items-center space-x-2">
-            <input type="radio" name="ai-engine" value="claude" data-label="Claude">
-            <span>Claude</span>
-        </label>
-        -->
-    </div>
-</section>
+            <section class="mb-3">
+                <h2 class="text-xs font-semibold text-gray-600 mb-2">AI 엔진 선택</h2>
+                <div class="p-2 border border-gray-300 rounded-lg space-y-2">
+                    <label class="flex items-center space-x-2">
+                        <input type="radio" name="ai-engine" value="gemini" data-label="Gemini" checked>
+                        <span>Gemini</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="radio" name="ai-engine" value="gpt" data-label="GPT" >
+                        <span>GPT</span>
+                    </label>
+                </div>
+            </section>
 
-
-            <!-- AI 분석 모드 (맨 위, 라디오) -->
             <section>
                 <h2 class="text-xs font-semibold text-gray-600 mb-2">AI 분석 모드</h2>
                 <div class="p-2 border border-gray-300 rounded-lg space-y-2">
@@ -337,58 +362,40 @@
                         <input type="radio" name="ai-mode" value="ai" data-label="AI 검색">
                         <span>AI 검색</span>
                     </label>
-
                 </div>
             </section>
 
-            <!-- 기간 선택 (ERP 모드일 때만 표시) -->
             <section id="period-section">
-
                 <h2 class="text-xs font-semibold text-gray-600 mb-2">기간 선택</h2>
                 <div class="space-y-2">
                     <label class="text-xs">시작일(ERP 데이터: 2024-04-01 부터)</label>
-                    <input type="date" id="start-date"
-                           class="w-full p-2 border border-gray-300 rounded-lg">
-
+                    <input type="date" id="start-date" class="w-full p-2 border border-gray-300 rounded-lg">
                     <label class="text-xs">종료일</label>
-                    <input type="date" id="end-date"
-                           class="w-full p-2 border border-gray-300 rounded-lg">
+                    <input type="date" id="end-date" class="w-full p-2 border border-gray-300 rounded-lg">
                 </div>
-                <!-- ERP 날짜 프린트 -->
-                <p id="sheet-update-display"
-                   class="text-xs text-gray-600 mb-1 text-center leading-relaxed whitespace-pre-line">
-                </p>
-
+                <p id="sheet-update-display" class="text-xs text-gray-600 mb-1 text-center leading-relaxed whitespace-pre-line"></p>
             </section>
 
-            <!-- ERP 모드일 때만 보이는: Location + Item + 사용자 입력 -->
             <section id="erp-options-section" class="space-y-4">
-
-                <!-- Location -->
                 <div id="erp-location-section">
                     <h2 class="text-xs font-semibold text-gray-600 mb-2">Location</h2>
                     <div class="p-2 border border-gray-300 rounded-lg space-y-1">
-
                         <label class="flex items-center space-x-2 font-semibold">
                             <input type="checkbox" id="location-all" class="location-master">
                             <span>모두 선택</span>
                         </label>
-
                         <label class="flex items-center space-x-2">
                             <input type="checkbox" class="location-checkbox" value="1007" data-label="SEA">
                             <span>SEA</span>
                         </label>
-
                         <label class="flex items-center space-x-2">
                             <input type="checkbox" class="location-checkbox" value="1008" data-label="SEG">
                             <span>SEG</span>
                         </label>
-
                         <label class="flex items-center space-x-2">
                             <input type="checkbox" class="location-checkbox" value="1006" data-label="SEMA">
                             <span>SEMA</span>
                         </label>
-
                         <label class="flex items-center space-x-2">
                             <input type="checkbox" class="location-checkbox" value="1005" data-label="SEMS">
                             <span>SEMS</span>
@@ -396,84 +403,51 @@
                     </div>
                 </div>
 
-                <!-- Item + 사용자 입력 -->
                 <div id="erp-item-section" class="space-y-4">
-                    <!-- Item -->
                     <div>
                         <h2 class="text-xs font-semibold text-gray-600 mb-2">Item (제품명,제품속성)</h2>
                         <div class="p-2 border border-gray-300 rounded-lg space-y-1">
-                            
                             <label class="flex items-center space-x-2 font-semibold">
-                            <input type="checkbox" id="item-all" class="item-master">
-                            <span>모두 선택</span>
-                        </label>
-
+                                <input type="checkbox" id="item-all" class="item-master">
+                                <span>모두 선택</span>
+                            </label>
                             <label class="flex items-center space-x-2">
                                 <input type="checkbox" class="item-checkbox" value="LABEL">
                                 <span>Label</span>
                             </label>
-
                             <label class="flex items-center space-x-2">
                                 <input type="checkbox" class="item-checkbox" value="RIBBON">
                                 <span>Ribbon</span>
                             </label>
-
                             <label class="flex items-center space-x-2">
                                 <input type="checkbox" class="item-checkbox" value="FILM">
                                 <span>Film</span>
                             </label>
-                             <!-- 사용자 입력 체크박스 + 입력창 -->
                             <div class="space-y-1 pt-1">
-                            <!-- 체크박스 라벨 -->
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" id="item-custom-toggle">
-                                <span><input type="text" id="item-color-input"
-                                        placeholder="여러값은 쉼표(,)로 구분"
-                                        class="w-full p-2 border border-gray-300 rounded-lg"></span>
-                            </label>
-                                
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" id="item-custom-toggle">
+                                    <span><input type="text" id="item-color-input" placeholder="여러값은 쉼표(,)로 구분" class="w-full p-2 border border-gray-300 rounded-lg"></span>
+                                </label>
                             </div>
                         </div>
-
                     </div>
-
-                    <!-- Item 사용자 입력 -->
-                    <!--div>
-                        <h2 class="text-xs font-semibold text-gray-600 mb-2">Item 사용자 입력</h2>
-                        <input type="text" id="item-color-input"
-                            placeholder="여러값은 쉼표(,)로 구분"
-                            class="w-full p-2 border border-gray-300 rounded-lg">
-                    </div-->
                 </div>
-                <!-- 프로젝트 -->
+
                 <div class="relative">
                     <h2 class="text-xs font-semibold text-gray-600 mb-2">Project</h2>
-                    <!-- 드롭다운 버튼 -->
-                    <button id="projectDropdownBtn"
-                            class="w-full p-2 border border-gray-300 rounded-lg flex justify-between items-center bg-white">
-                        <span id="projectDropdownLabel">Project</span>    <!-- ✅ 라벨 span 추가 -->
+                    <button id="projectDropdownBtn" class="w-full p-2 border border-gray-300 rounded-lg flex justify-between items-center bg-white">
+                        <span id="projectDropdownLabel">Project</span>
                         <span>▼</span>
                     </button>
-                    
-                    <!-- 드롭다운 내용 -->
-                    <div id="projectDropdownMenu"
-                        class="absolute left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg p-2 hidden z-20">
-                    
-                        <!--label class="flex items-center space-x-2 font-semibold">
-                            <input type="checkbox" id="project-all" class="project-master">
-                            <span>모두 선택</span>
-                        </label-->
-                    
+                    <div id="projectDropdownMenu" class="absolute left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg p-2 hidden z-20">
                         <label class="flex items-center space-x-2">
                             <input type="checkbox" class="project-checkbox" value="P001" data-label="구매대행">
                             <span>MRO 구매대행 General Purchasing</span>
                         </label>
-                    
                         <label class="flex items-center space-x-2">
                             <input type="checkbox" class="project-checkbox" value="P018" data-label="경비">
                             <span>경비 Security</span>
                         </label>
-                    
                         <label class="flex items-center space-x-2">
                             <input type="checkbox" class="project-checkbox" value="P020" data-label="보전">
                             <span>보전 Maintenance Management</span>
@@ -514,178 +488,122 @@
                             <input type="checkbox" class="project-checkbox" value="P019" data-label="폐기물 처리 대행">
                             <span>폐기물 처리 대행 Waste Management</span>
                         </label>
-
                     </div>
                 </div>
 
-
-                <!-- 업체명 -->
                 <div>
                     <h2 class="text-xs font-semibold text-gray-600 mb-2">업체명</h2>
-                    <input type="text" id="SupplierName"
-                        placeholder="여러값은 쉼표(,)로 구분"
-                        class="w-full p-2 border border-gray-300 rounded-lg">
+                    <input type="text" id="SupplierName" placeholder="여러값은 쉼표(,)로 구분" class="w-full p-2 border border-gray-300 rounded-lg">
                 </div>
                 
-                <!-- Invoice No -->
                 <div>
                     <h2 class="text-xs font-semibold text-gray-600 mb-2">Invoice No</h2>
-                    <input type="text" id="InvoiceNo"
-                        placeholder="여러값은 쉼표(,)로 구분"
-                        class="w-full p-2 border border-gray-300 rounded-lg">
+                    <input type="text" id="InvoiceNo" placeholder="여러값은 쉼표(,)로 구분" class="w-full p-2 border border-gray-300 rounded-lg">
                 </div>
 
-                <!-- ⭐ New Feature Button: Data Critique (Gemini API) -->
-                <!-- 래퍼 추가 및 기본 숨김 처리 -->
                 <div id="critique-btn-wrapper">
-                    <button id="critique-btn" onclick="requestCritique()"
-                            class="w-full p-3 bg-green-500 text-white rounded-lg font-bold shadow-md hover:bg-green-600 transition duration-150 disabled:bg-gray-400">
+                    <button id="critique-btn" onclick="requestCritique()" class="w-full p-3 bg-green-500 text-white rounded-lg font-bold shadow-md hover:bg-green-600 transition duration-150 disabled:bg-gray-400">
                         ✨ 데이터 필터 Critique (Gemini)
                     </button>
                 </div>
             </section>
-
         </div>
     </aside>
 
     <!-- 오른쪽: 메인 채팅 영역 -->
     <main class="flex-1 flex flex-col">
-
-        <!-- 상단 헤더 -->
         <header class="h-14 px-6 flex items-center border-b bg-white">
             <div>
                 <h2 class="text-base font-semibold">NOVA INTEGRATED SOLUTIONS LLC</h2>
-                <p class="text-sm text-gray-500">
-                    구매이력을 AI 통해 조회 및 분석하고 AI 검색을 위한 시스템입니다.
-                </p>
+                <p class="text-sm text-gray-500">구매이력을 AI 통해 조회 및 분석하고 AI 검색을 위한 시스템입니다.</p>
             </div>
         </header>
 
-        <!-- 메시지 영역 -->
         <section id="messages" class="flex-1 flex flex-col p-4 space-y-3 bg-white">
-            <div class="ai-message">
-                🪄 안녕하세요! AI 분석 모드를 선택하거나, ERP 데이터 검색을 위한 필터를 선택하고 아래에 질문을 입력해 주세요.
-            </div>
+            <div class="ai-message">🪄 안녕하세요! AI 분석 모드를 선택하거나, ERP 데이터 검색을 위한 필터를 선택하고 아래에 질문을 입력해 주세요. 이미지를 첨부하거나 클릭하여 크게 볼 수 있습니다.</div>
         </section>
 
-        <!-- 아래 입력 영역 -->
         <section class="bg-white p-4">
             <div class="max-w-3xl mx-auto space-y-2">
-
-                <!-- 미리 정의된 질문 (ERP일 때만 보임) -->
                 <section id="preset-prompt-wrapper">
-                    <select id="preset-prompt"
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
+                    <select id="preset-prompt" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
                         <option value="">-- 미리 정의된 질문 선택 (선택 안함) --</option>
                         <option value="주어진 값으로 조회된 데이터 결과를 날짜 오름차순으로 표로 정리">데이터 검색 결과를 표로 정리</option>
-                        <option value="해당 기간 및 Location에서 Tax와 Shpping fee를 제외하고 가장 많이 구매한 제품 순위 10개를 순위, item이름, 총금액, 구매횟수로 보여줘">
-                            해당 기간 및 Lacation에서 가장 많이 구매한 제품 순위 10개
-                        </option>
+                        <option value="해당 기간 및 Location에서 Tax와 Shpping fee를 제외하고 가장 많이 구매한 제품 순위 10개를 순위, item이름, 총금액, 구매횟수로 보여줘">해당 기간 및 Lacation에서 가장 많이 구매한 제품 순위 10개</option>
                         <option value="단가 비교를 업체명, 아이템명, 단가를 단가기준 오름차순 표로 작성">단가 비교를 업체명, 아이템명, 단가 표로 작성</option>
                     </select>
                 </section>
 
-                <!-- GPT 스타일 프롬프트 바 -->
                 <div class="gpt-input-bar">
-                    <!-- 왼쪽: AI 모드 토글 버튼 -->
-                    <button id="ai-search-toggle" class="gpt-left-btn">
-                        AI모드
-                    </button>
-                      <!-- 📎 첨부 버튼 (여기에!) -->
-                    <button id="attach-btn"
-                            type="button"
-                            class="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition duration-150"
-                            title="파일 첨부">
-                        📁
-                    </button>
-                    
-                    <!-- 가운데: 프롬프트 textarea -->
-                    <textarea id="user-input"
-                              placeholder="Location, Item, Invoice No.등은 왼쪽 필터에서 선택하고, 여기에는 AI에게 원하는 내용을 입력합니다"
-                              class="gpt-input"
-                              rows="1"
-                              oninput="autoResize(this)"></textarea>
-
-                    <!-- 오른쪽: 전송 버튼 -->
-                    <button onclick="sendMessage()" id="send-button"
-                            class="gpt-send-btn">
-                        ➤
-                    </button>
+                    <button id="ai-search-toggle" class="gpt-left-btn">AI모드</button>
+                    <button id="attach-btn" type="button" class="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition duration-150" title="파일 첨부">📁</button>
+                    <textarea id="user-input" placeholder="필터를 선택하고 AI에게 원하는 내용을 입력하세요" class="gpt-input" rows="1" oninput="autoResize(this)"></textarea>
+                    <button onclick="sendMessage()" id="send-button" class="gpt-send-btn">➤</button>
                 </div>
                 
-                <!-- 숨겨진 파일 input (gpt-input-bar 밖으로 이동) -->
-                <input id="file-input"
-                        type="file"
-                        accept="*/*"
-                        multiple
-                        class="hidden" />
-                        
-                <!-- 🔽 첨부 미리보기는 bar 아래 -->
+                <input id="file-input" type="file" accept="*/*" multiple class="hidden" />
                 <div id="attachment-preview" class="msg-attachments"></div>
-
             </div>
         </section>
-
     </main>
 </div>
 
+<!-- 이미지 확대 모달 -->
+<div id="image-modal" onclick="closeImageModal()">
+    <span id="modal-close">&times;</span>
+    <img id="modal-img" alt="Zoomed Image">
+</div>
 
 <script>
 // --- 전역 상수 ---
-const MAX_FILES = 3;                       // ✅ 최대 파일 개수
-const MAX_TOTAL_BYTES = 10 * 1024 * 1024; // ✅ 총 10MB
-// ------------------------------------
+const MAX_FILES = 3;
+const MAX_TOTAL_BYTES = 10 * 1024 * 1024;
+const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/beojnrbam68450c5366anrdb2lfdi8uq";
 
-window.currentEngine = null;    // 'gpt' 또는 'gemini'
+window.currentEngine = null;
 window.lastEngine = null;
-    
-// 우선 변수 선언 (try 밖)
 let responseId = null;
 let conversationId = null;
-    
-// 🔹 "정말 새로운 대화"를 시작할 때만 호출할 함수
+
+// 이미지 확대 모달 함수
+function openImageModal(src) {
+    const modal = document.getElementById('image-modal');
+    const modalImg = document.getElementById('modal-img');
+    modal.style.display = "flex";
+    modalImg.src = src;
+}
+
+function closeImageModal() {
+    document.getElementById('image-modal').style.display = "none";
+}
+
 function resetConversationState() {
     window.conversationId = null;
     window.responseId = null;
 }
-const engineRadios = document.querySelectorAll('input[name="ai-engine"]');
 
+const engineRadios = document.querySelectorAll('input[name="ai-engine"]');
 engineRadios.forEach(r => {
     r.addEventListener('change', () => {
-        // 엔진이 바뀌면 대화 맥락 완전 새로 시작
-        resetConversationState();   // 🔹 여기서만 ID 초기화
-        resetPromptArea();          // 프롬프트 내용도 초기화 (원하면 유지해도 되고)
-        
-        // ⭐ 엔진 변경 시 버튼 가시성 업데이트
+        resetConversationState();
+        resetPromptArea();
         updateCritiqueButtonVisibility();
-
-        // 필요하면 화면에 "새 대화 시작" 안내 메시지를 추가해도 됨
     });
 });
 
-/**
- * 현재 AI 엔진 선택 상태에 따라 Critique 버튼의 가시성을 토글합니다.
- */
 function updateCritiqueButtonVisibility() {
     const selectedEngine = document.querySelector('input[name="ai-engine"]:checked')?.value;
     const critiqueWrapper = document.getElementById('critique-btn-wrapper');
-    
     if (critiqueWrapper) {
-        if (selectedEngine === 'gemini') {
-            critiqueWrapper.classList.remove('hidden');
-        } else {
-            critiqueWrapper.classList.add('hidden');
-        }
+        critiqueWrapper.classList.toggle('hidden', selectedEngine !== 'gemini');
     }
 }
-    
-/* textarea 자동 높이 증가 */
+
 function autoResize(el) {
     el.style.height = "auto";
     el.style.height = (el.scrollHeight) + "px";
 }
-    
-/* 데이터 마지막 업데이트 날짜 불러오기 */
+
 const SHEET_LAST_UPDATE_URL = "https://hook.us2.make.com/3xywupvm8a60lrh5l1l6kwpqe4sjake1";
 async function setEndDateFromSheet() {
     const endInput = document.getElementById("end-date");
@@ -695,95 +613,45 @@ async function setEndDateFromSheet() {
     try {
         const res = await fetch(SHEET_LAST_UPDATE_URL);
         const data = await res.json();
-
-        // 1) 시트에서 받은 업데이트 날짜 (YYYY-MM-DD 형식이라고 가정)
-        const endStr = data.lastUpdatedDate;    // ← Make 응답 키 이름에 맞게 사용
+        const endStr = data.lastUpdatedDate;
         if (!endStr || !endInput || !startInput) return;
-
-        // 종료일 = 업데이트일
         endInput.value = endStr;
-
-        // 2) 시작일 = 종료일 기준 1개월 전
-        const endDateObj = parseHtmlDate(endStr); // "YYYY-MM-DD" → Date
+        const endDateObj = parseHtmlDate(endStr);
         const start = new Date(endDateObj);
-        start.setMonth(start.getMonth() - 1);      // 한 달 전
+        start.setMonth(start.getMonth() - 1);
         startInput.value = formatHtmlDate(start);
-
-        // 3) 화면에 설명 텍스트 표시 (예: 11/21/2025 (금요일) 2:36:46 오후)
-        if (display) {
-            const text = data.lastUpdatedText || endStr; // 예쁘게 포맷된 문자열이 있으면 사용
-            display.textContent = `📌 ERP 최신 업데이트 날짜: ${text}`;
-        }
-
+        if (display) display.textContent = `📌 ERP 최신 업데이트 날짜: ${data.lastUpdatedText || endStr}`;
     } catch (e) {
-        console.error("업데이트 날짜 불러오기 실패, 오늘 기준으로 설정:", e);
-
-        // 실패 시 fallback: 오늘을 종료일, 한 달 전을 시작일
+        console.error("업데이트 날짜 불러오기 실패:", e);
         const today = new Date();
         if (endInput) endInput.value = formatHtmlDate(today);
-
         const start = new Date(today);
         start.setMonth(start.getMonth() - 1);
         if (startInput) startInput.value = formatHtmlDate(start);
-
-        if (display) {
-            display.textContent = "📌 ERP 최신 업데이트 날짜를 불러오지 못해, 오늘 날짜 기준으로 설정했습니다.";
-        }
     }
 }
 
-
-/**
- * 현재 선택된 필터 데이터를 수집하여 객체로 반환합니다.
- */
 function collectFilterData() {
-    // Dates
     const startDateValue = document.getElementById("start-date").value;
     const endDateValue = document.getElementById("end-date").value;
-    const startDateObj = startDateValue ? parseHtmlDate(startDateValue) : new Date();
-    const endDateObj = endDateValue ? parseHtmlDate(endDateValue) : new Date();
-
-    const startDateDisplay = formatDisplayDate(startDateObj);
-    const endDateDisplay = formatDisplayDate(endDateObj);
-
-    // Location
     const locBoxes = document.querySelectorAll(".location-checkbox:checked");
-    const locationLabels = Array.from(locBoxes).map(cb => cb.dataset.label).filter(Boolean);
-    
-    // Item (체크박스)
     const itemBoxes = document.querySelectorAll(".item-checkbox:checked");
-    const itemIds = Array.from(itemBoxes).map(cb => cb.value);
-    
-    // Project
     const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
-    const projectLabels = Array.from(projectBoxes).map(cb => cb.dataset.label.trim()).filter(Boolean);
-
-    // Text inputs
-    const itemColor = document.getElementById("item-color-input").value.trim();
-    const SupplierName = document.getElementById("SupplierName").value.trim();
-    const InvoiceNo = document.getElementById("InvoiceNo").value.trim();
 
     return {
-        startDate: startDateDisplay,
-        endDate: endDateDisplay,
-        location: locationLabels.join(", ") || 'ALL Locations',
-        itemNames: itemIds.join(", ") || 'ALL Items (Checked)',
-        itemCustom: itemColor || 'None',
-        projects: projectLabels.join(", ") || 'ALL Projects',
-        supplier: SupplierName || 'ALL Suppliers',
-        invoice: InvoiceNo || 'None'
+        startDate: startDateValue ? formatDisplayDate(parseHtmlDate(startDateValue)) : '',
+        endDate: endDateValue ? formatDisplayDate(parseHtmlDate(endDateValue)) : '',
+        location: Array.from(locBoxes).map(cb => cb.dataset.label).join(", ") || 'ALL Locations',
+        itemNames: Array.from(itemBoxes).map(cb => cb.value).join(", ") || 'ALL Items (Checked)',
+        itemCustom: document.getElementById("item-color-input").value.trim() || 'None',
+        projects: Array.from(projectBoxes).map(cb => cb.dataset.label.trim()).join(", ") || 'ALL Projects',
+        supplier: document.getElementById("SupplierName").value.trim() || 'ALL Suppliers',
+        invoice: document.getElementById("InvoiceNo").value.trim() || 'None'
     };
 }
 
-
-/**
- * Gemini API 호출을 위한 특별 프롬프트를 입력하고 sendMessage를 호출합니다.
- * 이 함수는 Gemini의 분석 능력(Criticism/Insight)을 특정 조건 없이 활용하도록 합니다.
- */
 function requestCritique() {
     const filters = collectFilterData();
-    
-    // 필터 값을 포함하는 구체적인 프롬프트 생성
     const critiquePrompt = `Critique the currently selected ERP filter set for meaningful analysis and suggest deep-dive questions.
 
     --- Current Filters ---
@@ -797,76 +665,48 @@ function requestCritique() {
     
     Based on these specific filters, suggest a focused analysis or point out any potential data integrity issues (e.g., if the time range is too long, or conflicting filters are applied).
     `;
-    
-    // Set the critique prompt into the user input field (for user visibility)
     const inputElement = document.getElementById('user-input');
     if (inputElement) {
         inputElement.value = critiquePrompt;
         autoResize(inputElement);
     }
-    
-    // Trigger the main send message function
     sendMessage();
 }
 
-
-/* 날짜 포맷 함수 */
 function formatHtmlDate(date) {
     return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
 }
 function formatDisplayDate(date) {
-    return `${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).
-        padStart(2,'0')}/${date.getFullYear()}`;
-}
-function formatWebhookDate(date) {
-    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+    return `${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).padStart(2,'0')}/${date.getFullYear()}`;
 }
 function parseHtmlDate(str) {
-    // YYYY-MM-DD 형식 문자열을 Date 객체로 변환
-    if (!str) return new Date(); // 빈 문자열 처리
+    if (!str) return new Date();
     const [y,m,d] = str.split("-").map(Number);
-    // 월은 0부터 시작하므로 -1
     return new Date(y, m - 1, d);
 }
 
-/* "모두 선택" 체크박스 기능 */
 function setupMasterCheckbox(masterSelector, itemSelector) {
     const master = document.querySelector(masterSelector);
     const items = document.querySelectorAll(itemSelector);
-
     if (!master || items.length === 0) return;
-
-    master.addEventListener("change", () => {
-        items.forEach(cb => cb.checked = master.checked);
-    });
-
+    master.addEventListener("change", () => items.forEach(cb => cb.checked = master.checked));
     items.forEach(cb => {
         cb.addEventListener("change", () => {
-            const allChecked = Array.from(items).every(x => x.checked);
-            master.checked = allChecked;
+            master.checked = Array.from(items).every(x => x.checked);
         });
     });
 }
 
-/* 현재 선택된 AI 모드 값 가져오기 */
 function getCurrentAiMode() {
-    const selected = document.querySelector('input[name="ai-mode"]:checked');
-    return selected ? selected.value : null;
+    return document.querySelector('input[name="ai-mode"]:checked')?.value;
 }
 
-/* ERP 선택 시: 기간 + Location + Item + 미리정의 질문 보이기/숨기기 */
 function updateErpVisibility() {
     const mode = getCurrentAiMode();
     const isErp = (mode === 'erp');
-
-    const periodSection = document.getElementById('period-section');
-    const erpOptionsSection = document.getElementById('erp-options-section');
-    const presetWrapper = document.getElementById('preset-prompt-wrapper');
-
-    [periodSection, erpOptionsSection, presetWrapper].forEach(el => {
-        if (!el) return;
-        if (isErp) el.classList.remove('hidden');
-        else el.classList.add('hidden');
+    ['period-section', 'erp-options-section', 'preset-prompt-wrapper'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('hidden', !isErp);
     });
 }
 
@@ -874,355 +714,113 @@ function updateAiModeStyling() {
     const aiMode = getCurrentAiMode();
     const textarea = document.getElementById("user-input");
     const sendButton = document.getElementById("send-button");
-
-    if (aiMode === "ai") {
-        textarea.classList.add("ai-mode-active-textarea");
-        sendButton.classList.add("ai-mode-active-button");
-    } else {
-        textarea.classList.remove("ai-mode-active-textarea");
-        sendButton.classList.remove("ai-mode-active-button");
-    }
+    textarea.classList.toggle("ai-mode-active-textarea", aiMode === "ai");
+    sendButton.classList.toggle("ai-mode-active-button", aiMode === "ai");
 }
 
-/* ERP/AI 선택 시: 프롬프트 초기화 */
 function resetPromptArea() {
     const textarea = document.getElementById("user-input");
-    if (textarea) {
-        textarea.value = "";
-        autoResize(textarea);
-    }
+    if (textarea) { textarea.value = ""; autoResize(textarea); }
 }
-    /* ERP/AI 선택 시: 프롬프트 placeholder 변 */
+
 function updatePromptPlaceholder() {
     const textarea = document.getElementById("user-input");
     const aiMode = getCurrentAiMode();
-
     if (!textarea) return;
-
-    if (aiMode === "erp") {
-        textarea.placeholder =
-            "Location, Item, Invoice No.등은 왼쪽 필터에서 선택하고, 여기에는 AI에게 원하는 내용을 입력합니다.";
-    } else {
-        textarea.placeholder =
-            "무엇이든 자유롭게 질문해보세요.";
-    }
+    textarea.placeholder = aiMode === "erp" ? "필터를 선택하고 AI에게 원하는 내용을 입력하세요." : "무엇이든 자유롭게 질문해보세요.";
 }
-    //프로젝트선택을 위
+
 const projectBtn = document.getElementById("projectDropdownBtn");
 const projectMenu = document.getElementById("projectDropdownMenu");
-
-// 버튼 클릭 → 토글 열기/닫기
-projectBtn.addEventListener("click", () => {
-    projectMenu.classList.toggle("hidden");
-});
-
-// 바깥 클릭 시 닫기
+projectBtn.addEventListener("click", () => projectMenu.classList.toggle("hidden"));
 document.addEventListener("click", (e) => {
-    if (!projectBtn.contains(e.target) && !projectMenu.contains(e.target)) {
-        projectMenu.classList.add("hidden");
-    }
+    if (!projectBtn.contains(e.target) && !projectMenu.contains(e.target)) projectMenu.classList.add("hidden");
 });
 
-
-/* 페이지 로드 시 초기화 */
 document.addEventListener("DOMContentLoaded", () => {
-
     setupMasterCheckbox("#location-all", ".location-checkbox");
     setupMasterCheckbox("#item-all", ".item-checkbox");
-    setupMasterCheckbox("#project-all", ".project-checkbox");
-
-    // 미리 정의된 질문 선택 시 textarea에 자동 입력
     const presetSelect = document.getElementById("preset-prompt");
     const userInput = document.getElementById("user-input");
-
     if (presetSelect && userInput) {
         presetSelect.addEventListener("change", () => {
-            const value = presetSelect.value || "";
-            userInput.value = value;
+            userInput.value = presetSelect.value;
             autoResize(userInput);
         });
     }
 
-    // GPT 스타일: Enter → 전송, Shift+Enter → 줄바꿈
-    if (userInput) {
-        userInput.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") {
-                if (!e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            }
-        });
-    }
+    userInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
 
-    // 프롬프트 옆 AI 검색 토글 버튼 & 라디오 동기화
     const aiToggleBtn = document.getElementById('ai-search-toggle');
     const aiRadios = document.querySelectorAll('input[name="ai-mode"]');
-
     if (aiToggleBtn) {
-        // 토글 버튼을 누르면 라디오도 같이 바뀜
         aiToggleBtn.addEventListener('click', () => {
-            const isActive = aiToggleBtn.classList.toggle('ai-toggle-active'); // on/off
-
-            const targetValue = isActive ? 'ai' : 'erp';
-            const targetRadio = document.querySelector(
-                `input[name="ai-mode"][value="${targetValue}"]`
-            );
-            if (targetRadio) {
-                targetRadio.checked = true;
-            }
-
-            updateErpVisibility();
-            updateAiModeStyling();
-            updatePromptPlaceholder();
-            updateCritiqueButtonVisibility(); // ⭐ 가시성 업데이트
-            resetPromptArea();
+            const isActive = aiToggleBtn.classList.toggle('ai-toggle-active');
+            const targetRadio = document.querySelector(`input[name="ai-mode"][value="${isActive ? 'ai' : 'erp'}"]`);
+            if (targetRadio) targetRadio.checked = true;
+            updateErpVisibility(); updateAiModeStyling(); updatePromptPlaceholder(); updateCritiqueButtonVisibility(); resetPromptArea();
         });
-
-        // 라디오를 바꾸면 토글 상태도 따라감
-        aiRadios.forEach(r => {
-            r.addEventListener('change', () => {
-                const isAi = r.value === 'ai' && r.checked;
-                if (isAi) {
-                    aiToggleBtn.classList.add('ai-toggle-active');
-                } else {
-                    aiToggleBtn.classList.remove('ai-toggle-active');
-                }
-    
-
-                updateErpVisibility();
-                updateAiModeStyling();
-                updatePromptPlaceholder();
-                updateCritiqueButtonVisibility(); // ⭐ 가시성 업데이트
-                resetPromptArea();
-            });
-        });
+        aiRadios.forEach(r => r.addEventListener('change', () => {
+            aiToggleBtn.classList.toggle('ai-toggle-active', r.value === 'ai' && r.checked);
+            updateErpVisibility(); updateAiModeStyling(); updatePromptPlaceholder(); updateCritiqueButtonVisibility(); resetPromptArea();
+        }));
     }
-    
-    // AI 엔진 라디오 (Gemini/GPT) 변경 시
-    document.querySelectorAll('input[name="ai-engine"]').forEach(r => {
-        r.addEventListener('change', updateCritiqueButtonVisibility);
-    });
 
-    // 🔹 Project 드롭다운 라벨 업데이트 함수
-    function updateProjectLabel() {
-        const labelSpan = document.getElementById("projectDropdownLabel");
-        if (!labelSpan) return;
-    
+    const updateProjectLabel = () => {
         const checked = document.querySelectorAll(".project-checkbox:checked");
         const labels = Array.from(checked).map(cb => cb.dataset.label || cb.value);
-    
-        if (labels.length === 0) {
-            labelSpan.textContent = "Project"; // 기본 텍스트
-        } else if (labels.length > 2) {
-            // 마지막으로 클릭한 체크박스를 해제
-            event.target.checked = false;
+        if (labels.length > 2) { event.target.checked = false; alert("프로젝트는 최대 2개까지만 선택 가능합니다."); return; }
+        document.getElementById("projectDropdownLabel").textContent = labels.length ? labels.join(", ") : "Project";
+    };
+    document.querySelectorAll(".project-checkbox").forEach(el => el.addEventListener("change", updateProjectLabel));
 
-            // 안내 메시지 (필요 시 삭제 가능)
-            alert("프로젝트는 최대 2개까지만 선택할 수 있습니다.");
-            return; // 아래 UI 업데이트는 실행하지 않음
-        } else if (labels.length <= 2) {          
-            // 이름 표시
-            labelSpan.textContent = labels.join(", ");
-        } 
-    }
-    
-    // ✅ Project 체크박스 변경 시마다 라벨 갱신
-    document.querySelectorAll(".project-checkbox, #project-all").forEach(el => {
-        el.addEventListener("change", updateProjectLabel);
-    });
-    
-    // 페이지 처음 로드할 때도 한 번 맞춰주기
-    updateProjectLabel();
-
-
-    // 초기 표시 상태
-    setEndDateFromSheet();
-    updateErpVisibility();
-    updateAiModeStyling();
-    updateCritiqueButtonVisibility(); // ⭐ 초기 로드 시 가시성 설정
-    autoResize(userInput);
+    setEndDateFromSheet(); updateErpVisibility(); updateAiModeStyling(); updateCritiqueButtonVisibility(); autoResize(userInput);
 });
 
-// ✅ 첨부 파일(모든 파일) 목록: 여러 개 지원
-window.attachedImages = []; // File[]
+window.attachedImages = [];
 
-// ----------------------------------------------------
-// --- 파일 첨부 및 미리보기 (모든 파일 타입 지원) ---
-// ----------------------------------------------------
-
-// ✅ 미리보기 렌더 (수정됨)
 function renderAttachments() {
     const wrap = document.getElementById("attachment-preview");
     if (!wrap) return;
-
     wrap.innerHTML = "";
-    if (window.attachedImages.length === 0) return;
-
     window.attachedImages.forEach((file, idx) => {
         const url = URL.createObjectURL(file);
-
         const item = document.createElement("div");
         item.className = "thumb-wrap";
-        
-        let fileContentHtml = '';
-        let fileNameDisplay = file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name;
-
-        // 파일 유형에 따라 미리보기 및 아이콘 결정
-        if (file.type.startsWith("image/")) {
-            // 이미지 파일: 썸네일로 렌더링
-            fileContentHtml = `<img src="${url}" class="thumb" alt="${file.name}" />`;
-        } else {
-            // 이미지 외 파일: 아이콘과 파일명 표시
-            let iconSvg;
-            if (file.type.includes('pdf')) {
-                iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 w-6 h-6"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="16" y2="16"/></svg>`; // PDF Icon
-            } else if (file.type.includes('text')) {
-                iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500 w-6 h-6"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L15 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`; // Text Icon
-            } else {
-                iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 w-6 h-6"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/></svg>`; // Generic File Icon
-            }
-            
-            fileContentHtml = `
-                <div class="flex flex-col items-center justify-center h-full">
-                    ${iconSvg}
-                    <span class="text-xs mt-1 text-gray-700 font-medium">${fileNameDisplay}</span>
-                    <span class="text-xs text-gray-500">${bytesToMB(file.size)}MB</span>
-                </div>
-            `;
-            // 썸네일 대신 파일 아이콘과 이름이 들어가도록 thumb-wrap 내부 스타일 조정이 필요
-        }
-
-
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "thumb-remove";
-        btn.textContent = "×";
-        btn.onclick = () => {
-            URL.revokeObjectURL(url);
-            window.attachedImages.splice(idx, 1);
-            renderAttachments();
-        };
-
-        item.innerHTML = fileContentHtml;
-        item.appendChild(btn);
+        let contentHtml = file.type.startsWith("image/") ? `<img src="${url}" class="thumb" />` : 
+            `<div class="flex flex-col items-center justify-center h-full"><span class="text-xs font-bold text-gray-500">${file.name.split('.').pop().toUpperCase()}</span></div>`;
+        item.innerHTML = `${contentHtml}<button type="button" class="thumb-remove" onclick="removeAttachment(${idx})">×</button>`;
         wrap.appendChild(item);
     });
 }
 
-// ✅ FileList / Clipboard items에서 파일 File만 추출하여 추가 (이미지 필터링 제거됨)
-function bytesToMB(bytes) {
-    return (bytes / (1024 * 1024)).toFixed(2);
-}
-
-function currentTotalBytes() {
-    return (window.attachedImages || []).reduce((sum, f) => sum + (f?.size || 0), 0);
+function removeAttachment(idx) {
+    window.attachedImages.splice(idx, 1);
+    renderAttachments();
 }
 
 function addImageFiles(files) {
     const arr = Array.from(files || []).filter(f => f);
-    
-    // ⭐ 핵심 수정: 이미지 필터링 제거 - 모든 파일을 후보로 사용
-    const candidates = arr; 
-    if (!candidates.length) return;
-
-    window.attachedImages = window.attachedImages || [];
-
-    // 1) 장수 제한
+    if (!arr.length) return;
     const remain = MAX_FILES - window.attachedImages.length;
-    if (remain <= 0) {
-        pushWarn(`첨부 파일은 최대 ${MAX_FILES}개까지 첨부할 수 있습니다.`);
-        return;
-    }
-
-    const finalCandidates = candidates.slice(0, remain); // candidates에서 남은 개수만큼 슬라이스
-
-    // 2) 용량 제한
-    let total = currentTotalBytes();
+    if (remain <= 0) { pushWarn(`첨부 파일은 최대 ${MAX_FILES}개까지 가능합니다.`); return; }
+    const finalCandidates = arr.slice(0, remain);
+    let currentSize = window.attachedImages.reduce((s, f) => s + f.size, 0);
     const accepted = [];
-
-    for (const file of finalCandidates) {
-        const next = total + file.size;
-        if (next > MAX_TOTAL_BYTES) {
-            pushWarn(`총 첨부 용량은 ${bytesToMB(MAX_TOTAL_BYTES)}MB까지 가능합니다.`);
-            break;
-        }
-        accepted.push(file);
-        total = next;
+    for (const f of finalCandidates) {
+        if (currentSize + f.size > MAX_TOTAL_BYTES) { pushWarn("총 첨부 용량 10MB를 초과했습니다."); break; }
+        accepted.push(f);
+        currentSize += f.size;
     }
-
-    if (!accepted.length) return;
-
     window.attachedImages = window.attachedImages.concat(accepted);
-
-    // 3) 미리보기 렌더
     renderAttachments();
 }
 
+document.getElementById("attach-btn").onclick = () => document.getElementById("file-input").click();
+document.getElementById("file-input").onchange = (e) => { addImageFiles(e.target.files); e.target.value = ""; };
 
-document.addEventListener("DOMContentLoaded", () => {
-    const textarea = document.getElementById("user-input");
-    const fileInput = document.getElementById("file-input");
-    const attachBtn = document.getElementById("attach-btn");
-
-    // ① 파일 선택 버튼 → file input 열기
-    if (attachBtn && fileInput) {
-        attachBtn.addEventListener("click", () => fileInput.click());
-    }
-
-    // ② 파일 선택 input 변경 → 첨부 추가
-    if (fileInput) {
-        fileInput.addEventListener("change", () => {
-            addImageFiles(fileInput.files);
-            fileInput.value = ""; // 같은 파일 다시 선택 가능하게
-        });
-    }
-
-    // ③ 붙여넣기(Ctrl/Cmd+V) → 첨부 추가
-    if (textarea) {
-        textarea.addEventListener("paste", (e) => {
-            const items = e.clipboardData?.items;
-            if (!items) return;
-
-            const files = [];
-            for (const it of items) {
-                // ⭐ 이미지 타입 필터링 제거 (모든 클립보드 항목을 파일로 시도)
-                const f = it.getAsFile();
-                if (f) files.push(f);
-            }
-            if (files.length) addImageFiles(files);
-        });
-    }
-
-    // ④ 드래그&드롭 → 첨부 추가 (textarea 위로 드롭)
-    if (textarea) {
-        textarea.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            textarea.classList.add("drop-hint");
-        });
-
-        textarea.addEventListener("dragleave", () => {
-            textarea.classList.remove("drop-hint");
-        });
-
-        textarea.addEventListener("drop", (e) => {
-            e.preventDefault();
-            textarea.classList.remove("drop-hint");
-
-            const files = e.dataTransfer?.files;
-            if (files && files.length) addImageFiles(files);
-        });
-    }
-});
-
-
-/* 전송 로직 */
-// ⭐ 수정: 사용자가 실제 URL을 입력하도록 주석을 추가합니다.
-const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/beojnrbam68450c5366anrdb2lfdi8uq"; 
-// 👆 WARNING: 이 URL은 임시 예시 주소입니다. Make에서 발급받은 실제 Webhook 주소로 변경해야 합니다.
-let isSending = false;
-
-// 이미지 파일을 Base64 데이터 URL로 읽어오는 헬퍼 함수
 async function readFileAsDataURL(file) {
     return new Promise((resolve) => {
         const reader = new FileReader();
@@ -1231,248 +829,89 @@ async function readFileAsDataURL(file) {
     });
 }
 
+function pushWarn(text) {
+    const messagesDiv = document.getElementById("messages");
+    messagesDiv.innerHTML += `<div class="ai-message bg-yellow-50 text-yellow-700">⚠️ ${text}</div>`;
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+let isSending = false;
 async function sendMessage() {
     const textarea = document.getElementById("user-input");
-    const selectElement = document.getElementById("preset-prompt");
-    const sendButton = document.getElementById("send-button");
     const messagesDiv = document.getElementById("messages");
-
-    // 프롬프트 창 내용만 전송
+    const sendButton = document.getElementById("send-button");
     const message = textarea.value.trim();
 
-    if (!message || isSending) {
-        if (!message && !isSending) {
-            messagesDiv.innerHTML += `<div class="ai-message self-start bg-yellow-100 text-yellow-700">⚠️ 오류: 질문을 입력해주세요.</div>`;
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-        return;
-    }
+    if (!message || isSending) return;
 
-    // ⭐ 필터 데이터 수집
     const filterData = collectFilterData();
-
-    // Location
     const locBoxes = document.querySelectorAll(".location-checkbox:checked");
-    const locationIds = Array.from(locBoxes).map(cb => cb.value);
-    const locationLabels = Array.from(locBoxes).map(cb => cb.dataset.label);
-    const locationLabel = locationLabels.join(", ");
-
-    // Item
     const itemBoxes = document.querySelectorAll(".item-checkbox:checked");
-    const itemIds = Array.from(itemBoxes).map(cb => cb.value);
-    const itemLabel = itemIds.join(", ");
-
-    // Item 사용자 입력
-    const itemColor = document.getElementById("item-color-input").value.trim();
-
-    // AI 모드 (라디오)
-    const aiRadio = document.querySelector('input[name="ai-mode"]:checked');
-    const aiMode = aiRadio ? aiRadio.value : null;
-    const aiModeLabel = aiRadio ? aiRadio.dataset.label : "";
-
-    // 선택된 AI 엔진 (GPT / Gemini 등)
-    const aiEngineRadio = document.querySelector('input[name="ai-engine"]:checked');
-    const aiEngine = aiEngineRadio ? aiEngineRadio.value : null;        // "gpt", "gemini" ...
-    const aiEngineLabel = aiEngineRadio ? aiEngineRadio.dataset.label : ""; // "GPT", "Gemini"
-
-    // ✅ Project (체크된 것만)
     const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
-    const projectIds = Array.from(projectBoxes).map(cb => cb.value.trim()).filter(Boolean);
-    const projectLabels = Array.from(projectBoxes).map(cb => cb.dataset.label.trim()).filter(Boolean);
-    
-    // Make로 보낼 "ProjectCode" (콤마로 합침)
-    const projectCode = projectIds.join(",");
-    const projectLabel = projectLabels.join(",");
-
-    // 신규 입력 필드
-    const SupplierName = document.getElementById("SupplierName").value.trim();
-    const InvoiceNo = document.getElementById("InvoiceNo").value.trim();
-    
-    // Webhook 전송을 위한 YYYY-MM-DD 형식 데이터
-    const startDateForWebhook = document.getElementById('start-date').value;
-    const endDateForWebhook = document.getElementById('end-date').value;
-
-
- // 🔥 AI 모델이 바뀌었으면 session 초기화
-    if (window.lastAiModel && window.lastAiModel !== aiMode) {
-        window.conversationId = null;
-        window.responseId = null;
-    }
-
-    // 엔진 바뀌었으면 session 관련 ID 싹 지우기
-    if (window.lastEngine && window.lastEngine !== aiEngine) {
-        window.conversationId = null;
-        window.responseId = null;
-    }
-    window.currentEngine = aiEngine;
-    window.lastEngine = aiEngine;
-
-    // 현재 ai 모델 기록
-    window.lastAiModel = aiMode;
-    
-    // ERP 선택 시: 4개 중 하나는 필수
-    if (aiMode === 'erp' &&
-        itemIds.length === 0 &&
-        !itemColor &&
-        !SupplierName &&
-        !InvoiceNo
-    ) {
-        messagesDiv.innerHTML += `
-            <div class="ai-message self-start bg-yellow-100 text-yellow-700">
-                ⚠️ ERP 분석을 선택한 경우, 제품명·Item 사용자 입력·업체명·Invoice No 중 최소 1개를 입력해야 합니다.
-            </div>`;
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        return;
-    }
 
     isSending = true;
     sendButton.disabled = true;
 
-    // 화면에 사용자 메시지 출력
-    let filterTxt = [];
-    if (aiEngineLabel) filterTxt.push(`AI 엔진: ${aiEngineLabel}`);
-    if (aiModeLabel) filterTxt.push(`AI 모드: ${aiModeLabel}`);
-    if (aiMode === 'erp') {
-        if (filterData.startDate) filterTxt.push(`시작일: ${filterData.startDate}`);
-        if (filterData.endDate) filterTxt.push(`종료일: ${filterData.endDate}`);
-        if (locationLabels.length) filterTxt.push(`Location: ${locationLabel}`);
-        if (itemLabel) filterTxt.push(`Item: ${itemLabel}`);
-        if (itemColor) filterTxt.push(`Item 사용자 입력: ${itemColor}`);
-        if (SupplierName) filterTxt.push(`업체명: ${SupplierName}`);
-        if (InvoiceNo) filterTxt.push(`Invoice No: ${InvoiceNo}`);
-        if (projectLabel) filterTxt.push(`Project: ${projectLabel}`);
-    } 
-
-    // 사용자 메시지 출력용 썸네일 HTML 생성 (Base64로 비동기 변환하여 이미지 깨짐 방지)
-    const attachmentParts = await Promise.all((window.attachedImages || []).map(async (file, idx) => {
-      if (file.type.startsWith("image/")) {
-        const base64Data = await readFileAsDataURL(file);
-        return `<img src="${base64Data}" alt="attachment" />`;
-      } else {
-        // 이미지 외 파일에 대한 표시 방식 (작은 아이콘)
-        let iconHtml = '<span class="text-xs text-white">FILE</span>';
-        if (file.type.includes('pdf')) iconHtml = '<span class="text-xs text-white">PDF</span>';
-        else if (file.type.includes('text')) iconHtml = '<span class="text-xs text-white">TXT</span>';
-        
-        return `<div class="w-16 h-16 rounded-lg bg-indigo-700 flex flex-col items-center justify-center p-1" title="${file.name}">
-                    ${iconHtml}
-                    <span class="text-xs text-white truncate w-full text-center">${file.name.substring(0, 10)}</span>
-                </div>`;
-      }
+    // 사용자 메시지 표시 (이미지 확대 기능 적용)
+    const attachmentParts = await Promise.all(window.attachedImages.map(async (file) => {
+        if (file.type.startsWith("image/")) {
+            const base64Data = await readFileAsDataURL(file);
+            return `<img src="${base64Data}" onclick="openImageModal('${base64Data}')" alt="attachment" />`;
+        }
+        return `<div class="w-16 h-16 rounded-lg bg-indigo-700 flex flex-col items-center justify-center p-1"><span class="text-xs text-white truncate w-full text-center">${file.name.substring(0, 10)}</span></div>`;
     }));
-    const attachmentsForBubble = attachmentParts.join("");
     
     messagesDiv.innerHTML += `
       <div class="user-message">
         ${message}
-        ${filterTxt.length ? `<br><span class="text-xs opacity-80">(필터: ${filterTxt.join(", ")})</span>` : ""}
-        ${attachmentsForBubble ? `<div class="msg-attachments">${attachmentsForBubble}</div>` : ""}
+        <div class="msg-attachments">${attachmentParts.join("")}</div>
       </div>
     `;
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-    textarea.value = "";
-    autoResize(textarea);
-    if (!document.getElementById('preset-prompt-wrapper').classList.contains('hidden')) {
-        selectElement.value = "";
-    }
-
+    textarea.value = ""; autoResize(textarea);
     const loadingDiv = document.createElement("div");
     loadingDiv.id = "loading";
-    loadingDiv.innerHTML = `
-            <div class="stage">
-              <div class="dot-floating"></div>
-            </div>
-    `;
+    loadingDiv.innerHTML = `<div class="stage"><div class="dot-floating"></div></div>`;
     messagesDiv.appendChild(loadingDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        
-    // 세션 ID 관리
-    if (conversationId) {
-        window.conversationId = conversationId;
-    }
-    if (responseId) {
-        window.responseId = responseId;
-    }
 
     try {
-        if (!MAKE_WEBHOOK_URL || MAKE_WEBHOOK_URL.length < 10) {
-            throw new Error("Make Webhook URL이 설정되지 않았습니다. URL을 확인하고 다시 시도해주세요.");
-        }
-
         const body = {
             prompt: message,
-            startDate: startDateForWebhook, // YYYY-MM-DD
-            endDate: endDateForWebhook,     // YYYY-MM-DD
-            location: locationIds.join(","),
-            locationLabel,
-            item: itemLabel,
-            itemColor,
-            aiMode,
-            aiModeLabel,
-            SupplierName,
-            InvoiceNo,
-            ProjectCode: projectCode,
-            aiEngine,
-            aiEngineLabel,
-            conversationId: window.conversationId || null,
-            responseId: window.responseId || null
+            startDate: document.getElementById('start-date').value,
+            endDate: document.getElementById('end-date').value,
+            location: Array.from(locBoxes).map(cb => cb.value).join(","),
+            item: Array.from(itemBoxes).map(cb => cb.value).join(","),
+            itemColor: document.getElementById("item-color-input").value.trim(),
+            aiMode: getCurrentAiMode(),
+            SupplierName: document.getElementById("SupplierName").value.trim(),
+            InvoiceNo: document.getElementById("InvoiceNo").value.trim(),
+            ProjectCode: Array.from(projectBoxes).map(cb => cb.value).join(","),
+            aiEngine: document.querySelector('input[name="ai-engine"]:checked')?.value,
+            conversationId: window.conversationId,
+            responseId: window.responseId
         };
 
         const formData = new FormData();
+        Object.entries(body).forEach(([k, v]) => formData.append(k, v ?? ""));
+        window.attachedImages.forEach((file, idx) => formData.append("files", file, file.name || `file-${idx}`));
 
-        Object.entries(body).forEach(([k, v]) => {
-          if (typeof v === "object") formData.append(k, JSON.stringify(v));
-          else formData.append(k, v ?? "");
-        });
-        
-        (window.attachedImages || []).forEach((file, idx) => {
-          formData.append("files", file, file.name || `attached-file-${idx}`);
-        });
-        
-        const response = await fetch(MAKE_WEBHOOK_URL, {
-          method: "POST",
-          body: formData,
-        });
-
+        const response = await fetch(MAKE_WEBHOOK_URL, { method: "POST", body: formData });
         const rawText = await response.text();
 
         responseId = response.headers.get("ResponseID");
         conversationId = response.headers.get("ConversationID");
 
-        if (aiEngine === 'gpt' && window.responseId && window.responseId.startsWith('resp_')) {
-            body.responseId = window.responseId;
-        }
-
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status} ${response.statusText} / body: ${rawText}`);
-        }
-
         loadingDiv.remove();
-
-        messagesDiv.innerHTML += `
-            <div class="ai-message">🪄 ${rawText}</div>
-        `;
+        messagesDiv.innerHTML += `<div class="ai-message">🪄 ${rawText}</div>`;
 
     } catch (err) {
         loadingDiv.remove();
-        console.error("웹훅 호출 중 오류 발생:", err);
-        const msg = (err && err.message ? err.message : String(err))
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
-        messagesDiv.innerHTML += `
-            <div class="ai-message bg-red-100 text-red-700 text-sm">
-                ⚠️ 서버(Make) 실행 오류: ${msg}. Make 시나리오의 로그를 확인하세요.
-            </div>
-        `;
+        console.error("Error:", err);
+        messagesDiv.innerHTML += `<div class="ai-message bg-red-50 text-red-700">⚠️ 오류: ${err.message}</div>`;
     } finally {
-        if (conversationId && conversationId !== "null" && conversationId !== "") {
-            window.conversationId = conversationId;
-        }
-        if (responseId && responseId !== "null" && responseId !== "") {
-            window.responseId = responseId;
-        }
-
+        if (conversationId) window.conversationId = conversationId;
+        if (responseId) window.responseId = responseId;
         sendButton.disabled = false;
         window.attachedImages = [];
         renderAttachments();
