@@ -143,6 +143,42 @@
             box-shadow: 0 4px 10px rgba(15,23,42,0.18);
             font-size: 0.875rem;
             line-height: 1.5;
+            position: relative;
+            padding-right: 2.75rem;
+        }
+
+        .message-text {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .message-meta {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.75rem;
+            opacity: 0.85;
+        }
+
+        .message-edit-btn {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: rgba(255,255,255,0.18);
+            color: #ffffff;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .message-edit-btn:hover {
+            background: rgba(255,255,255,0.28);
+            transform: translateY(-1px);
         }
 
         /* 왼쪽 AI 말풍선 */
@@ -1231,6 +1267,64 @@ async function readFileAsDataURL(file) {
     });
 }
 
+function escapeHtml(str = "") {
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function createUserMessageElement({ text, filtersText = "", attachmentsHtml = "" }) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "user-message";
+    wrapper.dataset.author = "user";
+
+    const textBlock = document.createElement("div");
+    textBlock.className = "message-text";
+    textBlock.textContent = text;
+    wrapper.appendChild(textBlock);
+
+    if (filtersText) {
+        const meta = document.createElement("span");
+        meta.className = "message-meta";
+        meta.textContent = `(필터: ${filtersText})`;
+        wrapper.appendChild(meta);
+    }
+
+    if (attachmentsHtml) {
+        const attachWrap = document.createElement("div");
+        attachWrap.className = "msg-attachments";
+        attachWrap.innerHTML = attachmentsHtml;
+        wrapper.appendChild(attachWrap);
+    }
+
+    const editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.className = "message-edit-btn";
+    editBtn.title = "내 메시지 수정";
+    editBtn.textContent = "✏️";
+    editBtn.addEventListener("click", () => {
+        const current = textBlock.textContent || "";
+        const nextValue = prompt("메시지를 수정하세요.", current);
+        if (nextValue === null) return;
+        const trimmed = nextValue.trim();
+        if (!trimmed) return;
+        textBlock.textContent = trimmed;
+    });
+
+    wrapper.appendChild(editBtn);
+    return wrapper;
+}
+
+function createAiMessageElement(text) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "ai-message";
+    wrapper.innerHTML = `🪄 ${escapeHtml(text).replace(/\n/g, "<br>")}`;
+    return wrapper;
+}
+
 async function sendMessage() {
     const textarea = document.getElementById("user-input");
     const selectElement = document.getElementById("preset-prompt");
@@ -1344,31 +1438,32 @@ async function sendMessage() {
     } 
 
     // 사용자 메시지 출력용 썸네일 HTML 생성 (Base64로 비동기 변환하여 이미지 깨짐 방지)
-    const attachmentParts = await Promise.all((window.attachedImages || []).map(async (file, idx) => {
+    const attachmentParts = await Promise.all((window.attachedImages || []).map(async (file) => {
+      const safeName = escapeHtml(file.name || "attachment");
       if (file.type.startsWith("image/")) {
         const base64Data = await readFileAsDataURL(file);
-        return `<img src="${base64Data}" alt="attachment" />`;
+        return `<img src="${base64Data}" alt="${safeName}" />`;
       } else {
         // 이미지 외 파일에 대한 표시 방식 (작은 아이콘)
         let iconHtml = '<span class="text-xs text-white">FILE</span>';
         if (file.type.includes('pdf')) iconHtml = '<span class="text-xs text-white">PDF</span>';
         else if (file.type.includes('text')) iconHtml = '<span class="text-xs text-white">TXT</span>';
         
-        return `<div class="w-16 h-16 rounded-lg bg-indigo-700 flex flex-col items-center justify-center p-1" title="${file.name}">
+        return `<div class="w-16 h-16 rounded-lg bg-indigo-700 flex flex-col items-center justify-center p-1" title="${safeName}">
                     ${iconHtml}
-                    <span class="text-xs text-white truncate w-full text-center">${file.name.substring(0, 10)}</span>
+                    <span class="text-xs text-white truncate w-full text-center">${escapeHtml(file.name.substring(0, 10))}</span>
                 </div>`;
       }
     }));
     const attachmentsForBubble = attachmentParts.join("");
-    
-    messagesDiv.innerHTML += `
-      <div class="user-message">
-        ${message}
-        ${filterTxt.length ? `<br><span class="text-xs opacity-80">(필터: ${filterTxt.join(", ")})</span>` : ""}
-        ${attachmentsForBubble ? `<div class="msg-attachments">${attachmentsForBubble}</div>` : ""}
-      </div>
-    `;
+
+    const userMessageEl = createUserMessageElement({
+        text: message,
+        filtersText: filterTxt.join(", "),
+        attachmentsHtml: attachmentsForBubble
+    });
+
+    messagesDiv.appendChild(userMessageEl);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
     textarea.value = "";
@@ -1450,9 +1545,7 @@ async function sendMessage() {
 
         loadingDiv.remove();
 
-        messagesDiv.innerHTML += `
-            <div class="ai-message">🪄 ${rawText}</div>
-        `;
+        messagesDiv.appendChild(createAiMessageElement(rawText));
 
     } catch (err) {
         loadingDiv.remove();
