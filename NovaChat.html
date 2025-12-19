@@ -29,13 +29,12 @@
             align-items: center;
             gap: 8px;
             background: #ffffff;
-            border: 1px solid #e5e7eb;  /* gray-200~300 */
+            border: 1px solid #e5e7eb;
             border-radius: 9999px;
             padding: 6px 12px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.06);
         }
 
-        /* 왼쪽 AI 모드 버튼 (프롬프트 안) */
         .gpt-left-btn {
             width: 40px;
             height: 40px;
@@ -51,14 +50,12 @@
             padding: 0 8px;
         }
 
-        /* AI 모드 토글 활성화 시 */
         .ai-toggle-active {
-            background-color: #0284c7 !important; /* sky-700 */
+            background-color: #0284c7 !important;
             border-color: #0284c7 !important;
             color: white !important;
         }
 
-        /* 가운데 프롬프트 입력창 */
         .gpt-input {
             flex: 1;
             border: none;
@@ -74,13 +71,10 @@
             background: transparent;
             scrollbar-width: none;
         }
-        .gpt-input::-webkit-scrollbar {
-            display: none;
-        }
+        .gpt-input::-webkit-scrollbar { display: none; }
 
-        /* 오른쪽 전송 버튼 (원형) */
         .gpt-send-btn {
-            background: #4f46e5;    /* indigo-600 */
+            background: #4f46e5;
             color: white;
             border: none;
             width: 32px;
@@ -94,45 +88,19 @@
             box-shadow: 0 2px 6px rgba(79,70,229,0.4);
         }
         .gpt-send-btn:disabled {
-            background: #9ca3af; /* gray-400 */
+            background: #9ca3af;
             box-shadow: none;
         }
 
-        /* 프롬프트 줄 양쪽 버튼 공통 스타일 (지금은 사용 거의 안 하지만 남겨둠) */
-        .prompt-bar-btn {
-            height: 30px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 12px;
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
-        }
-
-        /* textarea 기본 스크롤/리사이즈 제거 (gpt-input에도 적용) */
         textarea {
-            scrollbar-width: none;      /* Firefox */
-            -ms-overflow-style: none;   /* IE, Edge */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
             overflow-y: auto;
             resize: none;
         }
-        textarea::-webkit-scrollbar {
-            display: none !important;   /* Chrome, Safari */
-        }
 
-        /* AI 검색 모드일 때 프롬프트 텍스트 영역 스타일 */
-        .ai-mode-active-textarea {
-            background-color: #e0f2fe !important; /* sky-100 */
-        }
-
-        /* AI 검색 모드일 때 전송 버튼 색 */
-        .ai-mode-active-button {
-            background-color: #0284c7 !important; /* sky-700 */
-        }
-
-        /* 오른쪽 사용자 말풍선 */
         .user-message {
-            background-color: #4f46e5; /* indigo-600 */
+            background-color: #4f46e5;
             color: #ffffff;
             padding: 0.75rem 1rem;
             border-radius: 1rem;
@@ -143,112 +111,71 @@
             box-shadow: 0 4px 10px rgba(15,23,42,0.18);
             font-size: 0.875rem;
             line-height: 1.5;
-            position: relative; /* 버튼 배치를 위해 추가 */
+            position: relative;
         }
 
-        /* 왼쪽 AI 말풍선 */
         .ai-message {
-            /*background-color: #f3f4f6; /* gray-100 */
-            /*color: #111827;           /* gray-900 */
+            background-color: #f3f4f6;
+            color: #111827;
             padding: 0.75rem 1rem;
             border-radius: 1rem;
             margin: 10px 10px;
             max-width: 100%;
             align-self: flex-start;
-            /*margin-right: auto;*/
-            /*box-shadow: 0 4px 10px rgba(15,23,42,0.10);*/
             font-size: 0.875rem;
             line-height: 1.5;
         }
 
-        #loading {
-            font-size: 0.75rem;
-            color: #6b7280;
-            font-style: italic;
-            margin-bottom: 0.5rem;
-        }
-
-        .loading-bubble {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #f3f4f6; /* gray-100 */
-            color: #4b5563;       /* gray-600 */
-            padding: 8px 12px;
-            border-radius: 12px;
-            max-width: 200px;
-            font-size: 0.75rem;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        }
-
-        .loading-gif {
-            width: 24px;
-            height: 24px;
-        }
-
-        /* 파일첨부용 */
-        .thumb {
-          width: 56px;
-          height: 56px;
-          border-radius: 12px;
-          object-fit: cover;
-          border: 1px solid #e5e7eb;
-        }
+        /* 썸네일 스타일 */
         .thumb-wrap {
-          position: relative;
-          display: inline-block;
-          /* 이미지 외 파일용 스타일 추가 */
-          min-width: 56px;
-          min-height: 56px;
-          padding: 8px;
-          background: #f9fafb; /* gray-50 */
-          border: 1px solid #e5e7eb;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-direction: column;
+            position: relative;
+            display: inline-block;
+            min-width: 64px;
+            min-height: 64px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: visible;
+        }
+        .thumb {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 11px;
         }
         .thumb-remove {
-          position: absolute;
-          top: -8px;
-          right: -8px;
-          width: 22px;
-          height: 22px;
-          border-radius: 9999px;
-          border: 1px solid #e5e7eb;
-          background: #fff;
-          font-size: 12px;
-          line-height: 20px;
-          text-align: center;
-          cursor: pointer;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-        }
-        .drop-hint {
-          outline: 2px dashed rgba(99,102,241,0.55);
-          outline-offset: 4px;
-        }
-        .msg-attachments {
-          margin-top: 8px;
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-        }
-        
-        .msg-attachments img {
-          width: 64px;
-          height: 64px;
-          border-radius: 12px;
-          object-fit: cover;
-          border: 1px solid rgba(255,255,255,0.35); /* user bubble 대비 */
-          cursor: pointer;
-          transition: opacity 0.2s;
-        }
-        .msg-attachments img:hover {
-            opacity: 0.8;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
         }
 
-        /* 이미지 확대 모달 스타일 */
+        .msg-attachments {
+            margin-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .msg-attachments img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* 모달 스타일 */
         #image-modal {
             display: none;
             position: fixed;
@@ -260,263 +187,90 @@
             background-color: rgba(0,0,0,0.9);
             justify-content: center;
             align-items: center;
-            animation: fadeIn 0.3s;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        #modal-img {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(255,255,255,0.1);
-        }
-        #modal-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: #f1f1f1;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        #modal-close:hover {
-            color: #bbb;
-        }
+        #modal-img { max-width: 90%; max-height: 90%; border-radius: 8px; }
+        #modal-close { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; }
 
-        /* 애니메이션 효과 */
-        .stage {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            padding: 32px 0;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        .dot-floating {
-            position: relative;
-            width: 10px;
-            height: 10px;
-            border-radius: 5px;
-            background-color: #9880ff;
-            color: #9880ff;
-            animation: dot-floating 3s infinite cubic-bezier(0.15, 0.6, 0.9, 0.1);
-        }
-        @keyframes dot-floating {
-            0% { left: calc(-50% - 5px); }
-            75% { left: calc(50% + 105px); }
-            100% { left: calc(50% + 105px); }
-        }
-
-        /* 메시지 수정/재사용 버튼 스타일 */
         .reuse-btn {
             @apply absolute -top-2 -right-2 bg-indigo-100 text-indigo-600 w-6 h-6 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-indigo-200 cursor-pointer border border-indigo-200;
             font-size: 10px;
         }
 
-        @media (max-width: 640px) {
-            .gpt-input-bar {
-                padding: 4px 8px;
-                gap: 6px;
-            }
-            .gpt-left-btn {
-                width: 28px;
-                height: 28px;
-                padding: 0 6px;
-            }
-            .gpt-send-btn {
-                width: 30px;
-                height: 30px;
-            }
+        /* 로딩 애니메이션 */
+        .stage { padding: 20px 0; display: flex; justify-content: center; }
+        .dot-floating {
+            position: relative;
+            width: 8px; height: 8px;
+            border-radius: 4px;
+            background-color: #4f46e5;
+            animation: dot-floating 3s infinite cubic-bezier(0.15, 0.6, 0.9, 0.1);
+        }
+        @keyframes dot-floating {
+            0% { left: -40px; }
+            50% { left: 40px; }
+            100% { left: -40px; }
         }
     </style>
 </head>
 <body class="bg-gray-100 font-sans h-screen">
 
 <div class="flex h-screen">
-
-    <!-- 왼쪽 사이드바 -->
+    <!-- 왼쪽 사이드바 (필터 영역) -->
     <aside class="w-80 bg-white border-r flex flex-col">
         <div class="p-4 border-b">
             <h1 class="text-lg font-bold text-indigo-600">ERP-AI 필터</h1>
-            <p class="text-xs text-gray-500 mt-1">
-                ERP 모드일 때는 기간, Location, Item, 업체명을 통해 데이터를 검색하여 그 데이터를 기반으로 프롬프트 AI분석을 할 수 있습니다.
-            </p>
+            <p class="text-xs text-gray-500 mt-1">엔진 및 검색 조건을 선택하세요.</p>
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 space-y-4 text-sm">
-            <section class="mb-3">
+            <section>
                 <h2 class="text-xs font-semibold text-gray-600 mb-2">AI 엔진 선택</h2>
                 <div class="p-2 border border-gray-300 rounded-lg space-y-2">
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" name="ai-engine" value="gemini" data-label="Gemini" checked>
-                        <span>Gemini</span>
-                    </label>
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" name="ai-engine" value="gpt" data-label="GPT" >
-                        <span>GPT</span>
-                    </label>
+                    <label class="flex items-center space-x-2"><input type="radio" name="ai-engine" value="gemini" checked> <span>Gemini</span></label>
+                    <label class="flex items-center space-x-2"><input type="radio" name="ai-engine" value="gpt"> <span>GPT</span></label>
                 </div>
             </section>
 
             <section>
                 <h2 class="text-xs font-semibold text-gray-600 mb-2">AI 분석 모드</h2>
                 <div class="p-2 border border-gray-300 rounded-lg space-y-2">
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" name="ai-mode" value="erp" data-label="ERP-AI 분석" checked>
-                        <span>ERP-AI 분석</span>
-                    </label>
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" name="ai-mode" value="ai" data-label="AI 검색">
-                        <span>AI 검색</span>
-                    </label>
+                    <label class="flex items-center space-x-2"><input type="radio" name="ai-mode" value="erp" checked> <span>ERP-AI 분석</span></label>
+                    <label class="flex items-center space-x-2"><input type="radio" name="ai-mode" value="ai"> <span>AI 검색</span></label>
                 </div>
             </section>
 
             <section id="period-section">
                 <h2 class="text-xs font-semibold text-gray-600 mb-2">기간 선택</h2>
                 <div class="space-y-2">
-                    <label class="text-xs">시작일(ERP 데이터: 2024-04-01 부터)</label>
                     <input type="date" id="start-date" class="w-full p-2 border border-gray-300 rounded-lg">
-                    <label class="text-xs">종료일</label>
                     <input type="date" id="end-date" class="w-full p-2 border border-gray-300 rounded-lg">
                 </div>
-                <p id="sheet-update-display" class="text-xs text-gray-600 mb-1 text-center leading-relaxed whitespace-pre-line"></p>
+                <p id="sheet-update-display" class="text-[10px] text-gray-500 mt-2 text-center"></p>
             </section>
 
             <section id="erp-options-section" class="space-y-4">
-                <div id="erp-location-section">
+                <div>
                     <h2 class="text-xs font-semibold text-gray-600 mb-2">Location</h2>
                     <div class="p-2 border border-gray-300 rounded-lg space-y-1">
-                        <label class="flex items-center space-x-2 font-semibold">
-                            <input type="checkbox" id="location-all" class="location-master">
-                            <span>모두 선택</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="location-checkbox" value="1007" data-label="SEA">
-                            <span>SEA</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="location-checkbox" value="1008" data-label="SEG">
-                            <span>SEG</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="location-checkbox" value="1006" data-label="SEMA">
-                            <span>SEMA</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="location-checkbox" value="1005" data-label="SEMS">
-                            <span>SEMS</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div id="erp-item-section" class="space-y-4">
-                    <div>
-                        <h2 class="text-xs font-semibold text-gray-600 mb-2">Item (제품명,제품속성)</h2>
-                        <div class="p-2 border border-gray-300 rounded-lg space-y-1">
-                            <label class="flex items-center space-x-2 font-semibold">
-                                <input type="checkbox" id="item-all" class="item-master">
-                                <span>모두 선택</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="item-checkbox" value="LABEL">
-                                <span>Label</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="item-checkbox" value="RIBBON">
-                                <span>Ribbon</span>
-                            </label>
-                            <label class="flex items-center space-x-2">
-                                <input type="checkbox" class="item-checkbox" value="FILM">
-                                <span>Film</span>
-                            </label>
-                            <div class="space-y-1 pt-1">
-                                <label class="flex items-center space-x-2">
-                                    <input type="checkbox" id="item-custom-toggle">
-                                    <span><input type="text" id="item-color-input" placeholder="여러값은 쉼표(,)로 구분" class="w-full p-2 border border-gray-300 rounded-lg"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative">
-                    <h2 class="text-xs font-semibold text-gray-600 mb-2">Project</h2>
-                    <button id="projectDropdownBtn" class="w-full p-2 border border-gray-300 rounded-lg flex justify-between items-center bg-white">
-                        <span id="projectDropdownLabel">Project</span>
-                        <span>▼</span>
-                    </button>
-                    <div id="projectDropdownMenu" class="absolute left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg p-2 hidden z-20">
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="project-checkbox" value="P001" data-label="구매대행">
-                            <span>MRO 구매대행 General Purchasing</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="project-checkbox" value="P018" data-label="경비">
-                            <span>경비 Security</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="project-checkbox" value="P020" data-label="보전">
-                            <span>보전 Maintenance Management</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="project-checkbox" value="P011" data-label="생관 물류">
-                            <span>생관 물류 Transportation Shipping</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="project-checkbox" value="P008" data-label="생산지원">
-                            <span>생산지원 Production Service</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="project-checkbox" value="P009" data-label="인력공급">
-                            <span>인력공급 Staffing</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="project-checkbox" value="P016" data-label="자산관리">
-                            <span>자산관리 Property Management</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="project-checkbox" value="P013" data-label="자재 물류">
-                            <span>자재 물류 Transportation Material</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="project-checkbox" value="P010" data-label="장비임대">
-                            <span>장비임대 Equipment Lease</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="project-checkbox" value="P002" data-label="청소">
-                            <span>청소 Janitorial</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="project-checkbox" value="P017" data-label="케이터링">
-                            <span>케이터링 Catering</span>
-                        </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" class="project-checkbox" value="P019" data-label="폐기물 처리 대행">
-                            <span>폐기물 처리 대행 Waste Management</span>
-                        </label>
+                        <label class="flex items-center space-x-2 font-bold"><input type="checkbox" id="location-all"> <span>모두 선택</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" class="location-checkbox" value="1007" data-label="SEA"> <span>SEA</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" class="location-checkbox" value="1008" data-label="SEG"> <span>SEG</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" class="location-checkbox" value="1006" data-label="SEMA"> <span>SEMA</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" class="location-checkbox" value="1005" data-label="SEMS"> <span>SEMS</span></label>
                     </div>
                 </div>
 
                 <div>
-                    <h2 class="text-xs font-semibold text-gray-600 mb-2">업체명</h2>
-                    <input type="text" id="SupplierName" placeholder="여러값은 쉼표(,)로 구분" class="w-full p-2 border border-gray-300 rounded-lg">
-                </div>
-                
-                <div>
-                    <h2 class="text-xs font-semibold text-gray-600 mb-2">Invoice No</h2>
-                    <input type="text" id="InvoiceNo" placeholder="여러값은 쉼표(,)로 구분" class="w-full p-2 border border-gray-300 rounded-lg">
+                    <h2 class="text-xs font-semibold text-gray-600 mb-2">업체명/품목</h2>
+                    <div class="space-y-2">
+                        <input type="text" id="SupplierName" placeholder="업체명" class="w-full p-2 border border-gray-300 rounded-lg">
+                        <input type="text" id="item-color-input" placeholder="품목 속성" class="w-full p-2 border border-gray-300 rounded-lg">
+                        <input type="text" id="InvoiceNo" placeholder="Invoice No" class="w-full p-2 border border-gray-300 rounded-lg">
+                    </div>
                 </div>
 
                 <div id="critique-btn-wrapper">
-                    <button id="critique-btn" onclick="requestCritique()" class="w-full p-3 bg-green-500 text-white rounded-lg font-bold shadow-md hover:bg-green-600 transition duration-150 disabled:bg-gray-400">
-                        ✨ 데이터 필터 Critique (Gemini)
-                    </button>
+                    <button onclick="requestCritique()" class="w-full p-3 bg-green-500 text-white rounded-lg font-bold shadow-md hover:bg-green-600 transition">✨ 데이터 Critique (Gemini)</button>
                 </div>
             </section>
         </div>
@@ -525,102 +279,53 @@
     <!-- 오른쪽: 메인 채팅 영역 -->
     <main class="flex-1 flex flex-col">
         <header class="h-14 px-6 flex items-center border-b bg-white">
-            <div>
-                <h2 class="text-base font-semibold">NOVA INTEGRATED SOLUTIONS LLC</h2>
-                <p class="text-sm text-gray-500">구매이력을 AI 통해 조회 및 분석하고 AI 검색을 위한 시스템입니다.</p>
-            </div>
+            <h2 class="text-base font-semibold">ERP-AI Intelligent Chat</h2>
         </header>
 
-        <section id="messages" class="flex-1 flex flex-col p-4 space-y-3 bg-white">
-            <div class="ai-message">🪄 안녕하세요! AI 분석 모드를 선택하거나, ERP 데이터 검색을 위한 필터를 선택하고 아래에 질문을 입력해 주세요. 이미지를 첨부하거나 클릭하여 크게 볼 수 있습니다.</div>
-        </section>
+        <section id="messages" class="flex-1 flex flex-col p-4 space-y-3 bg-white"></section>
 
         <section class="bg-white p-4">
             <div class="max-w-3xl mx-auto space-y-2">
-                <section id="preset-prompt-wrapper">
-                    <select id="preset-prompt" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm">
-                        <option value="">-- 미리 정의된 질문 선택 (선택 안함) --</option>
-                        <option value="주어진 값으로 조회된 데이터 결과를 날짜 오름차순으로 표로 정리">데이터 검색 결과를 표로 정리</option>
-                        <option value="해당 기간 및 Location에서 Tax와 Shpping fee를 제외하고 가장 많이 구매한 제품 순위 10개를 순위, item이름, 총금액, 구매횟수로 보여줘">해당 기간 및 Lacation에서 가장 많이 구매한 제품 순위 10개</option>
-                        <option value="단가 비교를 업체명, 아이템명, 단가를 단가기준 오름차순 표로 작성">단가 비교를 업체명, 아이템명, 단가 표로 작성</option>
-                    </select>
-                </section>
-
                 <div class="gpt-input-bar">
                     <button id="ai-search-toggle" class="gpt-left-btn">AI모드</button>
-                    <button id="attach-btn" type="button" class="w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition duration-150" title="파일 첨부">📁</button>
-                    <textarea id="user-input" placeholder="필터를 선택하고 AI에게 원하는 내용을 입력하세요" class="gpt-input" rows="1" oninput="autoResize(this)"></textarea>
+                    <button id="attach-btn" type="button" class="p-2 text-gray-500 hover:text-indigo-600 transition" title="파일 첨부">📎</button>
+                    <textarea id="user-input" placeholder="여기에 질문을 입력하거나 이미지를 붙여넣으세요..." class="gpt-input" rows="1" oninput="autoResize(this)"></textarea>
                     <button onclick="sendMessage()" id="send-button" class="gpt-send-btn">➤</button>
                 </div>
-                
-                <input id="file-input" type="file" accept="*/*" multiple class="hidden" />
+                <input id="file-input" type="file" accept="*/*" multiple class="hidden">
                 <div id="attachment-preview" class="msg-attachments"></div>
             </div>
         </section>
     </main>
 </div>
 
-<!-- 이미지 확대 모달 -->
-<div id="image-modal" onclick="closeImageModal()">
+<!-- 이미지 모달 -->
+<div id="image-modal" onclick="this.style.display='none'">
     <span id="modal-close">&times;</span>
-    <img id="modal-img" alt="Zoomed Image">
+    <img id="modal-img" src="" alt="확대 이미지">
 </div>
 
 <script>
-// --- 전역 상수 ---
 const MAX_FILES = 3;
 const MAX_TOTAL_BYTES = 10 * 1024 * 1024;
 const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/beojnrbam68450c5366anrdb2lfdi8uq";
 
-window.currentEngine = null;
-window.lastEngine = null;
-let responseId = null;
-let conversationId = null;
+window.attachedImages = [];
+let isSending = false;
 
-// 이미지 확대 모달 함수
+// 이미지 확대 기능
 function openImageModal(src) {
     const modal = document.getElementById('image-modal');
-    const modalImg = document.getElementById('modal-img');
+    document.getElementById('modal-img').src = src;
     modal.style.display = "flex";
-    modalImg.src = src;
 }
 
-function closeImageModal() {
-    document.getElementById('image-modal').style.display = "none";
-}
-
-// 메시지 재사용 함수 (입력창으로 복사)
+// 메시지 재사용
 function reuseMessage(text) {
-    const userInput = document.getElementById("user-input");
-    if (userInput) {
-        userInput.value = text;
-        userInput.focus();
-        autoResize(userInput);
-        // 부드럽게 입력창으로 스크롤
-        userInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-}
-
-function resetConversationState() {
-    window.conversationId = null;
-    window.responseId = null;
-}
-
-const engineRadios = document.querySelectorAll('input[name="ai-engine"]');
-engineRadios.forEach(r => {
-    r.addEventListener('change', () => {
-        resetConversationState();
-        resetPromptArea();
-        updateCritiqueButtonVisibility();
-    });
-});
-
-function updateCritiqueButtonVisibility() {
-    const selectedEngine = document.querySelector('input[name="ai-engine"]:checked')?.value;
-    const critiqueWrapper = document.getElementById('critique-btn-wrapper');
-    if (critiqueWrapper) {
-        critiqueWrapper.classList.toggle('hidden', selectedEngine !== 'gemini');
-    }
+    const input = document.getElementById("user-input");
+    input.value = text;
+    input.focus();
+    autoResize(input);
 }
 
 function autoResize(el) {
@@ -628,326 +333,196 @@ function autoResize(el) {
     el.style.height = (el.scrollHeight) + "px";
 }
 
-const SHEET_LAST_UPDATE_URL = "https://hook.us2.make.com/3xywupvm8a60lrh5l1l6kwpqe4sjake1";
-async function setEndDateFromSheet() {
-    const endInput = document.getElementById("end-date");
-    const startInput = document.getElementById("start-date");
-    const display = document.getElementById("sheet-update-display");
-
-    try {
-        const res = await fetch(SHEET_LAST_UPDATE_URL);
-        const data = await res.json();
-        const endStr = data.lastUpdatedDate;
-        if (!endStr || !endInput || !startInput) return;
-        endInput.value = endStr;
-        const endDateObj = parseHtmlDate(endStr);
-        const start = new Date(endDateObj);
-        start.setMonth(start.getMonth() - 1);
-        startInput.value = formatHtmlDate(start);
-        if (display) display.textContent = `📌 ERP 최신 업데이트 날짜: ${data.lastUpdatedText || endStr}`;
-    } catch (e) {
-        console.error("업데이트 날짜 불러오기 실패:", e);
-        const today = new Date();
-        if (endInput) endInput.value = formatHtmlDate(today);
-        const start = new Date(today);
-        start.setMonth(start.getMonth() - 1);
-        if (startInput) startInput.value = formatHtmlDate(start);
-    }
-}
-
+// 필터 데이터 수집
 function collectFilterData() {
-    const startDateValue = document.getElementById("start-date").value;
-    const endDateValue = document.getElementById("end-date").value;
-    const locBoxes = document.querySelectorAll(".location-checkbox:checked");
-    const itemBoxes = document.querySelectorAll(".item-checkbox:checked");
-    const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
-
+    const start = document.getElementById("start-date").value;
+    const end = document.getElementById("end-date").value;
+    const locs = Array.from(document.querySelectorAll(".location-checkbox:checked")).map(cb => cb.dataset.label);
+    
     return {
-        startDate: startDateValue ? formatDisplayDate(parseHtmlDate(startDateValue)) : '',
-        endDate: endDateValue ? formatDisplayDate(parseHtmlDate(endDateValue)) : '',
-        location: Array.from(locBoxes).map(cb => cb.dataset.label).join(", ") || 'ALL Locations',
-        itemNames: Array.from(itemBoxes).map(cb => cb.value).join(", ") || 'ALL Items (Checked)',
-        itemCustom: document.getElementById("item-color-input").value.trim() || 'None',
-        projects: Array.from(projectBoxes).map(cb => cb.dataset.label.trim()).join(", ") || 'ALL Projects',
-        supplier: document.getElementById("SupplierName").value.trim() || 'ALL Suppliers',
-        invoice: document.getElementById("InvoiceNo").value.trim() || 'None'
+        startDate: start,
+        endDate: end,
+        location: locs.join(", ") || 'All',
+        supplier: document.getElementById("SupplierName").value.trim(),
+        itemAttr: document.getElementById("item-color-input").value.trim(),
+        invoice: document.getElementById("InvoiceNo").value.trim()
     };
 }
 
+// Critique 요청
 function requestCritique() {
-    const filters = collectFilterData();
-    const critiquePrompt = `Critique the currently selected ERP filter set for meaningful analysis and suggest deep-dive questions.
-
-    --- Current Filters ---
-    1. Period: ${filters.startDate} to ${filters.endDate}
-    2. Location(s): ${filters.location}
-    3. Item Names (Checkboxes): ${filters.itemNames}
-    4. Item Custom Filter (Text): ${filters.itemCustom}
-    5. Projects: ${filters.projects}
-    6. Supplier Name: ${filters.supplier}
-    7. Invoice No: ${filters.invoice}
-    
-    Based on these specific filters, suggest a focused analysis or point out any potential data integrity issues (e.g., if the time range is too long, or conflicting filters are applied).
-    `;
-    const inputElement = document.getElementById('user-input');
-    if (inputElement) {
-        inputElement.value = critiquePrompt;
-        autoResize(inputElement);
-    }
+    const f = collectFilterData();
+    const prompt = `현재 설정된 필터를 분석하고 유의미한 분석 포인트를 제안해줘.\n\n[현재 필터]\n기간: ${f.startDate} ~ ${f.endDate}\n지역: ${f.location}\n업체: ${f.supplier || '미지정'}\n속성: ${f.itemAttr || '미지정'}\n송장: ${f.invoice || '미지정'}`;
+    reuseMessage(prompt);
     sendMessage();
 }
 
-function formatHtmlDate(date) {
-    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
-}
-function formatDisplayDate(date) {
-    return `${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).padStart(2,'0')}/${date.getFullYear()}`;
-}
-function parseHtmlDate(str) {
-    if (!str) return new Date();
-    const [y,m,d] = str.split("-").map(Number);
-    return new Date(y, m - 1, d);
-}
-
-function setupMasterCheckbox(masterSelector, itemSelector) {
-    const master = document.querySelector(masterSelector);
-    const items = document.querySelectorAll(itemSelector);
-    if (!master || items.length === 0) return;
-    master.addEventListener("change", () => items.forEach(cb => cb.checked = master.checked));
-    items.forEach(cb => {
-        cb.addEventListener("change", () => {
-            master.checked = Array.from(items).every(x => x.checked);
-        });
-    });
-}
-
-function getCurrentAiMode() {
-    return document.querySelector('input[name="ai-mode"]:checked')?.value;
-}
-
-function updateErpVisibility() {
-    const mode = getCurrentAiMode();
-    const isErp = (mode === 'erp');
-    ['period-section', 'erp-options-section', 'preset-prompt-wrapper'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.toggle('hidden', !isErp);
-    });
-}
-
-function updateAiModeStyling() {
-    const aiMode = getCurrentAiMode();
-    const textarea = document.getElementById("user-input");
-    const sendButton = document.getElementById("send-button");
-    textarea.classList.toggle("ai-mode-active-textarea", aiMode === "ai");
-    sendButton.classList.toggle("ai-mode-active-button", aiMode === "ai");
-}
-
-function resetPromptArea() {
-    const textarea = document.getElementById("user-input");
-    if (textarea) { textarea.value = ""; autoResize(textarea); }
-}
-
-function updatePromptPlaceholder() {
-    const textarea = document.getElementById("user-input");
-    const aiMode = getCurrentAiMode();
-    if (!textarea) return;
-    textarea.placeholder = aiMode === "erp" ? "필터를 선택하고 AI에게 원하는 내용을 입력하세요." : "무엇이든 자유롭게 질문해보세요.";
-}
-
-const projectBtn = document.getElementById("projectDropdownBtn");
-const projectMenu = document.getElementById("projectDropdownMenu");
-projectBtn.addEventListener("click", () => projectMenu.classList.toggle("hidden"));
-document.addEventListener("click", (e) => {
-    if (!projectBtn.contains(e.target) && !projectMenu.contains(e.target)) projectMenu.classList.add("hidden");
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    setupMasterCheckbox("#location-all", ".location-checkbox");
-    setupMasterCheckbox("#item-all", ".item-checkbox");
-    const presetSelect = document.getElementById("preset-prompt");
-    const userInput = document.getElementById("user-input");
-    if (presetSelect && userInput) {
-        presetSelect.addEventListener("change", () => {
-            userInput.value = presetSelect.value;
-            autoResize(userInput);
-        });
+// 파일 첨부 처리
+function addImageFiles(files) {
+    const arr = Array.from(files);
+    if (window.attachedImages.length + arr.length > MAX_FILES) {
+        pushWarn(`최대 ${MAX_FILES}개의 파일만 첨부할 수 있습니다.`);
+        return;
     }
-
-    userInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    
+    arr.forEach(file => {
+        if (file.size > MAX_TOTAL_BYTES) {
+            pushWarn(`${file.name}의 용량이 너무 큽니다 (최대 10MB).`);
+            return;
+        }
+        window.attachedImages.push(file);
     });
-
-    const aiToggleBtn = document.getElementById('ai-search-toggle');
-    const aiRadios = document.querySelectorAll('input[name="ai-mode"]');
-    if (aiToggleBtn) {
-        aiToggleBtn.addEventListener('click', () => {
-            const isActive = aiToggleBtn.classList.toggle('ai-toggle-active');
-            const targetRadio = document.querySelector(`input[name="ai-mode"][value="${isActive ? 'ai' : 'erp'}"]`);
-            if (targetRadio) targetRadio.checked = true;
-            updateErpVisibility(); updateAiModeStyling(); updatePromptPlaceholder(); updateCritiqueButtonVisibility(); resetPromptArea();
-        });
-        aiRadios.forEach(r => r.addEventListener('change', () => {
-            aiToggleBtn.classList.toggle('ai-toggle-active', r.value === 'ai' && r.checked);
-            updateErpVisibility(); updateAiModeStyling(); updatePromptPlaceholder(); updateCritiqueButtonVisibility(); resetPromptArea();
-        }));
-    }
-
-    const updateProjectLabel = () => {
-        const checked = document.querySelectorAll(".project-checkbox:checked");
-        const labels = Array.from(checked).map(cb => cb.dataset.label || cb.value);
-        if (labels.length > 2) { event.target.checked = false; alert("최대 2개까지만 선택 가능합니다."); return; }
-        document.getElementById("projectDropdownLabel").textContent = labels.length ? labels.join(", ") : "Project";
-    };
-    document.querySelectorAll(".project-checkbox").forEach(el => el.addEventListener("change", updateProjectLabel));
-
-    setEndDateFromSheet(); updateErpVisibility(); updateAiModeStyling(); updateCritiqueButtonVisibility(); autoResize(userInput);
-});
-
-window.attachedImages = [];
+    renderAttachments();
+}
 
 function renderAttachments() {
-    const wrap = document.getElementById("attachment-preview");
-    if (!wrap) return;
-    wrap.innerHTML = "";
+    const preview = document.getElementById("attachment-preview");
+    preview.innerHTML = "";
     window.attachedImages.forEach((file, idx) => {
-        const url = URL.createObjectURL(file);
-        const item = document.createElement("div");
-        item.className = "thumb-wrap";
-        let contentHtml = file.type.startsWith("image/") ? `<img src="${url}" class="thumb" />` : 
-            `<div class="flex flex-col items-center justify-center h-full"><span class="text-xs font-bold text-gray-500">${file.name.split('.').pop().toUpperCase()}</span></div>`;
-        item.innerHTML = `${contentHtml}<button type="button" class="thumb-remove" onclick="removeAttachment(${idx})">×</button>`;
-        wrap.appendChild(item);
+        const wrap = document.createElement("div");
+        wrap.className = "thumb-wrap";
+        
+        if (file.type.startsWith("image/")) {
+            const img = document.createElement("img");
+            img.className = "thumb";
+            const reader = new FileReader();
+            reader.onload = (e) => img.src = e.target.result;
+            reader.readAsDataURL(file);
+            wrap.appendChild(img);
+        } else {
+            wrap.innerHTML = `<div class="thumb flex items-center justify-center text-[10px] font-bold text-gray-400 bg-gray-50">${file.name.split('.').pop().toUpperCase()}</div>`;
+        }
+        
+        const close = document.createElement("div");
+        close.className = "thumb-remove";
+        close.innerHTML = "×";
+        close.onclick = () => { window.attachedImages.splice(idx, 1); renderAttachments(); };
+        wrap.appendChild(close);
+        preview.appendChild(wrap);
     });
 }
 
-function removeAttachment(idx) {
-    window.attachedImages.splice(idx, 1);
-    renderAttachments();
+function pushWarn(msg) {
+    const messages = document.getElementById("messages");
+    messages.innerHTML += `<div class="ai-message bg-yellow-50 text-yellow-700">⚠️ ${msg}</div>`;
+    messages.scrollTop = messages.scrollHeight;
 }
-
-function addImageFiles(files) {
-    const arr = Array.from(files || []).filter(f => f);
-    if (!arr.length) return;
-    const remain = MAX_FILES - window.attachedImages.length;
-    if (remain <= 0) { pushWarn(`첨부 파일은 최대 ${MAX_FILES}개까지 가능합니다.`); return; }
-    const finalCandidates = arr.slice(0, remain);
-    let currentSize = window.attachedImages.reduce((s, f) => s + f.size, 0);
-    const accepted = [];
-    for (const f of finalCandidates) {
-        if (currentSize + f.size > MAX_TOTAL_BYTES) { pushWarn("총 용량 10MB를 초과했습니다."); break; }
-        accepted.push(f);
-        currentSize += f.size;
-    }
-    window.attachedImages = window.attachedImages.concat(accepted);
-    renderAttachments();
-}
-
-document.getElementById("attach-btn").onclick = () => document.getElementById("file-input").click();
-document.getElementById("file-input").onchange = (e) => { addImageFiles(e.target.files); e.target.value = ""; };
 
 async function readFileAsDataURL(file) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
         const reader = new FileReader();
         reader.onload = (e) => resolve(e.target.result);
         reader.readAsDataURL(file);
     });
 }
 
-function pushWarn(text) {
-    const messagesDiv = document.getElementById("messages");
-    messagesDiv.innerHTML += `<div class="ai-message bg-yellow-50 text-yellow-700">⚠️ ${text}</div>`;
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-let isSending = false;
+// 메시지 전송 로직
 async function sendMessage() {
-    const textarea = document.getElementById("user-input");
-    const messagesDiv = document.getElementById("messages");
-    const sendButton = document.getElementById("send-button");
-    const message = textarea.value.trim();
-
-    if (!message || isSending) return;
-
-    const filterData = collectFilterData();
-    const locBoxes = document.querySelectorAll(".location-checkbox:checked");
-    const itemBoxes = document.querySelectorAll(".item-checkbox:checked");
-    const projectBoxes = document.querySelectorAll(".project-checkbox:checked");
+    const input = document.getElementById("user-input");
+    const messages = document.getElementById("messages");
+    const text = input.value.trim();
+    
+    if ((!text && window.attachedImages.length === 0) || isSending) return;
 
     isSending = true;
-    sendButton.disabled = true;
+    document.getElementById("send-button").disabled = true;
 
-    // 사용자 메시지 표시 (이미지 확대 기능 및 재사용 버튼 적용)
-    const attachmentParts = await Promise.all(window.attachedImages.map(async (file) => {
-        if (file.type.startsWith("image/")) {
-            const base64Data = await readFileAsDataURL(file);
-            return `<img src="${base64Data}" onclick="openImageModal('${base64Data}')" alt="attachment" />`;
+    // 사용자 메시지 렌더링
+    const attParts = await Promise.all(window.attachedImages.map(async f => {
+        if (f.type.startsWith("image/")) {
+            const b64 = await readFileAsDataURL(f);
+            return `<img src="${b64}" onclick="openImageModal('${b64}')" />`;
         }
-        return `<div class="w-16 h-16 rounded-lg bg-indigo-700 flex flex-col items-center justify-center p-1"><span class="text-xs text-white truncate w-full text-center">${file.name.substring(0, 10)}</span></div>`;
+        return `<div class="p-1 bg-white/20 rounded text-[10px]">${f.name}</div>`;
     }));
     
-    // 메시지 내용을 JSON 문자열로 안전하게 변환하여 속성에 삽입
-    const safeMessage = message.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-
-    messagesDiv.innerHTML += `
-      <div class="user-message group">
-        <button class="reuse-btn" title="이 메시지 수정하여 다시 사용" onclick="reuseMessage('${safeMessage}')">✏️</button>
-        <div class="message-content">${message}</div>
-        <div class="msg-attachments">${attachmentParts.join("")}</div>
-      </div>
+    const safeMsg = text.replace(/'/g, "\\'");
+    messages.innerHTML += `
+        <div class="user-message group">
+            <button class="reuse-btn" onclick="reuseMessage('${safeMsg}')">✏️</button>
+            <div>${text}</div>
+            <div class="msg-attachments">${attParts.join("")}</div>
+        </div>
     `;
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    
+    input.value = "";
+    autoResize(input);
+    messages.scrollTop = messages.scrollHeight;
 
-    textarea.value = ""; autoResize(textarea);
-    const loadingDiv = document.createElement("div");
-    loadingDiv.id = "loading";
-    loadingDiv.innerHTML = `<div class="stage"><div class="dot-floating"></div></div>`;
-    messagesDiv.appendChild(loadingDiv);
+    const loading = document.createElement("div");
+    loading.className = "stage";
+    loading.innerHTML = `<div class="dot-floating"></div>`;
+    messages.appendChild(loading);
 
     try {
-        const body = {
-            prompt: message,
-            startDate: document.getElementById('start-date').value,
-            endDate: document.getElementById('end-date').value,
-            location: Array.from(locBoxes).map(cb => cb.value).join(","),
-            item: Array.from(itemBoxes).map(cb => cb.value).join(","),
-            itemColor: document.getElementById("item-color-input").value.trim(),
-            aiMode: getCurrentAiMode(),
-            SupplierName: document.getElementById("SupplierName").value.trim(),
-            InvoiceNo: document.getElementById("InvoiceNo").value.trim(),
-            ProjectCode: Array.from(projectBoxes).map(cb => cb.value).join(","),
-            aiEngine: document.querySelector('input[name="ai-engine"]:checked')?.value,
-            conversationId: window.conversationId,
-            responseId: window.responseId
-        };
-
         const formData = new FormData();
-        Object.entries(body).forEach(([k, v]) => formData.append(k, v ?? ""));
-        window.attachedImages.forEach((file, idx) => formData.append("files", file, file.name || `file-${idx}`));
+        const f = collectFilterData();
+        
+        formData.append("prompt", text);
+        formData.append("startDate", f.startDate);
+        formData.append("endDate", f.endDate);
+        formData.append("location", f.location);
+        formData.append("supplier", f.supplier);
+        formData.append("itemAttr", f.itemAttr);
+        formData.append("invoice", f.invoice);
+        formData.append("aiEngine", document.querySelector('input[name="ai-engine"]:checked').value);
+        
+        window.attachedImages.forEach((file, i) => {
+            formData.append("files", file, file.name || `pasted-image-${Date.now()}.png`);
+        });
 
-        const response = await fetch(MAKE_WEBHOOK_URL, { method: "POST", body: formData });
-        const rawText = await response.text();
-
-        responseId = response.headers.get("ResponseID");
-        conversationId = response.headers.get("ConversationID");
-
-        loadingDiv.remove();
-        messagesDiv.innerHTML += `<div class="ai-message">🪄 ${rawText}</div>`;
-
+        const res = await fetch(MAKE_WEBHOOK_URL, { method: "POST", body: formData });
+        const resultText = await res.text();
+        
+        loading.remove();
+        messages.innerHTML += `<div class="ai-message">🪄 ${resultText}</div>`;
     } catch (err) {
-        loadingDiv.remove();
-        console.error("Error:", err);
-        messagesDiv.innerHTML += `<div class="ai-message bg-red-50 text-red-700">⚠️ 오류: ${err.message}</div>`;
+        loading.remove();
+        pushWarn(`통신 오류: ${err.message}`);
     } finally {
-        if (conversationId) window.conversationId = conversationId;
-        if (responseId) window.responseId = responseId;
-        sendButton.disabled = false;
+        isSending = false;
+        document.getElementById("send-button").disabled = false;
         window.attachedImages = [];
         renderAttachments();
-        isSending = false;
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        messages.scrollTop = messages.scrollHeight;
     }
 }
-</script>
 
+// 이벤트 초기화
+document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("user-input");
+    const fileInput = document.getElementById("file-input");
+    
+    document.getElementById("attach-btn").onclick = () => fileInput.click();
+    fileInput.onchange = (e) => { addImageFiles(e.target.files); e.target.value = ""; };
+
+    // ⭐ 캡처 이미지 붙여넣기 로직 강화
+    input.addEventListener("paste", (e) => {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        const capturedFiles = [];
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].kind === 'file') {
+                const file = items[i].getAsFile();
+                if (file) capturedFiles.push(file);
+            }
+        }
+        if (capturedFiles.length > 0) {
+            addImageFiles(capturedFiles);
+        }
+    });
+
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+
+    // 엔진 변경에 따른 Critique 버튼 가시성
+    const updateVisibility = () => {
+        const isGemini = document.querySelector('input[name="ai-engine"]:checked').value === 'gemini';
+        document.getElementById('critique-btn-wrapper').style.display = isGemini ? 'block' : 'none';
+    };
+    document.querySelectorAll('input[name="ai-engine"]').forEach(r => r.onchange = updateVisibility);
+    updateVisibility();
+});
+</script>
 </body>
 </html>
