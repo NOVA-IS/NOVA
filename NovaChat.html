@@ -616,7 +616,7 @@
                 <!-- 숨겨진 파일 input (gpt-input-bar 밖으로 이동) -->
                 <input id="file-input"
                         type="file"
-                        accept="*/*"
+                        accept="*/*" <!-- ⭐ 모든 파일 타입 허용 -->
                         multiple
                         class="hidden" />
                         
@@ -1126,10 +1126,6 @@ function addImageFiles(files) {
     const candidates = arr; 
     if (!candidates.length) return;
 
-    // 상수를 전역 스코프에서 사용
-    // const MAX_FILES = 3;                       
-    // const MAX_TOTAL_BYTES = 10 * 1024 * 1024; 
-
     window.attachedImages = window.attachedImages || [];
 
     // 1) 장수 제한
@@ -1162,8 +1158,6 @@ function addImageFiles(files) {
     // 3) 미리보기 렌더
     renderAttachments();
 }
-
-// ⭐ 제거됨: fileToBase64 함수가 제거되었습니다. Make로 전송 시 FormData를 사용합니다.
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -1227,6 +1221,15 @@ document.addEventListener("DOMContentLoaded", () => {
 const MAKE_WEBHOOK_URL = "https://hook.us2.make.com/beojnrbam68450c5366anrdb2lfdi8uq"; 
 // 👆 WARNING: 이 URL은 임시 예시 주소입니다. Make에서 발급받은 실제 Webhook 주소로 변경해야 합니다.
 let isSending = false;
+
+// 이미지 파일을 Base64 데이터 URL로 읽어오는 헬퍼 함수
+async function readFileAsDataURL(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(file);
+    });
+}
 
 async function sendMessage() {
     const textarea = document.getElementById("user-input");
@@ -1322,17 +1325,6 @@ async function sendMessage() {
         return;
     }
 
-    // 4. 파일 처리 및 검증 (불필요한 Base64 변환 로직 제거 및 디스플레이 정보만 추출)
-    let fileDetailsForDisplay = [];
-
-    if (window.attachedImages.length > 0) {
-        // 용량 검사는 addImageFiles에서 이미 했으므로, 디스플레이용 정보만 추출합니다.
-        window.attachedImages.forEach((file) => {
-             fileDetailsForDisplay.push(`${file.name} (${bytesToMB(file.size)}MB)`);
-        });
-    }
-
-
     isSending = true;
     sendButton.disabled = true;
 
@@ -1351,11 +1343,13 @@ async function sendMessage() {
         if (projectLabel) filterTxt.push(`Project: ${projectLabel}`);
     } 
 
-    // 사용자 메시지 출력용 썸네일 HTML 생성
-    const attachmentsForBubble = (window.attachedImages || []).map(file => {
-      const url = URL.createObjectURL(file);
-      // 이미지 외 파일에 대한 표시 방식 (작은 아이콘)
-      if (!file.type.startsWith("image/")) {
+    // 사용자 메시지 출력용 썸네일 HTML 생성 (Base64로 비동기 변환하여 이미지 깨짐 방지)
+    const attachmentParts = await Promise.all((window.attachedImages || []).map(async (file, idx) => {
+      if (file.type.startsWith("image/")) {
+        const base64Data = await readFileAsDataURL(file);
+        return `<img src="${base64Data}" alt="attachment" />`;
+      } else {
+        // 이미지 외 파일에 대한 표시 방식 (작은 아이콘)
         let iconHtml = '<span class="text-xs text-white">FILE</span>';
         if (file.type.includes('pdf')) iconHtml = '<span class="text-xs text-white">PDF</span>';
         else if (file.type.includes('text')) iconHtml = '<span class="text-xs text-white">TXT</span>';
@@ -1365,10 +1359,8 @@ async function sendMessage() {
                     <span class="text-xs text-white truncate w-full text-center">${file.name.substring(0, 10)}</span>
                 </div>`;
       }
-      
-      // 이미지 파일에 대한 표시 방식
-      return `<img src="${url}" data-temp-url="${url}" alt="attachment" />`;
-    }).join("");
+    }));
+    const attachmentsForBubble = attachmentParts.join("");
     
     messagesDiv.innerHTML += `
       <div class="user-message">
@@ -1378,15 +1370,6 @@ async function sendMessage() {
       </div>
     `;
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-    // 방금 만든 objectURL들 해제(이미지 렌더 후)
-    setTimeout(() => {
-      document.querySelectorAll('img[data-temp-url]').forEach(img => {
-        const u = img.getAttribute('data-temp-url');
-        if (u) URL.revokeObjectURL(u);
-        img.removeAttribute('data-temp-url');
-      });
-    }, 2000);
 
     textarea.value = "";
     autoResize(textarea);
@@ -1404,22 +1387,13 @@ async function sendMessage() {
     messagesDiv.appendChild(loadingDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
         
-        // 값 정리용(문자열 "null" / 빈 문자열 제거)
-        //const clean = v => (v && v !== "null" && v !== "") ? v : null;
-        
-       // const responseId = clean(rawResponseId);
-       // const conversationId = clean(rawResponseId);
-        
-        // 🔥 3) 각각 따로 저장 (window 또는 localStorage)
-        if (conversationId) {
-            window.conversationId = conversationId;
-            // localStorage.setItem("conversationId", conversationId);
-        }
-        
-        if (responseId) {
-            window.responseId = responseId;
-            // localStorage.setItem("responseId", responseId);
-        }
+    // 세션 ID 관리
+    if (conversationId) {
+        window.conversationId = conversationId;
+    }
+    if (responseId) {
+        window.responseId = responseId;
+    }
 
     try {
         if (!MAKE_WEBHOOK_URL || MAKE_WEBHOOK_URL.length < 10) {
@@ -1441,49 +1415,31 @@ async function sendMessage() {
             ProjectCode: projectCode,
             aiEngine,
             aiEngineLabel,
-            //engine,  // 위에서 계산한 'gpt' | 'gemini'
-            conversationId: window.conversationId || null,  // ⭐ 추가 부분
-            responseId: window.responseId || null   // ⭐ 추가 부분
+            conversationId: window.conversationId || null,
+            responseId: window.responseId || null
         };
-/* 파일첨부기능전 
-        const response = await fetch(MAKE_WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body)
-        });
-        */
-        /* 파일첨부기능*/
+
         const formData = new FormData();
 
-        // (기존 body의 필드들을 FormData에 담기)
         Object.entries(body).forEach(([k, v]) => {
-          // 배열/객체는 문자열로
           if (typeof v === "object") formData.append(k, JSON.stringify(v));
           else formData.append(k, v ?? "");
         });
         
-        // ✅ 첨부 파일들 추가 (여러장)
         (window.attachedImages || []).forEach((file, idx) => {
-          formData.append("files", file, file.name || `attached-file-${idx}`); // ⭐ images 키를 files로 변경
+          formData.append("files", file, file.name || `attached-file-${idx}`);
         });
         
-        // ✅ 전송
         const response = await fetch(MAKE_WEBHOOK_URL, {
           method: "POST",
           body: formData,
-          // FormData를 사용할 때는 'Content-Type' 헤더를 명시적으로 설정하지 않습니다.
         });
 
-        
-        
-        // 🔥 1) 응답 본문은 순수 텍스트
         const rawText = await response.text();
 
-        // 🔥 2) Header에서 ResponseID / ConversationID 가져오기
         responseId = response.headers.get("ResponseID");
         conversationId = response.headers.get("ConversationID");
 
-        // GPT일 때 + resp_ 로 시작할 때만 previous_response_id 후보로 보냄
         if (aiEngine === 'gpt' && window.responseId && window.responseId.startsWith('resp_')) {
             body.responseId = window.responseId;
         }
@@ -1500,43 +1456,29 @@ async function sendMessage() {
 
     } catch (err) {
         loadingDiv.remove();
-
         console.error("웹훅 호출 중 오류 발생:", err);
-
         const msg = (err && err.message ? err.message : String(err))
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;");
-
-        // ⭐ 500 오류에 대한 명확한 안내 추가
         messagesDiv.innerHTML += `
             <div class="ai-message bg-red-100 text-red-700 text-sm">
                 ⚠️ 서버(Make) 실행 오류: ${msg}. Make 시나리오의 로그를 확인하세요.
             </div>
         `;
     } finally {
-    // ✨ 항상 실행됨 (에러가 나도 실행됨)
+        if (conversationId && conversationId !== "null" && conversationId !== "") {
+            window.conversationId = conversationId;
+        }
+        if (responseId && responseId !== "null" && responseId !== "") {
+            window.responseId = responseId;
+        }
 
-    // 값이 있을 때만 덮어쓰기
-    if (conversationId && conversationId !== "null" && conversationId !== "") {
-        window.conversationId = conversationId;
+        sendButton.disabled = false;
+        window.attachedImages = [];
+        renderAttachments();
+        isSending = false;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
-
-    if (responseId && responseId !== "null" && responseId !== "") {
-        window.responseId = responseId;
-    }
-
-    // 버튼 복구
-    sendButton.disabled = false;
-
-    //첨부초기화
-    window.attachedImages = [];
-    renderAttachments();
-
-}
-
-    isSending = false;
-    sendButton.disabled = false;
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 </script>
 
