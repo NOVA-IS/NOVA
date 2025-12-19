@@ -254,6 +254,28 @@
             overflow: hidden;
         }
 
+        /* 이전 대화 재사용 버튼 */
+        .reuse-btn {
+            margin-top: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            background: #eef2ff;
+            color: #4338ca;
+            border: 1px solid #e0e7ff;
+            box-shadow: 0 1px 2px rgba(67, 56, 202, 0.1);
+            transition: background-color 0.15s ease, transform 0.1s ease;
+        }
+        .reuse-btn:hover {
+            background: #e0e7ff;
+        }
+        .reuse-btn:active {
+            transform: translateY(1px);
+        }
+
         .dot-floating {
             position: relative;
             width: 10px;
@@ -775,6 +797,83 @@ function collectFilterData() {
     };
 }
 
+/* 텍스트를 안전하게 HTML로 변환 */
+function escapeHtml(str = "") {
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+function textToHtml(text = "") {
+    return escapeHtml(text).replace(/\n/g, "<br>");
+}
+
+/* 입력창에 재사용 */
+function reuseAsPrompt(text) {
+    const textarea = document.getElementById("user-input");
+    if (!textarea) return;
+    textarea.value = text;
+    autoResize(textarea);
+    textarea.focus();
+}
+
+/* 말풍선 생성 유틸 */
+function appendMessageBubble({ type = "ai", text = "", meta = "", attachmentsHtml = "" }) {
+    const messagesDiv = document.getElementById("messages");
+    if (!messagesDiv) return;
+
+    const bubble = document.createElement("div");
+    bubble.className = type === "user" ? "user-message" : "ai-message";
+
+    const content = document.createElement("div");
+    content.innerHTML = textToHtml(text);
+    bubble.appendChild(content);
+
+    if (meta) {
+        const metaEl = document.createElement("div");
+        metaEl.className = "text-xs opacity-80 mt-1";
+        metaEl.innerHTML = textToHtml(meta);
+        bubble.appendChild(metaEl);
+    }
+
+    if (attachmentsHtml) {
+        const attachWrap = document.createElement("div");
+        attachWrap.className = "msg-attachments";
+        attachWrap.innerHTML = attachmentsHtml;
+        bubble.appendChild(attachWrap);
+    }
+
+    const reuseBtn = document.createElement("button");
+    reuseBtn.type = "button";
+    reuseBtn.className = "reuse-btn";
+    reuseBtn.textContent = "↺ 프롬프트로 사용";
+    reuseBtn.addEventListener("click", () => reuseAsPrompt(text));
+    bubble.appendChild(reuseBtn);
+
+    messagesDiv.appendChild(bubble);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function attachReuseButtonToBubble(bubble) {
+    if (!bubble || bubble.querySelector(".reuse-btn")) return;
+    const capturedText = bubble.innerText?.trim();
+    if (!capturedText) return;
+
+    const reuseBtn = document.createElement("button");
+    reuseBtn.type = "button";
+    reuseBtn.className = "reuse-btn";
+    reuseBtn.textContent = "↺ 프롬프트로 사용";
+    reuseBtn.addEventListener("click", () => reuseAsPrompt(capturedText));
+    bubble.appendChild(reuseBtn);
+}
+
+function attachReuseButtonsToExisting() {
+    const bubbles = document.querySelectorAll("#messages .ai-message, #messages .user-message");
+    bubbles.forEach(bubble => attachReuseButtonToBubble(bubble));
+}
+
 
 /**
  * Gemini API 호출을 위한 특별 프롬프트를 입력하고 sendMessage를 호출합니다.
@@ -1041,6 +1140,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateErpVisibility();
     updateAiModeStyling();
     updateCritiqueButtonVisibility(); // ⭐ 초기 로드 시 가시성 설정
+    attachReuseButtonsToExisting();
     autoResize(userInput);
 });
 
@@ -1242,8 +1342,10 @@ async function sendMessage() {
 
     if (!message || isSending) {
         if (!message && !isSending) {
-            messagesDiv.innerHTML += `<div class="ai-message self-start bg-yellow-100 text-yellow-700">⚠️ 오류: 질문을 입력해주세요.</div>`;
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            appendMessageBubble({
+                type: "ai",
+                text: "⚠️ 오류: 질문을 입력해주세요."
+            });
         }
         return;
     }
@@ -1317,11 +1419,10 @@ async function sendMessage() {
         !SupplierName &&
         !InvoiceNo
     ) {
-        messagesDiv.innerHTML += `
-            <div class="ai-message self-start bg-yellow-100 text-yellow-700">
-                ⚠️ ERP 분석을 선택한 경우, 제품명·Item 사용자 입력·업체명·Invoice No 중 최소 1개를 입력해야 합니다.
-            </div>`;
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        appendMessageBubble({
+            type: "ai",
+            text: "⚠️ ERP 분석을 선택한 경우, 제품명·Item 사용자 입력·업체명·Invoice No 중 최소 1개를 입력해야 합니다."
+        });
         return;
     }
 
@@ -1362,14 +1463,12 @@ async function sendMessage() {
     }));
     const attachmentsForBubble = attachmentParts.join("");
     
-    messagesDiv.innerHTML += `
-      <div class="user-message">
-        ${message}
-        ${filterTxt.length ? `<br><span class="text-xs opacity-80">(필터: ${filterTxt.join(", ")})</span>` : ""}
-        ${attachmentsForBubble ? `<div class="msg-attachments">${attachmentsForBubble}</div>` : ""}
-      </div>
-    `;
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    appendMessageBubble({
+        type: "user",
+        text: message,
+        meta: filterTxt.length ? `(필터: ${filterTxt.join(", ")})` : "",
+        attachmentsHtml: attachmentsForBubble
+    });
 
     textarea.value = "";
     autoResize(textarea);
@@ -1450,9 +1549,10 @@ async function sendMessage() {
 
         loadingDiv.remove();
 
-        messagesDiv.innerHTML += `
-            <div class="ai-message">🪄 ${rawText}</div>
-        `;
+        appendMessageBubble({
+            type: "ai",
+            text: `🪄 ${rawText}`
+        });
 
     } catch (err) {
         loadingDiv.remove();
@@ -1460,11 +1560,10 @@ async function sendMessage() {
         const msg = (err && err.message ? err.message : String(err))
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;");
-        messagesDiv.innerHTML += `
-            <div class="ai-message bg-red-100 text-red-700 text-sm">
-                ⚠️ 서버(Make) 실행 오류: ${msg}. Make 시나리오의 로그를 확인하세요.
-            </div>
-        `;
+        appendMessageBubble({
+            type: "ai",
+            text: `⚠️ 서버(Make) 실행 오류: ${msg}. Make 시나리오의 로그를 확인하세요.`
+        });
     } finally {
         if (conversationId && conversationId !== "null" && conversationId !== "") {
             window.conversationId = conversationId;
