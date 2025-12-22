@@ -1435,7 +1435,7 @@ async function sendMessage() {
         if (itemColor) filterTxt.push(`Item 사용자 입력: ${itemColor}`);
         if (SupplierName) filterTxt.push(`업체명: ${SupplierName}`);
         if (InvoiceNo) filterTxt.push(`Invoice No: ${InvoiceNo}`);
-        if (projectLabel) filterTxt.push(`projectLabel: ${projectLabel}`);
+        if (projectLabel) filterTxt.push(`project: ${projectLabel}`);
     } 
 
     // 사용자 메시지 출력용 썸네일 HTML 생성 (Base64로 비동기 변환하여 이미지 깨짐 방지)
@@ -1508,7 +1508,8 @@ async function sendMessage() {
             aiModeLabel,
             SupplierName,
             InvoiceNo,
-            ProjectCode: projectCode,
+            ProjectCode,
+            projectLabel,
             aiEngine,
             aiEngineLabel,
             conversationId: window.conversationId || null,
