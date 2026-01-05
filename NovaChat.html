@@ -1539,12 +1539,12 @@ async function sendMessage() {
           method: "POST",
           body: formData,
         });
-
+        // 🔥 1) 응답 본문은 순수 텍스트
         const rawText = await response.text();
-
+        // 🔥 2) Header에서 ResponseID / ConversationID 가져오기
         responseId = response.headers.get("ResponseID");
         conversationId = response.headers.get("ConversationID");
-
+        // GPT일 때 + resp_ 로 시작할 때만 previous_response_id 후보로 보냄
         if (aiEngine === 'gpt' && window.responseId && window.responseId.startsWith('resp_')) {
             body.responseId = window.responseId;
         }
@@ -1554,8 +1554,11 @@ async function sendMessage() {
         }
 
         loadingDiv.remove();
+        messagesDiv.innerHTML += `
+            <div class="ai-message">🪄 ${rawText}</div>
+        `;
 
-        messagesDiv.appendChild(createAiMessageElement(rawText));
+        //messagesDiv.appendChild(createAiMessageElement(rawText));
 
     } catch (err) {
         loadingDiv.remove();
