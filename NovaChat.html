@@ -1320,12 +1320,19 @@ function createUserMessageElement({ text, filtersText = "", attachmentsHtml = ""
     return wrapper;
 }
 
-function createAiMessageElement(text) {
-    const wrapper = document.createElement("div");
-    wrapper.className = "ai-message";
-    wrapper.innerHTML = `🪄 ${escapeHtml(text).replace(/\n/g, "<br>")}`;
-    return wrapper;
+function createAiMessageElement(textOrHtml, { asHtml = false } = {}) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "ai-message";
+
+  if (asHtml) {
+    wrapper.innerHTML = `🪄 ${toHtmlFragment(textOrHtml)}`;
+  } else {
+    wrapper.innerHTML = `🪄 ${escapeHtml(textOrHtml).replace(/\n/g, "<br>")}`;
+  }
+
+  return wrapper;
 }
+
 
 async function sendMessage() {
     const textarea = document.getElementById("user-input");
